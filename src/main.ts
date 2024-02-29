@@ -10,7 +10,6 @@ import { lng, PluginID } from 'src/lang/helpers'
 import Pickr from "@simonwep/pickr"
 import ColorPicker from 'src/backend/colorpicker'
 import { GetColor } from 'src/backend/colorpicker'
-import { ColorTranslator } from "colortranslator"
 
 /*
     Basic Declrations
