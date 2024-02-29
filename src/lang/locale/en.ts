@@ -10,6 +10,7 @@ export default
     */
 
     cfg_modal_desc:                     'Embed Github and Opengist snippets in your notes. For a detailed set of examples, view the demo vault in the support section.',
+    cfg_modal_expand:                   'Expand',
 
     /*
         Tab > Settings > General
@@ -52,7 +53,7 @@ export default
     */
 
     cfg_tab_gh_css_name:                'Custom CSS',
-    cfg_tab_gh_css_desc:                'Paste CSS properties to override existing colors.',
+    cfg_tab_gh_css_desc:                'This textarea allows you to enter custom CSS properties to override existing colors.',
     cfg_tab_gh_css_pholder:             'Paste CSS here',
 
     /*
@@ -98,6 +99,19 @@ export default
     gs_btn_close:                       'Close',
     base_underdev_title:                'Feature Under Development',
     base_underdev_msg:                  'I am currently working with the developer of OpenGist to make minor changes to how OpenGist pastes appear, including moving the "view raw" button to the bottom so that Obsidian\'s edit button does not overlap.',
+
+    /*
+        Element > Color Picker
+    */
+
+    pickr_dialog:                       'Color Picker',
+    pickr_swatch:                       'Color Swatch',
+    pickr_toggle:                       'Pick Color',
+    pickr_last:                         'Use Last Color',
+    pickr_save:                         'Save',
+    pickr_cancel:                       'Cancel',
+    pickr_clear:                        'Clear',
+    pickr_dev_unknown:                  'Gistr: Unknown color format: {0}',
 
     /*
         Gist Load Error

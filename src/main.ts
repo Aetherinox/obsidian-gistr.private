@@ -9,6 +9,7 @@ import ModalGettingStarted from "./modals/GettingStartedModal"
 import { lng, PluginID } from 'src/lang/helpers'
 import Pickr from "@simonwep/pickr"
 import ColorPicker from 'src/backend/colorpicker'
+import { GetColor } from 'src/backend/colorpicker'
 import { ColorTranslator } from "colortranslator"
 
 /*
@@ -243,7 +244,7 @@ class OG_Tab_Settings extends PluginSettingTab
                     .setTooltip     ( "Restore default colour" )
                     .onClick( ( ) =>
                     {
-                        const resetColour: Color = ColorPickrDefaults[ id ]
+                        const resetColour:  Color = ColorPickrDefaults[ id ]
                         pickr.setColor      ( GetColor( resetColour ) )
                         pickr.ActionSave    ( resetColour )
                     } )
@@ -760,99 +761,4 @@ class OG_Tab_Settings extends PluginSettingTab
             new Setting( div_Donate ).setDesc( lnk_Donate )
         }
 
-}
-
-/*
-    Calculate colors when converting hsl and rgb
-*/
-
-function CalcColor( str : string ) : string
-{
-	const strSplit = str.trim( ).replace( /(\d*)%/g, "$1" ).split( " " )
-
-	const operators: { [ key: string ] : ( n1 : number, n2 : number ) => number } =
-    {
-		"+" : ( n1 : number, n2 : number ) : number => Math.max( n1 + n2, 0 ),
-		"-" : ( n1 : number, n2 : number ) : number => Math.max( n1 - n2, 0 ),
-	}
-
-	if ( strSplit.length === 3 )
-    {
-		if ( strSplit[ 1 ] in operators )
-        {
-            console.log( operators )
-			return `${ operators[ strSplit[ 1 ] ]( parseFloat( strSplit[ 0 ] ), parseFloat( strSplit[ 2 ] ) ) }%`
-        }
-    }
-
-    return str
-}
-
-/*
-    CSS > Get Value
-*/
-
-function CSS_GetValue( property: CLR_VAR ): CLR_HEX
-{
-
-	const value = window.getComputedStyle( document.body ).getPropertyValue( property ).trim( )
-
-    /*
-        type    : hex
-                  #ff0000
-    */
-
-	if ( typeof value === "string" && value.startsWith( "#" ) )
-		return `#${ value.trim( ).substring( 1 ) }`
-
-    /*
-        type    : hsl
-                  hsl( 0, 100%, 50% )
-    */
-
-	else if ( value.startsWith( "hsl" ) )
-		return `#${ ColorTranslator.toHEXA
-        ( 
-            value.replace( /CalcColor\((.*?)\)/g, ( match, capture ) =>
-            CalcColor( capture ) )
-        ).substring( 1 ) }`
-
-    /*
-        type    : rgb
-                  rgb( 255, 0, 0 )
-    */
-
-	else if ( value.startsWith( "rgb" ) )
-		return `#${ ColorTranslator.toHEXA
-        (
-            value.replace( /CalcColor\((.*?)\)/g, ( match, capture ) =>
-            CalcColor( capture ) )
-        ).substring( 1 ) }`
-
-    /*
-        Unknown type
-    */
-
-	else
-		console.warn( `Gistr: Unknown color format - ${value}` )
-
-	return `#${ ColorTranslator.toHEXA( value ).substring( 1 ) }`
-}
-
-/*
-    Get Color from CSS Value
-*/
-
-export function GetColor( clr: Color ): Color
-{
-	return bValidCSS( clr ) ? CSS_GetValue( clr ) : clr
-}
-
-/*
-    Check Valid CSS
-*/
-
-export function bValidCSS( css: string ): css is CLR_VAR
-{
-	return typeof css === "string" && css.startsWith( "--" )
 }

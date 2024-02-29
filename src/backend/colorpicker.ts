@@ -2,11 +2,9 @@
     Import
 */
 
-import { App, Plugin, PluginSettingTab, Setting, sanitizeHTMLToDom, ExtraButtonComponent, MarkdownRenderer } from 'obsidian'
-import { GistrBackend } from 'src/backend/backend'
+import { Setting, ExtraButtonComponent } from 'obsidian'
 import GistrPlugin from "src/main"
-import GistrSettings from 'src/settings/settings'
-import { lng, PluginID } from 'src/lang/helpers'
+import { lng } from 'src/lang/helpers'
 import Pickr from "@simonwep/pickr"
 import { ColorTranslator } from "colortranslator"
 
@@ -54,13 +52,13 @@ export default class ColorPicker extends Pickr
 			},
 			i18n:
             {
-				"ui:dialog":        "Color Picker",
-				"btn:swatch":       "Color Swatch",
-				"btn:toggle":       ( typeof tip !== "undefined" ) ? tip : "Pick Color",
-				"btn:last-color":   "Use Last Color",
-                "btn:save":         "Save",
-                "btn:cancel":       "Cancel",
-                "btn:clear":        "Clear",
+				"ui:dialog":        lng( "pickr_dialog" ),
+				"btn:swatch":       lng( "pickr_swatch" ),
+				"btn:toggle":       ( typeof tip !== "undefined" ) ? tip : lng( "pickr_toggle" ),
+				"btn:last-color":   lng( "pickr_last" ),
+                "btn:save":         lng( "pickr_save" ),
+                "btn:cancel":       lng( "pickr_cancel" ),
+                "btn:clear":        lng( "pickr_clear" ),
 			}
 		}
 
@@ -96,12 +94,20 @@ export default class ColorPicker extends Pickr
 	}
 }
 
+/*
+    Color > Get
+*/
+
+export function GetColor( clr: Color ): Color
+{
+    return bValidCSS( clr ) ? CSS_GetValue( clr ) : clr
+}
 
 /*
     Calculate colors when converting hsl and rgb
 */
 
-function CalcColor( str : string ) : string
+export function CalcColor( str : string ) : string
 {
 	const strSplit = str.trim( ).replace( /(\d*)%/g, "$1" ).split( " " )
 
@@ -127,7 +133,7 @@ function CalcColor( str : string ) : string
     CSS > Get Value
 */
 
-function CSS_GetValue( property: CLR_VAR ): CLR_HEX
+export function CSS_GetValue( property: CLR_VAR ): CLR_HEX
 {
 
 	const value = window.getComputedStyle( document.body ).getPropertyValue( property ).trim( )
@@ -169,18 +175,9 @@ function CSS_GetValue( property: CLR_VAR ): CLR_HEX
     */
 
 	else
-		console.warn( `Gistr: Unknown color format - ${value}` )
+		console.warn( lng( "pickr_dev_unknown", value ) )
 
 	return `#${ ColorTranslator.toHEXA( value ).substring( 1 ) }`
-}
-
-/*
-    Get Color from CSS Value
-*/
-
-export function GetColor( clr: Color ): Color
-{
-	return bValidCSS( clr ) ? CSS_GetValue( clr ) : clr
 }
 
 /*
