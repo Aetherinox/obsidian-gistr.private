@@ -162,11 +162,11 @@ export default class GistrPlugin extends Plugin
 class OG_Tab_Settings extends PluginSettingTab
 {
     readonly plugin:            GistrPlugin
-    private Hide_General:       boolean
+    private Hide_Global:        boolean
     private Hide_Github:        boolean
     private Hide_Opengist:      boolean
     private Hide_Support:       boolean
-    private Tab_General:        HTMLElement
+    private Tab_Gobal:          HTMLElement
     private Tab_Github:         HTMLElement
     private Tab_OpenGist:       HTMLElement
     private Tab_Support:        HTMLElement
@@ -179,7 +179,7 @@ class OG_Tab_Settings extends PluginSettingTab
         super( app, plugin )
 
         this.plugin             = plugin
-		this.Hide_General       = true
+		this.Hide_Global        = true
 		this.Hide_Github        = true
 		this.Hide_Opengist      = true
 		this.Hide_Support       = false
@@ -193,7 +193,7 @@ class OG_Tab_Settings extends PluginSettingTab
     {
         const { containerEl }   = this
 
-        this.Hide_General       = true
+        this.Hide_Global        = true
 		this.Hide_Github        = true
 		this.Hide_Opengist      = true
 		this.Hide_Support       = false
@@ -210,7 +210,6 @@ class OG_Tab_Settings extends PluginSettingTab
     {
 
         elm.empty( )
-        elm.createEl( "h1", { text: lng( "cfg_modal_title" ) } )
         elm.createEl( "p",
         {
             cls: "gistr-settings-section-header",
@@ -225,8 +224,8 @@ class OG_Tab_Settings extends PluginSettingTab
 
 	createMenus( elm: HTMLElement )
     {
-        this.Tab_General_New    ( elm )
-		this.Tab_General        = elm.createDiv( )
+        this.Tab_Gobal_New      ( elm )
+		this.Tab_Gobal          = elm.createDiv( )
 
         this.Tab_OpenGist_New   ( elm )
 		this.Tab_OpenGist       = elm.createDiv( )
@@ -245,33 +244,29 @@ class OG_Tab_Settings extends PluginSettingTab
         Tab > General > New
     */
 
-        Tab_General_New( elm: HTMLElement )
+        Tab_Gobal_New( elm: HTMLElement )
         {
-            const Tab_GN = elm.createEl( "h2", { text: lng( "cfg_tab_ge_title" ), cls: `gistr-settings-header${ this.Hide_General?" isfold" : "" }` } )
+            const Tab_GN = elm.createEl( "h2", { text: lng( "cfg_tab_ge_title" ), cls: `gistr-settings-header${ this.Hide_Global?" isfold" : "" }` } )
             Tab_GN.addEventListener( "click", ( )=>
             {
-                this.Hide_General = !this.Hide_General
-                Tab_GN.classList.toggle( "isfold", this.Hide_General )
-                this.Tab_General_CreateSettings( )
+                this.Hide_Global = !this.Hide_Global
+                Tab_GN.classList.toggle( "isfold", this.Hide_Global )
+                this.Tab_Gobal_CreateSettings( )
             } )
         }
 
-        Tab_General_CreateSettings( )
+        Tab_Gobal_CreateSettings( )
         {
-            this.Tab_General.empty( )
-            if ( this.Hide_General ) return
+            this.Tab_Gobal.empty( )
+            if ( this.Hide_Global ) return
             
-            this.Tab_General_ShowSettings( this.Tab_General )
+            this.Tab_Gobal_ShowSettings( this.Tab_Gobal )
         }
 
-        Tab_General_ShowSettings( elm: HTMLElement )
+        Tab_Gobal_ShowSettings( elm: HTMLElement )
         {
         
-            elm.createEl( 'small',
-            {
-                cls: "gistr-settings-section-description",
-                text: lng( "cfg_tab_ge_header" )
-            } )
+            elm.createEl( 'small', { cls: "gistr-settings-section-description", text: lng( "cfg_tab_ge_header" ) } )
 
             /*
                 Command Keyword
@@ -297,11 +292,7 @@ class OG_Tab_Settings extends PluginSettingTab
                 Tab Footer Spacer
             */
 
-            elm.createEl( 'div',
-            {
-                cls: "gistr-settings-section-footer",
-                text: ""
-            } )
+            elm.createEl( 'div', { cls: "gistr-settings-section-footer", text: "" } )
         }
 
     /*
@@ -330,11 +321,7 @@ class OG_Tab_Settings extends PluginSettingTab
         Tab_OpenGist_ShowSettings( elm: HTMLElement )
         {
 
-            elm.createEl( 'small',
-            {
-                cls: "gistr-settings-section-description",
-                text: lng( "cfg_tab_og_header" )
-            } )
+            elm.createEl( 'small', { cls: "gistr-settings-section-description", text: lng( "cfg_tab_og_header" ) } )
 
             /*
                 Development notice
@@ -500,11 +487,7 @@ class OG_Tab_Settings extends PluginSettingTab
                 Tab Footer Spacer
             */
 
-            elm.createEl( 'div',
-            {
-                cls: "gistr-settings-section-footer",
-                text: ""
-            } )
+            elm.createEl( 'div', { cls: "gistr-settings-section-footer", text: "" } )
         }
 
     /*
@@ -560,11 +543,7 @@ class OG_Tab_Settings extends PluginSettingTab
                 Tab Footer Spacer
             */
 
-            elm.createEl( 'div',
-            {
-                cls: "gistr-settings-section-footer",
-                text: ""
-            } )
+            elm.createEl( 'div', { cls: "gistr-settings-section-footer", text: "" } )
         }
 
 
@@ -598,11 +577,7 @@ class OG_Tab_Settings extends PluginSettingTab
                 Section -> Support Buttons
             */
 
-            elm.createEl( 'small',
-            {
-                cls: "gistr-settings-section-description",
-                text: lng( "cfg_tab_su_desc" )
-            } )
+            elm.createEl( 'small', { cls: "gistr-settings-section-description", text: lng( "cfg_tab_su_desc" ) } )
 
             /*
                 Button > Getting Started > Open Interface
@@ -633,6 +608,21 @@ class OG_Tab_Settings extends PluginSettingTab
                     btn.setButtonText( lng( "cfg_tab_su_repo_btn" ) ).onClick( ( ) =>
                     {
                         window.open( lng( "cfg_tab_su_repo_url" ) )
+                    } )
+                } )
+
+            /*
+                Button -> Plugin Demo Vault
+            */
+
+            new Setting( elm )
+                .setName( lng( "cfg_tab_su_vault_label" ) )
+                .setDesc( lng( "cfg_tab_su_vault_url" ) )
+                .addButton( ( btn ) =>
+                {
+                    btn.setButtonText( lng( "cfg_tab_su_vault_btn" ) ).onClick( ( ) =>
+                    {
+                        window.open( lng( "cfg_tab_su_vault_url" ) )
                     } )
                 } )
 
