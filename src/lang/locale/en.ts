@@ -111,6 +111,7 @@ export default
     pickr_save:                         'Save',
     pickr_cancel:                       'Cancel',
     pickr_clear:                        'Clear',
+    pickr_tip_restore_default:          'Restore default color',
     pickr_dev_unknown:                  'Gistr: Unknown color format: {0}',
 
     /*

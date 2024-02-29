@@ -240,7 +240,7 @@ class OG_Tab_Settings extends PluginSettingTab
 
                     .setIcon        ( "reset" )
                     .setDisabled    ( false )
-                    .setTooltip     ( "Restore default colour" )
+                    .setTooltip     ( lng( "pickr_tip_restore_default" ) )
                     .onClick( ( ) =>
                     {
                         const resetColour:  Color = ColorPickrDefaults[ id ]
