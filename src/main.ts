@@ -7,6 +7,8 @@ import { GistrBackend } from 'src/backend/backend'
 import GistrSettings from 'src/settings/settings'
 import ModalGettingStarted from "./modals/GettingStartedModal"
 import { lng, PluginID } from 'src/lang/helpers'
+import Pickr from "@simonwep/pickr"
+import ColorPicker from 'src/backend/colorpicker'
 import { ColorTranslator } from "colortranslator"
 
 /*
@@ -44,10 +46,10 @@ const CFG_DEFAULT: GistrSettings =
 
 export interface ColorPickrOpts
 {
-    'og_clr_bg_light'?: string
-    'og_clr_bg_dark'?: string
-    'og_clr_sb_light'?: string
-    'og_clr_sb_dark'?: string
+    'og_clr_bg_light'?:     string
+    'og_clr_bg_dark'?:      string
+    'og_clr_sb_light'?:     string
+    'og_clr_sb_dark'?:      string
 }
 
 /*
@@ -170,6 +172,7 @@ class OG_Tab_Settings extends PluginSettingTab
     private Tab_Github:         HTMLElement
     private Tab_OpenGist:       HTMLElement
     private Tab_Support:        HTMLElement
+    cPickr:                     Record<string, ColorPicker>
 
     /*
         Class > Constructor
@@ -183,6 +186,71 @@ class OG_Tab_Settings extends PluginSettingTab
 		this.Hide_Github        = true
 		this.Hide_Opengist      = true
 		this.Hide_Support       = false
+        this.cPickr             = { }
+    }
+
+
+    /*
+        Create Object > Color Picker
+
+        @arg    : bHidden
+                  associated to hovering color picker, not color element
+    */
+
+    new_ColorPicker( plugin: GistrPlugin, el: HTMLElement, setting: Setting, id: keyof ColorPickrOpts, bHidden?: ( ) => boolean )
+    {
+        const pickr: ColorPicker = new ColorPicker( plugin, el, setting )
+
+        pickr
+            .on( "init", ( colour: Pickr.HSVaColor, instance: Pickr ) =>
+            {
+                const currColor = this.plugin.settings[ id ]
+                pickr.setColor( currColor )
+            } )
+
+            .on( "show", ( colour: Pickr.HSVaColor, instance: Pickr ) =>
+            {
+                if ( typeof bHidden !== "undefined" && bHidden( ) )
+                    instance.hide( )
+            } )
+
+            .on( "save", ( colour: Pickr.HSVaColor, instance: ColorPicker ) =>
+            {
+
+                const clr : Color = `#${ colour.toHEXA( ).toString( ).substring( 1 ) }`
+
+                this.plugin.settings[ id ] = clr
+                this.plugin.saveSettings( )
+
+                instance.hide( )
+                instance.addSwatch( clr )
+                instance.ActionSave( clr )
+            } )
+
+            .on( "cancel", ( instance: ColorPicker ) =>
+            {
+                instance.hide( )
+            } )
+
+            setting.addExtraButton
+            (
+                ( btn ) =>
+                {
+                    pickr.AddButtonReset = btn
+
+                    .setIcon        ( "reset" )
+                    .setDisabled    ( false )
+                    .setTooltip     ( "Restore default colour" )
+                    .onClick( ( ) =>
+                    {
+                        const resetColour: Color = ColorPickrDefaults[ id ]
+                        pickr.setColor      ( GetColor( resetColour ) )
+                        pickr.ActionSave    ( resetColour )
+                    } )
+                }
+            )
+
+        this.cPickr[ id ] = pickr
     }
 
     /*
@@ -336,32 +404,27 @@ class OG_Tab_Settings extends PluginSettingTab
             */
 
             new Setting( elm )
-                .setName( lng( "cfg_tab_og_cblk_light_name" ) )
-                .setDesc( lng( "cfg_tab_og_cblk_light_desc" ) )
-                .addColorPicker( clr => clr
-                    .setValue( this.plugin.settings.og_clr_bg_light )
-                    .onChange( val =>
-                    {
-                        this.plugin.settings.og_clr_bg_light = val;
-                        this.plugin.saveSettings( );
-                    })
-                );
+                .setName( lng( "cfg_tab_og_cb_light_name" ) )
+                .setDesc( lng( "cfg_tab_og_cb_light_desc" ) )
+                .then( ( setting ) => { this.new_ColorPicker
+                (
+                    this.plugin, elm, setting,
+                    "og_clr_bg_light",
+                ) } )
+
 
             /*
                 Background color (Dark)
             */
 
             new Setting( elm )
-                .setName( lng( "cfg_tab_og_cblk_dark_name" ) )
-                .setDesc( lng( "cfg_tab_og_cblk_dark_desc" ) )
-                .addColorPicker( clr => clr
-                    .setValue( this.plugin.settings.og_clr_bg_dark )
-                    .onChange( val =>
-                    {
-                        this.plugin.settings.og_clr_bg_dark = val;
-                        this.plugin.saveSettings( );
-                    })
-                );
+                .setName( lng( "cfg_tab_og_cb_dark_name" ) )
+                .setDesc( lng( "cfg_tab_og_cb_dark_desc" ) )
+                    .then( ( setting ) => { this.new_ColorPicker
+                    (
+                        this.plugin, elm, setting,
+                        "og_clr_bg_dark",
+                ) } )
 
             /*
                 Scrollbar Track Color (Light)
@@ -370,14 +433,11 @@ class OG_Tab_Settings extends PluginSettingTab
             new Setting( elm )
                 .setName( lng( "cfg_tab_og_sb_light_name" ) )
                 .setDesc( lng( "cfg_tab_og_sb_light_desc" ) )
-                .addColorPicker( clr => clr
-                    .setValue( this.plugin.settings.og_clr_sb_light )
-                    .onChange( val =>
-                    {
-                        this.plugin.settings.og_clr_sb_light = val;
-                        this.plugin.saveSettings( );
-                    })
-                );
+                    .then( ( setting ) => { this.new_ColorPicker
+                    (
+                        this.plugin, elm, setting,
+                        "og_clr_sb_light",
+                ) } )
 
             /*
                 Scrollbar Track Color (Dark)
@@ -386,14 +446,11 @@ class OG_Tab_Settings extends PluginSettingTab
             new Setting( elm )
                 .setName( lng( "cfg_tab_og_sb_dark_name" ) )
                 .setDesc( lng( "cfg_tab_og_sb_dark_desc" ) )
-                .addColorPicker( clr => clr
-                    .setValue( this.plugin.settings.og_clr_sb_dark )
-                    .onChange( val =>
-                    {
-                        this.plugin.settings.og_clr_sb_dark = val;
-                        this.plugin.saveSettings( );
-                    })
-                );
+                    .then( ( setting ) => { this.new_ColorPicker
+                    (
+                        this.plugin, elm, setting,
+                        "og_clr_sb_dark",
+                ) } )
 
             /*
                 Codeblock > Padding > Top

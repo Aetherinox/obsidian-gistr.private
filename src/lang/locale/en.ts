@@ -29,10 +29,10 @@ export default
         Tab > Settings > OpenGist
     */
 
-    cfg_tab_og_cblk_light_name:         'Codeblock bg color (Light)',
-    cfg_tab_og_cblk_light_desc:         'Color for Opengist codeblock background color (Light Theme)',
-    cfg_tab_og_cblk_dark_name:          'Codeblock bg color (Dark)',
-    cfg_tab_og_cblk_dark_desc:          'Color for Opengist codeblock background color (Dark Theme)',
+    cfg_tab_og_cb_light_name:           'Codeblock bg color (Light)',
+    cfg_tab_og_cb_light_desc:           'Color for Opengist codeblock background color (Light Theme)',
+    cfg_tab_og_cb_dark_name:            'Codeblock bg color (Dark)',
+    cfg_tab_og_cb_dark_desc:            'Color for Opengist codeblock background color (Dark Theme)',
     cfg_tab_og_sb_light_name:           'Scrollbar track color (Light)',
     cfg_tab_og_sb_light_desc:           'Color for gist scrollbar track (Light Theme)',
     cfg_tab_og_sb_dark_name:            'Scrollbar track color (Dark)',
@@ -44,7 +44,7 @@ export default
     cfg_tab_og_theme_name:              'Theme',
     cfg_tab_og_theme_desc:              'This determines what color scheme will be used when loading an OpenGist code block. MUST reload your note for the new stylesheet to be loaded.',
     cfg_tab_og_css_name:                'Custom CSS',
-    cfg_tab_og_css_desc:                'Paste CSS properties to override existing colors.',
+    cfg_tab_og_css_desc:                'This textarea allows you to enter custom CSS properties to override existing colors.',
     cfg_tab_og_css_pholder:             'Paste CSS here',
 
     /*
