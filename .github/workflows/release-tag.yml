@@ -89,48 +89,14 @@ jobs:
               run: |
                 shasum --algorithm 256 ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip > SHA256SUMS.txt
 
-            - name: Install release-note dependency
-              run: |
-                go get k8s.io/release/cmd/release-notes@latest
-
-            - name: Get Time
-              id: time
-              uses: nanzm/get-time-action@v1.1
+            - name: Generate Changelog
+              id: changelog
+              uses: jaywcjlove/changelog-generator@v1.5.3
               with:
-                format: 'YYYYMMDDHHmmss'
+                filter: (^[\s]+?[R|r]elease)|(^[R|r]elease)
 
-            - name: Generate release notes
-              id: get-release-notes
-              env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: |
-                release-notes \
-                    --github-base-url https://github.com \
-                    --org Aetherinox \
-                    --repo obsidian-gistr.private \
-                    --branch main \
-                    --required-author "" \
-                    --start-sha cd0af4bce90f1fda3cd0f2a6edc652a06cd42424 \
-                    --end-sha cd0af4bce90f1fda3cd0f2a6edc652a06cd42424 \
-                    --output /tmp/${{ steps.time.outputs.time }}-bin-notes
-
-            - name: Get Github Release notes
-              uses: octokit/request-action@v2.x
-              id: get-github-release-notes
-              with:
-                route: POST /repos/{owner}/{repo}/releases/generate-notes
-                owner: ${{ steps.generate-release-details.outputs.repo-org }}
-                repo: ${{ steps.generate-release-details.outputs.repo-name }}
-                tag_name: ${{ steps.generate-release-details.outputs.release-version }}
-                previous_tag_name: ${{ steps.generate-release-details.outputs.prev-release-version }}
-              env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-            - name: 'Identify New Contributors section'
-              id: get-new-contributors
-              run: |
-                githubOutput="/tmp/${{ steps.time.outputs.time }}-github-output"
-                echo "${{ fromJson(steps.get-github-release-notes.outputs.data).body }}" > "$githubOutput"
+            - name: Get the changelog
+              run: echo "${{ steps.changelog.outputs.changelog }}"
 
             # ---------------------------------------------------------------------------------------
             #   [ Release Candidate ]: Create Release
@@ -155,15 +121,9 @@ jobs:
                   SHA256SUMS.txt
                 prerelease: true
                 body: |
-                  # What's Changed
-                  - 
-                  - 
-
-                  <br />
-
-                  ---
-
-                  <br />
+                  # Database Migrations
+                  TODO
+                  ${{ steps.changelog.outputs.changelog }}
 
             # ---------------------------------------------------------------------------------------
             #   [ Release ]: Create Release
