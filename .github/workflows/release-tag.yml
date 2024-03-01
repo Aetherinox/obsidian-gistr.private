@@ -47,16 +47,6 @@ jobs:
               run: echo "PACKAGE_VERSION=$(cat package.json | jq -r '.version')" >> $GITHUB_ENV
 
             # ---------------------------------------------------------------------------------------
-            #   Get Previous Tag
-            # ---------------------------------------------------------------------------------------
-
-            - name: "[Tag]: Get Previous"
-              run: |
-                TAG_PREVIOUS=$( git describe --tags --abbrev=0 2>/dev/null || echo "" )
-                echo "TAG_PREVIOUS=$TAG_PREVIOUS" >> $GITHUB_ENV
-                echo "Found Previous Tag: ${{ env.TAG_PREVIOUS }}"
-
-            # ---------------------------------------------------------------------------------------
             #   Generate Changelog
             #
             #   generates a changelog from the github api. requires a PREVIOUS_TAG in order to figure
@@ -66,14 +56,11 @@ jobs:
             #     ${{ steps.changelog.outputs.changelog }}
             # ---------------------------------------------------------------------------------------
 
-            - run: echo "previous_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo '')" >> $GITHUB_ENV
+            - run: echo "TAG_PREVIOUS=$(git describe --tags --abbrev=0 2>/dev/null || echo '')" >> $GITHUB_ENV
 
             - name: "[Tag]: Get Previous"
               run: |
-                TAG_PREVIOUS=$( git describe --tags --abbrev=0 2>/dev/null || echo "" )
-                echo "TAG_PREVIOUS=$TAG_PREVIOUS" >> $GITHUB_ENV
-                echo "Found Previous Tag: ${{ env.TAG_PREVIOUS }}"
-                echo "Found Previous Tag2: ${{ env.previous_tag }}"
+                echo "Found Previous Tag2: ${{ env.TAG_PREVIOUS }}"
 
             - name: "[Changelog]: Generate"
               id: changelog
