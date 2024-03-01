@@ -58,10 +58,6 @@ jobs:
 
             - run: echo "TAG_PREVIOUS=$(git describe --tags --abbrev=0 2>/dev/null || echo '')" >> $GITHUB_ENV
 
-            - name: "[Tag]: Get Previous"
-              run: |
-                echo "Found Previous Tag2: ${{ env.TAG_PREVIOUS }}"
-
             - name: "[Changelog]: Generate"
               id: changelog
               uses: jaywcjlove/changelog-generator@main
@@ -92,6 +88,8 @@ jobs:
                 echo ""
                 echo ""
                 echo "---- VARIABLES ---------------------------------------------------------------"
-                echo "RC Output ID: .......... ${{ steps.bundle-rc.outputs.id }}"
-                echo "R Output ID: ........... ${{ steps.bundle-r.outputs.id }}"
+                echo "Package Version ............ ${{ env.PACKAGE_VERSION }}"
+                echo "Previous Tag ............... ${{ env.TAG_PREVIOUS }}"
+                echo "RC Output ID ............... ${{ steps.bundle-rc.outputs.id }}"
+                echo "R Output ID ................ ${{ steps.bundle-r.outputs.id }}"
                 echo "---- CHANGELOG ---------------------------------------------------------------"
