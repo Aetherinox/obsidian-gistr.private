@@ -90,25 +90,6 @@ jobs:
                 shasum --algorithm 256 ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip > SHA256SUMS.txt
 
             # ---------------------------------------------------------------------------------------
-            #   Generate Changelog
-            # ---------------------------------------------------------------------------------------
-
-            - name: Generate Changelog
-              id: changelog
-              uses: jaywcjlove/changelog-generator@v1.5.3
-              with:
-                show-emoji: false
-                # custom-emoji: 'type🐝,feat💄,fix🆎'
-                filter: (^[\s]+?[R|r]elease)|(^[R|r]elease)
-
-            # ---------------------------------------------------------------------------------------
-            #   Fetch Changelog
-            # ---------------------------------------------------------------------------------------
-
-            - name: Get the changelog
-              run: echo "${{ steps.changelog.outputs.changelog }}"
-
-            # ---------------------------------------------------------------------------------------
             #   [ Release Candidate ]: Create Release
             # ---------------------------------------------------------------------------------------
 
@@ -137,6 +118,38 @@ jobs:
                   # What's Changed
                   ${{ steps.changelog.outputs.changelog }}
 
+            - name: Add Test Report to Release
+              uses: irongut/EditRelease@v1.2.0
+              with:
+                token: ${{ secrets.GITHUB_TOKEN }}
+                id: ${{ github.event.release.id }}
+                body: |
+                  > [!WARNING] Release Candidate
+                  > This is a **release candidate**, which means it is not a stable release and could contain bugs. You should download it at your own risk.
+
+                  # What's Changed
+                  ${{ steps.changelog.outputs.changelog }}
+
+
+            # ---------------------------------------------------------------------------------------
+            #   Generate Changelog
+            # ---------------------------------------------------------------------------------------
+
+            - name: Generate Changelog
+              id: changelog
+              uses: jaywcjlove/changelog-generator@v1.5.3
+              with:
+                show-emoji: false
+                # custom-emoji: 'type🐝,feat💄,fix🆎'
+                filter: (^[\s]+?[R|r]elease)|(^[R|r]elease)
+
+            # ---------------------------------------------------------------------------------------
+            #   Fetch Changelog
+            # ---------------------------------------------------------------------------------------
+
+            - name: Get the changelog
+              run: echo "${{ steps.changelog.outputs.changelog }}"
+
             # ---------------------------------------------------------------------------------------
             #   [ Release ]: Create Release
             # ---------------------------------------------------------------------------------------
@@ -159,3 +172,4 @@ jobs:
                   dist/styles.css
                   checksum.txt
                 prerelease: false
+
