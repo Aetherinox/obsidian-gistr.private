@@ -35,6 +35,7 @@ jobs:
               id: checkout
               with:
                   node-version: "20.x"
+                  fetch-depth: 0 # Required due to the way Git works, without it this action won't be able to find any or the correct tags
 
             # ---------------------------------------------------------------------------------------
             #   Get version from package.json VERSION value
@@ -43,14 +44,20 @@ jobs:
               id: get_package_version
               run: echo "PACKAGE_VERSION=$(cat package.json | jq -r '.version')" >> $GITHUB_ENV
 
+            - name: 'Get Previous tag'
+              id: previoustag
+              uses: "WyriHaximus/github-action-get-previous-tag@v1"
+              with:
+                fallback: 1.0.0 # Optional fallback tag to use when no tag can be found
+                #workingDirectory: another/path/where/a/git/repo/is/checked/out # Optional alternative
+
             # ---------------------------------------------------------------------------------------
             #   Build ( Release Candidate )
             # ---------------------------------------------------------------------------------------
 
             - name: previous tag
               run: |
-                echo "TAG_PREVIOUS=$(git ls-remote remote 'refs/tags/v*[0-9]' | cut -f 2- | sort -V | tail -1)" >> $GITHUB_ENV
-                echo "Found Previous Tag: ${{ env.TAG_PREVIOUS }}"
+                echo "Found Previous Tag: ${{ steps.previoustag.outputs.tag }}"
 
 
             - name: Build (Release Candidate)
