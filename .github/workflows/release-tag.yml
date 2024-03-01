@@ -12,12 +12,12 @@ on:
   workflow_dispatch:
     inputs:
       prerelease:
-        description: "prerelease"
+        description: "Release Candidate"
         required: true
         default: false
         type: boolean
       rc_version:
-        description: "rc version"
+        description: "RC Version"
         required: false
         type: string
         default: 1
@@ -44,10 +44,10 @@ jobs:
               run: echo "PACKAGE_VERSION=$(cat package.json | jq -r '.version')" >> $GITHUB_ENV
 
             # ---------------------------------------------------------------------------------------
-            #   Build ( Pre-release )
+            #   Build ( Release Candidate )
             # ---------------------------------------------------------------------------------------
 
-            - name: Build (Pre-release)
+            - name: Build (Release Candidate)
               id: dev
               if: ${{ startsWith( inputs.prerelease, true ) }}
               run: |
@@ -72,10 +72,10 @@ jobs:
                   ls
 
             # ---------------------------------------------------------------------------------------
-            #   [ PRE-RELEASE ]: Create Release
+            #   [ Release Candidate ]: Create Release
             # ---------------------------------------------------------------------------------------
 
-            - name: PreRelease
+            - name: Release Candidate
               if: ${{ startsWith( inputs.prerelease, true ) }}
               uses: softprops/action-gh-release@v1
               with:
@@ -89,7 +89,7 @@ jobs:
                 prerelease: true
 
             # ---------------------------------------------------------------------------------------
-            #   [ RELEASE ]: Create Release
+            #   [ Release ]: Create Release
             # ---------------------------------------------------------------------------------------
 
             - name: Release
