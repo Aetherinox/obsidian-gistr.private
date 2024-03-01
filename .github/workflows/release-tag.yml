@@ -108,7 +108,8 @@ jobs:
             #     ${{ steps.changelog.outputs.changelog }}
             # ---------------------------------------------------------------------------------------
 
-            - run: echo "TAG_PREVIOUS=$(git describe --tags --abbrev=0 2>/dev/null || echo '')" >> $GITHUB_ENV
+            - name: "Get Previous Tag" 
+              run: echo "TAG_PREVIOUS=$(git describe --tags --abbrev=0 2>/dev/null || echo '')" >> $GITHUB_ENV
 
             - name: "[Changelog]: Generate"
               id: changelog
@@ -147,3 +148,36 @@ jobs:
                 echo "RC Output ID ............... ${{ steps.bundle-rc.outputs.id }}"
                 echo "R Output ID ................ ${{ steps.bundle-r.outputs.id }}"
                 echo "---- CHANGELOG ---------------------------------------------------------------"
+
+            # ---------------------------------------------------------------------------------------
+            #   [ Release ]: Post Release
+            #
+            #   outputs:
+            #     [RELEASE ID]:
+            #       ${{ steps.bundle-rc.outputs.id
+            #       ${{ steps.bundle-r.outputs.id
+            # ---------------------------------------------------------------------------------------
+
+            - name: "[Post]: Release"
+              if: ${{ startsWith( inputs.prerelease, false ) }}
+              uses: softprops/action-gh-release@v1
+              id: bundle-r
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                name: v${{ env.PACKAGE_VERSION }}
+                tag_name: ${{ env.PACKAGE_VERSION }}
+                target_commitish: ${{ github.event.inputs.branch }}
+                draft: false
+                generate_release_notes: true
+                files: |
+                  ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip
+                  dist/main.js
+                  dist/manifest.json
+                  dist/styles.css
+                  checksum.txt
+                prerelease: false
+                body: |
+                  # What's Changed
+                  ${{ steps.changelog.outputs.changelog }}
+                  ---
