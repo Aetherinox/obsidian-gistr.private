@@ -8,7 +8,14 @@
 name: "Publish Release [Tag]"
 run-name: "Release [Tag] - ${{ github.event.workflow_run.id }}"
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      prerelease:
+        description: "prerelease"
+        required: true
+        default: false
+        type: boolean
 
 env:
     PLUGIN_NAME: gistr
@@ -21,6 +28,7 @@ jobs:
               uses: actions/setup-node@v1
               with:
                   node-version: "20.x"
+
             - name: Get Package Version
               id: get_package_version
               run: echo "PACKAGE_VERSION=$(cat package.json | jq -r '.version')" >> $GITHUB_ENV
@@ -32,12 +40,27 @@ jobs:
                   npm run build
                   zip -jr ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip dist/*
                   ls
+
+            - name: PreRelease
+              uses: softprops/action-gh-release@v1
+              if: ${{ startsWith( inputs.prerelease, true ) }}
+              with:
+                tag_name: ${{ env.PACKAGE_VERSION }}
+                files: |
+                  ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-beta.zip
+                  dist/main.js
+                  dist/manifest.json
+                  dist/styles.css
+                prerelease: true
+
             - name: Release
+              if: ${{ startsWith( inputs.prerelease, false ) }}
               uses: softprops/action-gh-release@v1
               with:
-                  tag_name: ${{ env.PACKAGE_VERSION }}
-                  files: |
-                      ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip
-                      dist/main.js
-                      dist/manifest.json
-                      dist/styles.css
+                tag_name: ${{ env.PACKAGE_VERSION }}
+                files: |
+                  ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip
+                  dist/main.js
+                  dist/manifest.json
+                  dist/styles.css
+                prerelease: false
