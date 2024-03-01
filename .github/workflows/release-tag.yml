@@ -44,15 +44,104 @@ jobs:
               run: echo "PACKAGE_VERSION=$(cat package.json | jq -r '.version')" >> $GITHUB_ENV
 
             # ---------------------------------------------------------------------------------------
+            #   Build ( Release Candidate )
+            # ---------------------------------------------------------------------------------------
+
+            - name: Build (Release Candidate)
+              id: dev
+              if: ${{ startsWith( inputs.prerelease, true ) }}
+              run: |
+                  echo Building PRE-RELEASE Package .zip PACKAGE_VERSION
+                  npm ci
+                  npm run build
+                  zip -jr ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.rc_version }}.zip dist/*
+                  ls
+
+            # ---------------------------------------------------------------------------------------
+            #   Build ( Stable )
+            # ---------------------------------------------------------------------------------------
+
+            - name: Build (Stable)
+              id: build
+              if: ${{ startsWith( inputs.prerelease, false ) }}
+              run: |
+                  echo Building STABLE Package .zip PACKAGE_VERSION
+                  npm ci
+                  npm run build
+                  zip -jr ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip dist/*
+                  ls
+
+            # ---------------------------------------------------------------------------------------
+            #   Checksum ( Release Candidate )
+            # ---------------------------------------------------------------------------------------
+
+            - name: Create checksum (Release Candidate)
+              if: ${{ startsWith( inputs.prerelease, true ) }}
+              run: |
+                shasum --algorithm 256 ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.rc_version }}.zip > SHA256SUMS.txt
+
+            # ---------------------------------------------------------------------------------------
+            #   Checksum ( Release )
+            # ---------------------------------------------------------------------------------------
+
+            - name: Create checksum (Release)
+              if: ${{ startsWith( inputs.prerelease, false ) }}
+              run: |
+                shasum --algorithm 256 ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip > SHA256SUMS.txt
+
+            # ---------------------------------------------------------------------------------------
+            #   [ Release Candidate ]: Create Release
+            # ---------------------------------------------------------------------------------------
+
+            - name: Release Candidate
+              if: ${{ startsWith( inputs.prerelease, true ) }}
+              uses: softprops/action-gh-release@v1
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                name: v${{ env.PACKAGE_VERSION }}-rc.${{ inputs.rc_version }}
+                tag_name: ${{ env.PACKAGE_VERSION }}
+                target_commitish: ${{ github.event.inputs.branch }}
+                draft: false
+                generate_release_notes: true
+                files: |
+                  ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.rc_version }}.zip
+                  dist/main.js
+                  dist/manifest.json
+                  dist/styles.css
+                  SHA256SUMS.txt
+                prerelease: true
+                body: |
+                  > [!WARNING] Release Candidate
+                  > This is a **release candidate**, which means it is not a stable release and could contain bugs. You should download it at your own risk.
+
+                  # What's Changed
+                  ${{ steps.changelog.outputs.changelog }}
+
+            # ---------------------------------------------------------------------------------------
+            #   Contributor Images
+            # ---------------------------------------------------------------------------------------
+
+            - name: Generate Contributors Images
+              uses: jaywcjlove/github-action-contributors@main
+              with:
+                filter-author: (renovate\[bot\]|renovate-bot|dependabot\[bot\])
+                output: CONTRIBUTORS.svg
+                avatarSize: 42
+
+            # ---------------------------------------------------------------------------------------
             #   Generate Changelog
             # ---------------------------------------------------------------------------------------
 
+            - run: echo "PREVIOUS_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo '')" >> $GITHUB_ENV
             - name: Generate Changelog
+              if: env.previous_tag
               id: changelog
               uses: jaywcjlove/changelog-generator@main
               with:
                 token: ${{ secrets.GITHUB_TOKEN }}
                 show-emoji: false
+                # custom-emoji: 'type🐝,feat💄,fix🆎'
                 filter: (^[\s]+?[R|r]elease)|(^[R|r]elease)
 
             # ---------------------------------------------------------------------------------------
@@ -66,10 +155,34 @@ jobs:
               uses: irongut/EditRelease@v1.2.0
               with:
                 token: ${{ secrets.GITHUB_TOKEN }}
-                id: ${{ github.event.release.id }}
+                id: ${{ steps.id.outputs }}
                 body: |
                   > [!WARNING] Release Candidate
                   > This is a **release candidate**, which means it is not a stable release and could contain bugs. You should download it at your own risk.
 
                   # What's Changed
                   ${{ steps.changelog.outputs.changelog }}
+
+            # ---------------------------------------------------------------------------------------
+            #   [ Release ]: Create Release
+            # ---------------------------------------------------------------------------------------
+
+            - name: Release
+              if: ${{ startsWith( inputs.prerelease, false ) }}
+              uses: softprops/action-gh-release@v1
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                name: v${{ env.PACKAGE_VERSION }}
+                tag_name: ${{ env.PACKAGE_VERSION }}
+                target_commitish: ${{ github.event.inputs.branch }}
+                draft: false
+                generate_release_notes: true
+                files: |
+                  ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip
+                  dist/main.js
+                  dist/manifest.json
+                  dist/styles.css
+                  checksum.txt
+                prerelease: false
+
