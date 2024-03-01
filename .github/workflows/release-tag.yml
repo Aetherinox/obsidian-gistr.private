@@ -47,10 +47,31 @@ jobs:
               run: echo "PACKAGE_VERSION=$(cat package.json | jq -r '.version')" >> $GITHUB_ENV
 
             # ---------------------------------------------------------------------------------------
-            #   Build ( Release Candidate )
+            #   Contributor Images
             # ---------------------------------------------------------------------------------------
 
-            - name: Build (Release Candidate)
+            - name: [Contributors]: Generate
+              uses: jaywcjlove/github-action-contributors@main
+              with:
+                filter-author: (renovate\[bot\]|renovate-bot|dependabot\[bot\])
+                output: CONTRIBUTORS.svg
+                avatarSize: 42
+
+            # ---------------------------------------------------------------------------------------
+            #   Build Zip
+            # ---------------------------------------------------------------------------------------
+
+            - name: [Build]: Release
+              id: build
+              if: ${{ startsWith( inputs.prerelease, false ) }}
+              run: |
+                  echo Building STABLE Package .zip PACKAGE_VERSION
+                  npm ci
+                  npm run build
+                  zip -jr ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip dist/*
+                  ls
+
+            - name: [Build]: Release Candidate
               id: dev
               if: ${{ startsWith( inputs.prerelease, true ) }}
               run: |
@@ -61,45 +82,53 @@ jobs:
                   ls
 
             # ---------------------------------------------------------------------------------------
-            #   Build ( Stable )
+            #   [ Release Candidate ]: Checksum
             # ---------------------------------------------------------------------------------------
 
-            - name: Build (Stable)
-              id: build
+            - name: [Checksum]: Release
               if: ${{ startsWith( inputs.prerelease, false ) }}
               run: |
-                  echo Building STABLE Package .zip PACKAGE_VERSION
-                  npm ci
-                  npm run build
-                  zip -jr ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip dist/*
-                  ls
+                shasum --algorithm 256 ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip > SHA256SUMS.txt
 
-            # ---------------------------------------------------------------------------------------
-            #   Checksum ( Release Candidate )
-            # ---------------------------------------------------------------------------------------
-
-            - name: Create checksum (Release Candidate)
+            - name: [Checksum]: Release Candidate
               if: ${{ startsWith( inputs.prerelease, true ) }}
               run: |
                 shasum --algorithm 256 ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.rc_version }}.zip > SHA256SUMS.txt
 
             # ---------------------------------------------------------------------------------------
-            #   Checksum ( Release )
+            #   [ Release ]: Post Release
+            #
+            #   outputs:
+            #     [RELEASE ID]:
+            #       ${{ steps.bundle-rc.outputs.id
+            #       ${{ steps.bundle-r.outputs.id
             # ---------------------------------------------------------------------------------------
 
-            - name: Create checksum (Release)
+            - name: [Post]: Release
               if: ${{ startsWith( inputs.prerelease, false ) }}
-              run: |
-                shasum --algorithm 256 ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip > SHA256SUMS.txt
+              uses: softprops/action-gh-release@v1
+              id: bundle-r
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                name: v${{ env.PACKAGE_VERSION }}
+                tag_name: ${{ env.PACKAGE_VERSION }}
+                target_commitish: ${{ github.event.inputs.branch }}
+                draft: false
+                generate_release_notes: true
+                files: |
+                  ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip
+                  dist/main.js
+                  dist/manifest.json
+                  dist/styles.css
+                  checksum.txt
+                prerelease: false
+                body: |
 
-            # ---------------------------------------------------------------------------------------
-            #   [ Release Candidate ]: Create Release
-            # ---------------------------------------------------------------------------------------
-
-            - name: Release Candidate
+            - name: [Post]: Release Candidate
               if: ${{ startsWith( inputs.prerelease, true ) }}
               uses: softprops/action-gh-release@v1
-              id: release-candidate
+              id: bundle-rc
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
@@ -118,37 +147,29 @@ jobs:
                 body: |
 
             # ---------------------------------------------------------------------------------------
-            #   Contributor Images
+            #   Get Previous Tag
             # ---------------------------------------------------------------------------------------
 
-            - name: Generate Contributors Images
-              uses: jaywcjlove/github-action-contributors@main
-              with:
-                filter-author: (renovate\[bot\]|renovate-bot|dependabot\[bot\])
-                output: CONTRIBUTORS.svg
-                avatarSize: 42
-
-
-            # ---------------------------------------------------------------------------------------
-            #   previous tag
-            # ---------------------------------------------------------------------------------------
-
-            - name: previous tag
+            - name: [Tag]: Get Previous
               run: |
-                # set previous_tag to the last tag in the repo
-                # or if the command throws an error, set it to nothing
-                previous_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-                echo "previous_tag=$previous_tag" >> $GITHUB_ENV
-                echo "Found Previous Tag: ${{ env.previous_tag }}"
+                TAG_PREVIOUS=$( git describe --tags --abbrev=0 2>/dev/null || echo "" )
+                echo "TAG_PREVIOUS=$TAG_PREVIOUS" >> $GITHUB_ENV
+                echo "Found Previous Tag: ${{ env.TAG_PREVIOUS }}"
 
             # ---------------------------------------------------------------------------------------
             #   Generate Changelog
+            #
+            #   generates a changelog from the github api. requires a PREVIOUS_TAG in order to figure
+            #   out the changes made between the two versions.
+            #
+            #   outputs:
+            #     ${{ steps.changelog.outputs.changelog }}
             # ---------------------------------------------------------------------------------------
 
-            - name: Generate Changelog
+            - name: [Changelog]: Generate
               id: changelog
               uses: jaywcjlove/changelog-generator@main
-              if: env.previous_tag
+              if: env.TAG_PREVIOUS
               with:
                 token: ${{ secrets.GITHUB_TOKEN }}
                 show-emoji: false
@@ -159,50 +180,36 @@ jobs:
             #   Fetch Changelog
             # ---------------------------------------------------------------------------------------
 
-            - name: Get the changelog
+            - name: [Changelog]: Get
+              run: |
+                echo "${{ steps.changelog.outputs.changelog }}"
+
+            # ---------------------------------------------------------------------------------------
+            #   Print Status
+            # ---------------------------------------------------------------------------------------
+
+            - name: [Status]: Print
               run: |
                 echo "${{ steps.changelog.outputs.changelog }}"
                 echo "---------------"
-                echo ${{ steps.release-candidate.outputs.id }}
+                echo ${{ steps.bundle-rc.outputs.id }}
                 echo ${{ steps.changelog.outputs.id }}
                 echo "---------------"
 
             # ---------------------------------------------------------------------------------------
             #   Append updated changelog to newly released version
+            #
+            #   this requires you to specify "id", which is the id of the release added
             # ---------------------------------------------------------------------------------------
 
-            - name: Add Test Report to Release
+            - name: Update Release
               uses: irongut/EditRelease@v1.2.0
               with:
                 token: ${{ secrets.GITHUB_TOKEN }}
-                id: ${{ steps.release-candidate.outputs.id }}
+                id: ${{ steps.bundle-rc.outputs.id }}
                 body: |
                   > [!WARNING]
                   > This is a **release candidate**, which means it is not a stable release and could contain bugs. You should download it at your own risk.
 
                   # What's Changed
                   ${{ steps.changelog.outputs.changelog }}
-
-            # ---------------------------------------------------------------------------------------
-            #   [ Release ]: Create Release
-            # ---------------------------------------------------------------------------------------
-
-            - name: Release
-              if: ${{ startsWith( inputs.prerelease, false ) }}
-              uses: softprops/action-gh-release@v1
-              env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                name: v${{ env.PACKAGE_VERSION }}
-                tag_name: ${{ env.PACKAGE_VERSION }}
-                target_commitish: ${{ github.event.inputs.branch }}
-                draft: false
-                generate_release_notes: true
-                files: |
-                  ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip
-                  dist/main.js
-                  dist/manifest.json
-                  dist/styles.css
-                  checksum.txt
-                prerelease: false
-
