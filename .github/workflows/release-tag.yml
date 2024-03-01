@@ -96,7 +96,7 @@ jobs:
               run: |
                 set -o xtrace
                 RELEASE_BRANCH="main"
-                RELEASE_VERSION=${GITHUB_REF#refs/*/}
+                RELEASE_VERSION=${{ env.PACKAGE_VERSION }}
                 major=$(echo "$RELEASE_VERSION"  | sed 's/^v\(.*\)/\1/' | cut -d. -f1)
                 minor=$(echo "$RELEASE_VERSION" | cut -d. -f2)
                 revision=$(echo "$RELEASE_VERSION" | cut -d. -f3)
