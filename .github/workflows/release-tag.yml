@@ -192,8 +192,9 @@ jobs:
               run: |
                 echo "${{ steps.changelog.outputs.changelog }}"
                 echo "---------------"
-                echo ${{ steps.bundle-rc.outputs.id }}
-                echo ${{ steps.changelog.outputs.id }}
+                echo "${{ steps.bundle-rc.outputs.id }}"
+                echo "${{ steps.bundle-r.outputs.id }}"
+                echo "${{ steps.changelog.outputs.id }}"
                 echo "---------------"
 
             # ---------------------------------------------------------------------------------------
