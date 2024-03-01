@@ -89,6 +89,16 @@ jobs:
               run: |
                 shasum --algorithm 256 ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip > SHA256SUMS.txt
 
+            - name: Install release-note dependency
+              run: |
+                go get k8s.io/release/cmd/release-notes@latest
+
+            - name: Get Time
+              id: time
+              uses: nanzm/get-time-action@v1.1
+              with:
+                format: 'YYYYMMDDHHmmss'
+
             - name: Generate release notes
               id: get-release-notes
               env:
