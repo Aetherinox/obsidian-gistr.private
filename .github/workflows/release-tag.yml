@@ -89,6 +89,21 @@ jobs:
               run: |
                 shasum --algorithm 256 ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip > SHA256SUMS.txt
 
+            - name: Generate release notes
+              id: get-release-notes
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                release-notes \
+                    --github-base-url https://github.com \
+                    --org Aetherinox \
+                    --repo obsidian-gistr.private \
+                    --branch main \
+                    --required-author "" \
+                    --start-sha cd0af4bce90f1fda3cd0f2a6edc652a06cd42424 \
+                    --end-sha cd0af4bce90f1fda3cd0f2a6edc652a06cd42424 \
+                    --output /tmp/${{ steps.time.outputs.time }}-bin-notes
+
             - name: Get Github Release notes
               uses: octokit/request-action@v2.x
               id: get-github-release-notes
