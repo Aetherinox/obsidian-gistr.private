@@ -78,7 +78,7 @@ jobs:
             - name: Create checksum (Release Candidate)
               if: ${{ startsWith( inputs.prerelease, true ) }}
               run: |
-                shasum --algorithm 256 ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.rc_version }}.zip > checksum.txt
+                shasum --algorithm 256 ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.rc_version }}.zip > SHA256SUMS.txt
 
             # ---------------------------------------------------------------------------------------
             #   Checksum ( Release )
@@ -87,7 +87,7 @@ jobs:
             - name: Create checksum (Release)
               if: ${{ startsWith( inputs.prerelease, false ) }}
               run: |
-                shasum --algorithm 256 ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip > checksum.txt
+                shasum --algorithm 256 ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip > SHA256SUMS.txt
 
             # ---------------------------------------------------------------------------------------
             #   [ Release Candidate ]: Create Release
@@ -101,12 +101,15 @@ jobs:
                 tag_name: ${{ env.PACKAGE_VERSION }}
                 target_commitish: ${{ github.event.inputs.branch }}
                 draft: false
+                generate_release_notes: true
+                env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 files: |
                   ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.rc_version }}.zip
                   dist/main.js
                   dist/manifest.json
                   dist/styles.css
-                  checksum.txt
+                  SHA256SUMS.txt
                 prerelease: true
 
             # ---------------------------------------------------------------------------------------
@@ -121,6 +124,9 @@ jobs:
                 tag_name: ${{ env.PACKAGE_VERSION }}
                 target_commitish: ${{ github.event.inputs.branch }}
                 draft: false
+                generate_release_notes: true
+                env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 files: |
                   ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip
                   dist/main.js
