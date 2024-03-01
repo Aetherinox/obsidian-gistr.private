@@ -126,6 +126,7 @@ jobs:
               id: changelog
               uses: jaywcjlove/changelog-generator@main
               with:
+                token: ${{ secrets.GITHUB_TOKEN }}
                 show-emoji: false
                 # custom-emoji: 'type🐝,feat💄,fix🆎'
                 filter: (^[\s]+?[R|r]elease)|(^[R|r]elease)
