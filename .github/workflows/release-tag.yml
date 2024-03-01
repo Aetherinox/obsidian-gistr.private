@@ -42,8 +42,6 @@ jobs:
             # ---------------------------------------------------------------------------------------
 
             - name: Build (Pre-release)
-              permissions:
-                contents: write
               id: dev
               if: ${{ startsWith( inputs.prerelease, true ) }}
               run: |
@@ -58,8 +56,6 @@ jobs:
             # ---------------------------------------------------------------------------------------
 
             - name: Build (Stable)
-              permissions:
-                contents: write
               id: build
               if: ${{ startsWith( inputs.prerelease, false ) }}
               run: |
