@@ -47,6 +47,58 @@ jobs:
               run: echo "PACKAGE_VERSION=$(cat package.json | jq -r '.version')" >> $GITHUB_ENV
 
             # ---------------------------------------------------------------------------------------
+            #   Build Zip
+            # ---------------------------------------------------------------------------------------
+
+            - name: "[Build]: Release"
+              id: build
+              if: ${{ startsWith( inputs.prerelease, false ) }}
+              run: |
+                  echo Building STABLE Package .zip PACKAGE_VERSION
+                  npm ci
+                  npm run build
+                  zip -jr ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip dist/*
+                  ls
+
+            - name: "[Build]: Release Candidate"
+              id: dev
+              if: ${{ startsWith( inputs.prerelease, true ) }}
+              run: |
+                  echo Building PRE-RELEASE Package .zip PACKAGE_VERSION
+                  npm ci
+                  npm run build
+                  zip -jr ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.rc_version }}.zip dist/*
+                  ls
+
+            # ---------------------------------------------------------------------------------------
+            #   [ Release Candidate ]: Checksum
+            # ---------------------------------------------------------------------------------------
+
+            - name: "[Checksum]: Release"
+              id: checksum-release
+              if: ${{ startsWith( inputs.prerelease, false ) }}
+              run: |
+                shasum --algorithm 256 ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip > SHA256SUMS.txt
+
+            - name: "[Checksum]: Release Candidate"
+              id: checksum-release-candidate
+              if: ${{ startsWith( inputs.prerelease, true ) }}
+              run: |
+                shasum --algorithm 256 ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.rc_version }}.zip > SHA256SUMS.txt
+
+            # ---------------------------------------------------------------------------------------
+            #   Contributor Images
+            # ---------------------------------------------------------------------------------------
+
+            - name: "[Contributors]: Generate"
+              id: contribs-generate
+              uses: jaywcjlove/github-action-contributors@main
+              with:
+                filter-author: (renovate\[bot\]|renovate-bot|dependabot\[bot\])
+                output: CONTRIBUTORS.svg
+                avatarSize: 42
+
+            # ---------------------------------------------------------------------------------------
             #   Generate Changelog
             #
             #   generates a changelog from the github api. requires a PREVIOUS_TAG in order to figure
