@@ -5,7 +5,7 @@
 #   @url        : https://github.com/Aetherinox
 # ---------------------------------------------------------------------------------------
 
-name: "Publish Release [Tag]"
+name: "Release Product"
 run-name: "Release Product"
 
 on:
