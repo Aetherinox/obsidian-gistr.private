@@ -49,7 +49,7 @@ jobs:
 
             - name: previous tag
               run: |
-                echo "TAG_PREVIOUS=$( git describe --tags --abbrev=0 || echo '' )" >> $GITHUB_ENV
+                echo "TAG_PREVIOUS=$(git ls-remote remote 'refs/tags/v*[0-9]'' | cut -f 2- | sort -V | tail -1)" >> $GITHUB_ENV
                 echo "Found Previous Tag: ${{ env.TAG_PREVIOUS }}"
 
 
