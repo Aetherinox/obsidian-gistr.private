@@ -54,7 +54,7 @@ jobs:
                   echo Building PRE-RELEASE Package .zip PACKAGE_VERSION
                   npm ci
                   npm run build
-                  zip -jr ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-beta.zip dist/*
+                  zip -jr ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.rc_version }}.zip dist/*
                   ls
 
             # ---------------------------------------------------------------------------------------
@@ -72,6 +72,24 @@ jobs:
                   ls
 
             # ---------------------------------------------------------------------------------------
+            #   Checksum ( Release Candidate )
+            # ---------------------------------------------------------------------------------------
+
+            - name: Create checksum (Release Candidate)
+              if: ${{ startsWith( inputs.prerelease, true ) }}
+              run: |
+                shasum --algorithm 256 ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.rc_version }}.zip > checksum.txt
+
+            # ---------------------------------------------------------------------------------------
+            #   Checksum ( Release )
+            # ---------------------------------------------------------------------------------------
+
+            - name: Create checksum (Release)
+              if: ${{ startsWith( inputs.prerelease, false ) }}
+              run: |
+                shasum --algorithm 256 ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip > checksum.txt
+
+            # ---------------------------------------------------------------------------------------
             #   [ Release Candidate ]: Create Release
             # ---------------------------------------------------------------------------------------
 
@@ -81,8 +99,10 @@ jobs:
               with:
                 name: v${{ env.PACKAGE_VERSION }}-rc.${{ inputs.rc_version }}
                 tag_name: ${{ env.PACKAGE_VERSION }}
+                target_commitish: ${{ github.event.inputs.branch }}
+                draft: false
                 files: |
-                  ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-beta.zip
+                  ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.rc_version }}.zip
                   dist/main.js
                   dist/manifest.json
                   dist/styles.css
@@ -98,6 +118,8 @@ jobs:
               with:
                 name: v${{ env.PACKAGE_VERSION }}
                 tag_name: ${{ env.PACKAGE_VERSION }}
+                target_commitish: ${{ github.event.inputs.branch }}
+                draft: false
                 files: |
                   ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip
                   dist/main.js
