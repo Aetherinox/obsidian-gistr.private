@@ -16,7 +16,10 @@ on:
         required: true
         default: false
         type: boolean
-
+      rc_version:
+        description: "rc version"
+        required: false
+        type: string
 env:
     PLUGIN_NAME: gistr
 jobs:
@@ -75,6 +78,7 @@ jobs:
               if: ${{ startsWith( inputs.prerelease, true ) }}
               uses: softprops/action-gh-release@v1
               with:
+                name: v${{ env.PACKAGE_VERSION }}
                 tag_name: ${{ env.PACKAGE_VERSION }}
                 files: |
                   ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-beta.zip
@@ -91,6 +95,7 @@ jobs:
               if: ${{ startsWith( inputs.prerelease, false ) }}
               uses: softprops/action-gh-release@v1
               with:
+                name: v${{ env.PACKAGE_VERSION }}-rc.${{ inputs.rc_version }}
                 tag_name: ${{ env.PACKAGE_VERSION }}
                 files: |
                   ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip
