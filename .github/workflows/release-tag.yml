@@ -104,8 +104,8 @@ jobs:
                 name: v${{ env.PACKAGE_VERSION }}-rc.${{ inputs.rc_version }}
                 tag_name: ${{ env.PACKAGE_VERSION }}
                 target_commitish: ${{ github.event.inputs.branch }}
-                draft: true
-                generate_release_notes: true
+                draft: false
+                generate_release_notes: false
                 files: |
                   ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.rc_version }}.zip
                   dist/main.js
@@ -114,12 +114,6 @@ jobs:
                   SHA256SUMS.txt
                 prerelease: true
                 body: |
-                  > [!WARNING] Release Candidate
-                  > This is a **release candidate**, which means it is not a stable release and could contain bugs. You should download it at your own risk.
-
-                  # What's Changed
-                  ${{ steps.changelog.outputs.changelog }}
-
 
             # ---------------------------------------------------------------------------------------
             #   Contributor Images
@@ -136,7 +130,6 @@ jobs:
             #   Generate Changelog
             # ---------------------------------------------------------------------------------------
 
-            - run: echo "PREVIOUS_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo '')" >> $GITHUB_ENV
             - name: Generate Changelog
               id: changelog
               uses: jaywcjlove/changelog-generator@main
@@ -158,13 +151,17 @@ jobs:
                 echo ${{ steps.changelog.outputs.id }}
                 echo "---------------"
 
+            # ---------------------------------------------------------------------------------------
+            #   Append updated changelog to newly released version
+            # ---------------------------------------------------------------------------------------
+
             - name: Add Test Report to Release
               uses: irongut/EditRelease@v1.2.0
               with:
                 token: ${{ secrets.GITHUB_TOKEN }}
                 id: ${{ steps.release-candidate.outputs.id }}
                 body: |
-                  > [!WARNING] Release --- ${{ steps.changelog.outputs.id }}
+                  > [!WARNING]
                   > This is a **release candidate**, which means it is not a stable release and could contain bugs. You should download it at your own risk.
 
                   # What's Changed
