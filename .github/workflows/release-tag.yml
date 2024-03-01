@@ -106,6 +106,7 @@ jobs:
                   dist/main.js
                   dist/manifest.json
                   dist/styles.css
+                  checksum.txt
                 prerelease: true
 
             # ---------------------------------------------------------------------------------------
@@ -125,4 +126,5 @@ jobs:
                   dist/main.js
                   dist/manifest.json
                   dist/styles.css
+                  checksum.txt
                 prerelease: false
