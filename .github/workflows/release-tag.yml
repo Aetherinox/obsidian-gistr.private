@@ -102,7 +102,7 @@ jobs:
                 name: v${{ env.PACKAGE_VERSION }}-rc.${{ inputs.rc_version }}
                 tag_name: ${{ env.PACKAGE_VERSION }}
                 target_commitish: ${{ github.event.inputs.branch }}
-                draft: false
+                draft: true
                 generate_release_notes: true
                 files: |
                   ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.rc_version }}.zip
@@ -117,6 +117,7 @@ jobs:
 
                   # What's Changed
                   ${{ steps.changelog.outputs.changelog }}
+
 
             # ---------------------------------------------------------------------------------------
             #   Contributor Images
@@ -135,7 +136,6 @@ jobs:
 
             - run: echo "PREVIOUS_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo '')" >> $GITHUB_ENV
             - name: Generate Changelog
-              if: env.previous_tag
               id: changelog
               uses: jaywcjlove/changelog-generator@main
               with:
@@ -157,7 +157,7 @@ jobs:
                 token: ${{ secrets.GITHUB_TOKEN }}
                 id: ${{ steps.changelog.outputs.id }}
                 body: |
-                  > [!WARNING] Release Candidate ${{ steps.changelog.outputs.id }}
+                  > [!WARNING] Release --- ${{ steps.changelog.outputs.id }}
                   > This is a **release candidate**, which means it is not a stable release and could contain bugs. You should download it at your own risk.
 
                   # What's Changed
