@@ -39,7 +39,7 @@ jobs:
             # ---------------------------------------------------------------------------------------
             #   Get version from package.json VERSION value
             # ---------------------------------------------------------------------------------------
-
+            - run: echo "previous_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo '')" >> $GITHUB_ENV
             - name: Get Package Version
               id: get_package_version
               run: echo "PACKAGE_VERSION=$(cat package.json | jq -r '.version')" >> $GITHUB_ENV
