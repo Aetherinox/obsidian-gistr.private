@@ -118,19 +118,6 @@ jobs:
                   # What's Changed
                   ${{ steps.changelog.outputs.changelog }}
 
-            - name: Add Test Report to Release
-              uses: irongut/EditRelease@v1.2.0
-              with:
-                token: ${{ secrets.GITHUB_TOKEN }}
-                id: ${{ github.event.release.id }}
-                body: |
-                  > [!WARNING] Release Candidate
-                  > This is a **release candidate**, which means it is not a stable release and could contain bugs. You should download it at your own risk.
-
-                  # What's Changed
-                  ${{ steps.changelog.outputs.changelog }}
-
-
             # ---------------------------------------------------------------------------------------
             #   Generate Changelog
             # ---------------------------------------------------------------------------------------
@@ -149,6 +136,18 @@ jobs:
 
             - name: Get the changelog
               run: echo "${{ steps.changelog.outputs.changelog }}"
+
+            - name: Add Test Report to Release
+              uses: irongut/EditRelease@v1.2.0
+              with:
+                token: ${{ secrets.GITHUB_TOKEN }}
+                id: ${{ github.event.release.id }}
+                body: |
+                  > [!WARNING] Release Candidate
+                  > This is a **release candidate**, which means it is not a stable release and could contain bugs. You should download it at your own risk.
+
+                  # What's Changed
+                  ${{ steps.changelog.outputs.changelog }}
 
             # ---------------------------------------------------------------------------------------
             #   [ Release ]: Create Release
