@@ -6,7 +6,7 @@
 # ---------------------------------------------------------------------------------------
 
 name: "Release Product Test"
-run-name: "Release Product Test"
+run-name: "Release Product"
 
 on:
   workflow_dispatch:
