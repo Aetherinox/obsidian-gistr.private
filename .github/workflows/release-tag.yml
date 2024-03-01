@@ -47,7 +47,14 @@ jobs:
             #   Build ( Release Candidate )
             # ---------------------------------------------------------------------------------------
 
-            - run: echo "previous_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo '')" >> $GITHUB_ENV
+            - name: previous tag
+              run: |
+                # set previous_tag to the last tag in the repo
+                # or if the command throws an error, set it to nothing
+                previous_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+                echo "previous_tag=$previous_tag" >> $GITHUB_ENV
+
+
             - name: Build (Release Candidate)
               id: dev
               if: ${{ startsWith( inputs.prerelease, true ) }}
