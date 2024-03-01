@@ -6,7 +6,7 @@
 # ---------------------------------------------------------------------------------------
 
 name: "Publish Release [Tag]"
-run-name: "Release [Tag] - ${{ github.event.workflow_run.id }}"
+run-name: "Release Product"
 
 on:
   workflow_dispatch:
@@ -133,6 +133,7 @@ jobs:
             - name: Generate Changelog
               id: changelog
               uses: jaywcjlove/changelog-generator@main
+              if: env.previous_tag
               with:
                 token: ${{ secrets.GITHUB_TOKEN }}
                 show-emoji: false
