@@ -51,8 +51,9 @@ jobs:
               run: |
                 # set previous_tag to the last tag in the repo
                 # or if the command throws an error, set it to nothing
+                git push --tags
                 latest="$(git describe --tag --abbrev=0)"
-                                echo "Found Previous Tag: ${{ env.latest }}"
+                echo "Found Previous Tag: ${{ env.latest }}"
                 echo "latest=$latest" >> $GITHUB_ENV
 
 
