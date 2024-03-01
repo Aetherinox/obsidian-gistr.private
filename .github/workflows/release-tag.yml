@@ -166,6 +166,7 @@ jobs:
             #     ${{ steps.changelog.outputs.changelog }}
             # ---------------------------------------------------------------------------------------
 
+            - run: echo "previous_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo '')" >> $GITHUB_ENV
             - name: "[Changelog]: Generate"
               id: changelog
               uses: jaywcjlove/changelog-generator@main
@@ -190,12 +191,15 @@ jobs:
 
             - name: "[Status]: Print"
               run: |
+                echo "---- CHANGELOG ---------------------------------------------------------------"
                 echo "${{ steps.changelog.outputs.changelog }}"
-                echo "---------------"
-                echo "${{ steps.bundle-rc.outputs.id }}"
-                echo "${{ steps.bundle-r.outputs.id }}"
-                echo "${{ steps.changelog.outputs.id }}"
-                echo "---------------"
+                echo "---- CHANGELOG ---------------------------------------------------------------"
+                echo ""
+                echo ""
+                echo "---- VARIABLES ---------------------------------------------------------------"
+                echo "RC Output ID: .......... ${{ steps.bundle-rc.outputs.id }}"
+                echo "R Output ID: ........... ${{ steps.bundle-r.outputs.id }}"
+                echo "---- CHANGELOG ---------------------------------------------------------------"
 
             # ---------------------------------------------------------------------------------------
             #   Append updated changelog to newly released version
@@ -210,9 +214,6 @@ jobs:
                 token: ${{ secrets.GITHUB_TOKEN }}
                 id: ${{ steps.bundle-r.outputs.id }}
                 body: |
-                  > [!WARNING]
-                  > This is a **release candidate**, which means it is not a stable release and could contain bugs. You should download it at your own risk.
-
                   # What's Changed
                   ${{ steps.changelog.outputs.changelog }}
 
