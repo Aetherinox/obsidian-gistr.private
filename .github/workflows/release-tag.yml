@@ -33,21 +33,29 @@ jobs:
               id: get_package_version
               run: echo "PACKAGE_VERSION=$(cat package.json | jq -r '.version')" >> $GITHUB_ENV
 
+            # ---------------------------------------------------------------------------------------
+            #   Build ( Pre-release )
+            # ---------------------------------------------------------------------------------------
+
             - name: Build (Pre-release)
-              id: build
+              id: dev
               if: ${{ startsWith( inputs.prerelease, true ) }}
               run: |
-                  echo Building Pre-Release Package .zip PACKAGE_VERSION
+                  echo Building PRE-RELEASE Package .zip PACKAGE_VERSION
                   npm ci
-                  npm run build
+                  npm run dev
                   zip -jr ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-beta.zip dist/*
                   ls
 
-            - name: Build (Release)
+            # ---------------------------------------------------------------------------------------
+            #   Build ( Stable )
+            # ---------------------------------------------------------------------------------------
+
+            - name: Build (Stable)
               id: build
               if: ${{ startsWith( inputs.prerelease, false ) }}
               run: |
-                  echo Building package .zip PACKAGE_VERSION
+                  echo Building STABLE Package .zip PACKAGE_VERSION
                   npm ci
                   npm run build
                   zip -jr ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip dist/*
