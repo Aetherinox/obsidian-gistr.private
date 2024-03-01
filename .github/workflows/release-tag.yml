@@ -61,9 +61,6 @@ jobs:
                   minor=$(($minor-1))
                 elif [ "$major" -gt 0 ]; then
                   major=$(($major-1))
-                else
-                  echo "Please validate that the tag release version(${RELEASE_VERSION}) conforms to semver."
-                  exit 1
                 fi
                 LAST_TAG="${major}.${minor}.${revision}"
                 echo "Last release tag - $LAST_TAG"
