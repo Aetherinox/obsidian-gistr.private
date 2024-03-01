@@ -152,12 +152,12 @@ jobs:
               run: echo "${{ steps.changelog.outputs.changelog }}"
 
             - name: Add Test Report to Release
-              uses: irongut/EditRelease@v1.2.0
+              uses: irongut/EditRelease@main
               with:
                 token: ${{ secrets.GITHUB_TOKEN }}
                 id: ${{ steps.changelog.outputs.id }}
                 body: |
-                  > [!WARNING] Release Candidate
+                  > [!WARNING] Release Candidate ${{ steps.changelog.outputs.id }}
                   > This is a **release candidate**, which means it is not a stable release and could contain bugs. You should download it at your own risk.
 
                   # What's Changed
