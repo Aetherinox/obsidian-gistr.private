@@ -97,6 +97,7 @@ jobs:
             - name: Release Candidate
               if: ${{ startsWith( inputs.prerelease, true ) }}
               uses: softprops/action-gh-release@v1
+              id: release-candidate
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
@@ -118,6 +119,8 @@ jobs:
 
                   # What's Changed
                   ${{ steps.changelog.outputs.changelog }}
+              outputs:
+                id: ${{ steps.release-candidate.outputs.id }}
 
 
             # ---------------------------------------------------------------------------------------
@@ -152,8 +155,10 @@ jobs:
             - name: Get the changelog
               run: |
                 echo "${{ steps.changelog.outputs.changelog }}"
-                echo ${{ steps.release.outputs.id }}
+                echo "---------------"
+                echo ${{ steps.release-candidate.outputs.id }}
                 echo ${{ steps.changelog.outputs.id }}
+                echo "---------------"
 
             - name: Add Test Report to Release
               uses: irongut/EditRelease@v1.2.0
