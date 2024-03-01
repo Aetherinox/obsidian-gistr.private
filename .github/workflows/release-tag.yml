@@ -55,7 +55,7 @@ jobs:
                 # or if the command throws an error, set it to nothing
                 previous_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
                 echo "previous_tag=$previous_tag" >> $GITHUB_ENV
-                echo "reeeee ${{ previous_tag }}"
+                echo "reeeee ${{ env.previous_tag }}"
 
 
             - name: Build (Release Candidate)
@@ -63,6 +63,6 @@ jobs:
               if: ${{ startsWith( inputs.prerelease, true ) }}
               run: |
                 echo "-------------"
-                  echo ${{ env.latest }}
+                  echo ${{ env.previous_tag }}
                 echo "-------------"
 
