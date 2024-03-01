@@ -96,14 +96,14 @@ jobs:
             - name: Release Candidate
               if: ${{ startsWith( inputs.prerelease, true ) }}
               uses: softprops/action-gh-release@v1
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
                 name: v${{ env.PACKAGE_VERSION }}-rc.${{ inputs.rc_version }}
                 tag_name: ${{ env.PACKAGE_VERSION }}
                 target_commitish: ${{ github.event.inputs.branch }}
                 draft: false
                 generate_release_notes: true
-                env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 files: |
                   ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.rc_version }}.zip
                   dist/main.js
@@ -119,14 +119,14 @@ jobs:
             - name: Release
               if: ${{ startsWith( inputs.prerelease, false ) }}
               uses: softprops/action-gh-release@v1
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
                 name: v${{ env.PACKAGE_VERSION }}
                 tag_name: ${{ env.PACKAGE_VERSION }}
                 target_commitish: ${{ github.event.inputs.branch }}
                 draft: false
                 generate_release_notes: true
-                env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 files: |
                   ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip
                   dist/main.js
