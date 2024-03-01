@@ -50,7 +50,7 @@ jobs:
             #   Contributor Images
             # ---------------------------------------------------------------------------------------
 
-            - name: [Contributors]: Generate
+            - name: Generate Contributors Images
               uses: jaywcjlove/github-action-contributors@main
               with:
                 filter-author: (renovate\[bot\]|renovate-bot|dependabot\[bot\])
@@ -58,10 +58,10 @@ jobs:
                 avatarSize: 42
 
             # ---------------------------------------------------------------------------------------
-            #   Build Zip
+            #   Build ( Stable )
             # ---------------------------------------------------------------------------------------
 
-            - name: [Build]: Release
+            - name: Build (Stable)
               id: build
               if: ${{ startsWith( inputs.prerelease, false ) }}
               run: |
@@ -71,7 +71,11 @@ jobs:
                   zip -jr ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip dist/*
                   ls
 
-            - name: [Build]: Release Candidate
+            # ---------------------------------------------------------------------------------------
+            #   [ Release Candidate ]: Build Zip
+            # ---------------------------------------------------------------------------------------
+
+            - name: [Release Candidate]: Build
               id: dev
               if: ${{ startsWith( inputs.prerelease, true ) }}
               run: |
@@ -85,29 +89,18 @@ jobs:
             #   [ Release Candidate ]: Checksum
             # ---------------------------------------------------------------------------------------
 
-            - name: [Checksum]: Release
-              if: ${{ startsWith( inputs.prerelease, false ) }}
-              run: |
-                shasum --algorithm 256 ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip > SHA256SUMS.txt
-
-            - name: [Checksum]: Release Candidate
+            - name: [Release Candidate]: Checksum
               if: ${{ startsWith( inputs.prerelease, true ) }}
               run: |
                 shasum --algorithm 256 ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.rc_version }}.zip > SHA256SUMS.txt
 
             # ---------------------------------------------------------------------------------------
-            #   [ Release ]: Post Release
-            #
-            #   outputs:
-            #     [RELEASE ID]:
-            #       ${{ steps.bundle-rc.outputs.id
-            #       ${{ steps.bundle-r.outputs.id
+            #   [ Release ]: Bundle
             # ---------------------------------------------------------------------------------------
 
-            - name: [Post]: Release
+            - name: [Release]: Bundle
               if: ${{ startsWith( inputs.prerelease, false ) }}
               uses: softprops/action-gh-release@v1
-              id: bundle-r
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
@@ -123,12 +116,15 @@ jobs:
                   dist/styles.css
                   checksum.txt
                 prerelease: false
-                body: |
 
-            - name: [Post]: Release Candidate
+            # ---------------------------------------------------------------------------------------
+            #   [ Release Candidate ]: Bundle
+            # ---------------------------------------------------------------------------------------
+
+            - name: [Release Candidate]: Bundle
               if: ${{ startsWith( inputs.prerelease, true ) }}
               uses: softprops/action-gh-release@v1
-              id: bundle-rc
+              id: release-candidate
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
@@ -147,29 +143,35 @@ jobs:
                 body: |
 
             # ---------------------------------------------------------------------------------------
-            #   Get Previous Tag
+            #   Checksum ( Release )
             # ---------------------------------------------------------------------------------------
 
-            - name: [Tag]: Get Previous
+            - name: Create checksum (Release)
+              if: ${{ startsWith( inputs.prerelease, false ) }}
               run: |
-                TAG_PREVIOUS=$( git describe --tags --abbrev=0 2>/dev/null || echo "" )
-                echo "TAG_PREVIOUS=$TAG_PREVIOUS" >> $GITHUB_ENV
-                echo "Found Previous Tag: ${{ env.TAG_PREVIOUS }}"
+                shasum --algorithm 256 ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip > SHA256SUMS.txt
+
+
+            # ---------------------------------------------------------------------------------------
+            #   previous tag
+            # ---------------------------------------------------------------------------------------
+
+            - name: previous tag
+              run: |
+                # set previous_tag to the last tag in the repo
+                # or if the command throws an error, set it to nothing
+                previous_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+                echo "previous_tag=$previous_tag" >> $GITHUB_ENV
+                echo "Found Previous Tag: ${{ env.previous_tag }}"
 
             # ---------------------------------------------------------------------------------------
             #   Generate Changelog
-            #
-            #   generates a changelog from the github api. requires a PREVIOUS_TAG in order to figure
-            #   out the changes made between the two versions.
-            #
-            #   outputs:
-            #     ${{ steps.changelog.outputs.changelog }}
             # ---------------------------------------------------------------------------------------
 
-            - name: [Changelog]: Generate
+            - name: Generate Changelog
               id: changelog
               uses: jaywcjlove/changelog-generator@main
-              if: env.TAG_PREVIOUS
+              if: env.previous_tag
               with:
                 token: ${{ secrets.GITHUB_TOKEN }}
                 show-emoji: false
@@ -180,33 +182,23 @@ jobs:
             #   Fetch Changelog
             # ---------------------------------------------------------------------------------------
 
-            - name: [Changelog]: Get
-              run: |
-                echo "${{ steps.changelog.outputs.changelog }}"
-
-            # ---------------------------------------------------------------------------------------
-            #   Print Status
-            # ---------------------------------------------------------------------------------------
-
-            - name: [Status]: Print
+            - name: Get the changelog
               run: |
                 echo "${{ steps.changelog.outputs.changelog }}"
                 echo "---------------"
-                echo ${{ steps.bundle-rc.outputs.id }}
+                echo ${{ steps.release-candidate.outputs.id }}
                 echo ${{ steps.changelog.outputs.id }}
                 echo "---------------"
 
             # ---------------------------------------------------------------------------------------
             #   Append updated changelog to newly released version
-            #
-            #   this requires you to specify "id", which is the id of the release added
             # ---------------------------------------------------------------------------------------
 
-            - name: Update Release
+            - name: Add Test Report to Release
               uses: irongut/EditRelease@v1.2.0
               with:
                 token: ${{ secrets.GITHUB_TOKEN }}
-                id: ${{ steps.bundle-rc.outputs.id }}
+                id: ${{ steps.release-candidate.outputs.id }}
                 body: |
                   > [!WARNING]
                   > This is a **release candidate**, which means it is not a stable release and could contain bugs. You should download it at your own risk.
