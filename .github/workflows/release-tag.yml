@@ -5,8 +5,8 @@
 #   @url        : https://github.com/Aetherinox
 # ---------------------------------------------------------------------------------------
 
-name: "Release Product"
-run-name: "Release Product"
+name: "Release Product Test"
+run-name: "Release Product Test"
 
 on:
   workflow_dispatch:
