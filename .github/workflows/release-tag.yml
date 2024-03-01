@@ -30,6 +30,8 @@ jobs:
           contents: write
         steps:
             - uses: actions/checkout@v2
+              with:
+                fetch-depth: 0
             - name: Use Node.js
               uses: actions/setup-node@v1
               id: checkout
@@ -131,13 +133,19 @@ jobs:
             #   previous tag
             # ---------------------------------------------------------------------------------------
 
-            - run: echo "previous_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo '')" >> $GITHUB_ENV
+            - name: previous tag
+              run: |
+                # set previous_tag to the last tag in the repo
+                # or if the command throws an error, set it to nothing
+                previous_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+                echo "previous_tag=$previous_tag" >> $GITHUB_ENV
+                echo "Found Previous Tag: ${{ env.previous_tag }}"
 
             # ---------------------------------------------------------------------------------------
             #   Generate Changelog
             # ---------------------------------------------------------------------------------------
 
-            - name: Generate Changelog ${{ env.previous_tag }}
+            - name: Generate Changelog
               id: changelog
               uses: jaywcjlove/changelog-generator@main
               if: env.previous_tag
