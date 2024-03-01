@@ -43,7 +43,7 @@ jobs:
               run: |
                   echo Building PRE-RELEASE Package .zip PACKAGE_VERSION
                   npm ci
-                  npm run dev
+                  npm run build
                   zip -jr ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-beta.zip dist/*
                   ls
 
@@ -60,6 +60,10 @@ jobs:
                   npm run build
                   zip -jr ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip dist/*
                   ls
+
+            # ---------------------------------------------------------------------------------------
+            #   [PRE-RELEASE]: Generate release
+            # ---------------------------------------------------------------------------------------
 
             - name: PreRelease
               uses: softprops/action-gh-release@v1
