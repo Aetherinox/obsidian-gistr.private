@@ -89,6 +89,18 @@ jobs:
               run: |
                 shasum --algorithm 256 ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip > SHA256SUMS.txt
 
+            - name: Get Github Release notes
+              uses: octokit/request-action@v2.x
+              id: get-github-release-notes
+              with:
+                route: POST /repos/{owner}/{repo}/releases/generate-notes
+                owner: ${{ steps.generate-release-details.outputs.repo-org }}
+                repo: ${{ steps.generate-release-details.outputs.repo-name }}
+                tag_name: ${{ steps.generate-release-details.outputs.release-version }}
+                previous_tag_name: ${{ steps.generate-release-details.outputs.prev-release-version }}
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
             - name: 'Identify New Contributors section'
               id: get-new-contributors
               run: |
