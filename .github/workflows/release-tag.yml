@@ -82,6 +82,8 @@ jobs:
 
             - name: "[Status]: Print"
               run: |
+                echo "Printing Variables"
+                echo 
                 echo "---- CHANGELOG ---------------------------------------------------------------"
                 echo "${{ steps.changelog.outputs.changelog }}"
                 echo "---- CHANGELOG ---------------------------------------------------------------"
