@@ -124,7 +124,7 @@ jobs:
 
             - name: Generate Changelog
               id: changelog
-              uses: jaywcjlove/changelog-generator@v1.5.3
+              uses: jaywcjlove/changelog-generator@main
               with:
                 show-emoji: false
                 # custom-emoji: 'type🐝,feat💄,fix🆎'
