@@ -202,8 +202,22 @@ jobs:
             #   this requires you to specify "id", which is the id of the release added
             # ---------------------------------------------------------------------------------------
 
-            - name: "Update Release"
+            - name: "[Update]: Release"
               uses: irongut/EditRelease@v1.2.0
+              if: ${{ startsWith( inputs.prerelease, false ) }}
+              with:
+                token: ${{ secrets.GITHUB_TOKEN }}
+                id: ${{ steps.bundle-r.outputs.id }}
+                body: |
+                  > [!WARNING]
+                  > This is a **release candidate**, which means it is not a stable release and could contain bugs. You should download it at your own risk.
+
+                  # What's Changed
+                  ${{ steps.changelog.outputs.changelog }}
+
+            - name: "[Update]: Release Candidate"
+              uses: irongut/EditRelease@v1.2.0
+              if: ${{ startsWith( inputs.prerelease, true ) }}
               with:
                 token: ${{ secrets.GITHUB_TOKEN }}
                 id: ${{ steps.bundle-rc.outputs.id }}
