@@ -56,7 +56,7 @@ jobs:
             # ---------------------------------------------------------------------------------------
 
             - name: "[Build]: Stable"
-              id: build
+              id: build-st
               if: ${{ startsWith( inputs.prerelease, false ) }}
               run: |
                   echo Building STABLE Package .zip PACKAGE_VERSION
@@ -66,7 +66,7 @@ jobs:
                   ls
 
             - name: "[Build]: Release Candidate"
-              id: dev
+              id: build-rc
               if: ${{ startsWith( inputs.prerelease, true ) }}
               run: |
                   echo Building PRE-RELEASE Package .zip PACKAGE_VERSION
@@ -80,13 +80,13 @@ jobs:
             # ---------------------------------------------------------------------------------------
 
             - name: "[Checksum]: Stable"
-              id: checksum-release-stable
+              id: checksum-st
               if: ${{ startsWith( inputs.prerelease, false ) }}
               run: |
                 shasum --algorithm 256 ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip > SHA256SUMS.txt
 
             - name: "[Checksum]: Release Candidate"
-              id: checksum-release-candidate
+              id: checksum-rc
               if: ${{ startsWith( inputs.prerelease, true ) }}
               run: |
                 shasum --algorithm 256 ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.rc_version }}.zip > SHA256SUMS.txt
@@ -212,8 +212,9 @@ jobs:
                 echo ""
                 echo "---- VARIABLES ---------------------------------------------------------------"
                 echo "Package Version ............ ${{ env.PACKAGE_VERSION }}"
-                echo "Previous Tag ............... ${{ env.TAG_LAST }}"
+                echo "Tag: Previous .............. ${{ env.TAG_LAST }}"
+                echo "Tag: Now.... ............... ${{ github.ref }}"
                 echo "Last Commit ................ ${{ env.COMMIT_LAST }}"
+                echo "ST Output ID ............... ${{ steps.bundle-st.outputs.id }}"
                 echo "RC Output ID ............... ${{ steps.bundle-rc.outputs.id }}"
-                echo "R Output ID ................ ${{ steps.bundle-r.outputs.id }}"
                 echo "---- CHANGELOG ---------------------------------------------------------------"
