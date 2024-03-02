@@ -22,7 +22,7 @@
     "url": "https://github.com/Aetherinox/obsidian-gistr/issues"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^18.0.0",
+    "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^8.2.1",
     "@types/node": "^14.14.37",
