@@ -111,14 +111,6 @@ jobs:
             - name: "Get Previous Tag" 
               run: echo "TAG_PREVIOUS=$(git describe --tags --abbrev=0 2>/dev/null || echo '')" >> $GITHUB_ENV
 
-            - name: Configure changelog
-              if: steps.publish.outputs.type != 'none'
-              run: |
-                echo '{"categories": [], "template": "## Commits:\n\n${{ '${{UNCATEGORIZED}}' }}", "pr_template": ${{ '"- #{{TITLE}} (#{{MERGE_SHA}}) @#{{AUTHOR}}"' }} }' > changelog_config.json
-                cat changelog_config.json
-                echo "last_tag=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
-                echo "curr_commit=$(git rev-parse HEAD)" >> $GITHUB_ENV
-
             - name: "[Status]: Print 2"
               run: |
                 echo "Printing Variables"
@@ -210,7 +202,7 @@ jobs:
                 tag_name: ${{ env.PACKAGE_VERSION }}
                 target_commitish: ${{ github.event.inputs.branch }}
                 draft: false
-                generate_release_notes: true
+                generate_release_notes: false
                 files: |
                   ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip
                   dist/main.js
