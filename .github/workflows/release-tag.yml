@@ -47,9 +47,44 @@ jobs:
               run: echo "PACKAGE_VERSION=$(cat package.json | jq -r '.version')" >> $GITHUB_ENV
 
             # ---------------------------------------------------------------------------------------
+            #   Build Zip
+            # ---------------------------------------------------------------------------------------
+
+            - name: "[Build]: Stable"
+              id: build
+              if: ${{ startsWith( inputs.prerelease, false ) }}
+              run: |
+                  echo Building STABLE Package .zip PACKAGE_VERSION
+                  npm ci
+                  npm run build
+                  zip -jr ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip dist/*
+                  ls
+
+            - name: "[Build]: Release Candidate"
+              id: dev
+              if: ${{ startsWith( inputs.prerelease, true ) }}
+              run: |
+                  echo Building PRE-RELEASE Package .zip PACKAGE_VERSION
+                  npm ci
+                  npm run build
+                  zip -jr ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.rc_version }}.zip dist/*
+                  ls
+
+            # ---------------------------------------------------------------------------------------
             #   [ Release Candidate ]: Checksum
             # ---------------------------------------------------------------------------------------
 
+            - name: "[Checksum]: Stable"
+              id: checksum-release-stable
+              if: ${{ startsWith( inputs.prerelease, false ) }}
+              run: |
+                shasum --algorithm 256 ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip > SHA256SUMS.txt
+
+            - name: "[Checksum]: Release Candidate"
+              id: checksum-release-candidate
+              if: ${{ startsWith( inputs.prerelease, true ) }}
+              run: |
+                shasum --algorithm 256 ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.rc_version }}.zip > SHA256SUMS.txt
 
             # ---------------------------------------------------------------------------------------
             #   Contributor Images
@@ -131,3 +166,63 @@ jobs:
                 echo "RC Output ID ............... ${{ steps.bundle-rc.outputs.id }}"
                 echo "R Output ID ................ ${{ steps.bundle-r.outputs.id }}"
                 echo "---- CHANGELOG ---------------------------------------------------------------"
+
+            # ---------------------------------------------------------------------------------------
+            #   [ Release ]: Post Release
+            #
+            #   outputs:
+            #     [RELEASE ID]:
+            #       ${{ steps.bundle-rc.outputs.id
+            #       ${{ steps.bundle-st.outputs.id
+            # ---------------------------------------------------------------------------------------
+
+            - name: "[Post]: Stable"
+              if: ${{ startsWith( inputs.prerelease, false ) }}
+              uses: softprops/action-gh-release@v1
+              id: bundle-st
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                name: v${{ env.PACKAGE_VERSION }}
+                tag_name: ${{ env.PACKAGE_VERSION }}
+                target_commitish: ${{ github.event.inputs.branch }}
+                draft: false
+                generate_release_notes: true
+                files: |
+                  ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip
+                  dist/main.js
+                  dist/manifest.json
+                  dist/styles.css
+                  checksum.txt
+                prerelease: false
+                body: |
+                  # What's Changed
+                  ${{ steps.changelog.outputs.changelog }}
+                  ---
+
+            - name: "[Post]: Release Candidate"
+              if: ${{ startsWith( inputs.prerelease, true ) }}
+              uses: softprops/action-gh-release@v1
+              id: bundle-rc
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                name: v${{ env.PACKAGE_VERSION }}
+                tag_name: ${{ env.PACKAGE_VERSION }}
+                target_commitish: ${{ github.event.inputs.branch }}
+                draft: false
+                generate_release_notes: true
+                files: |
+                  ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip
+                  dist/main.js
+                  dist/manifest.json
+                  dist/styles.css
+                  checksum.txt
+                prerelease: false
+                body: |
+                  > [!WARNING]
+                  > This is a **release candidate**, which means it is not a stable release and could contain bugs. You should download it at your own risk.
+
+                  # What's Changed
+                  ${{ steps.changelog.outputs.changelog }}
+                  ---
