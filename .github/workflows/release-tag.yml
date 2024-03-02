@@ -136,6 +136,7 @@ jobs:
                 configuration: ".github/changelog-configuration.json"
                 commitMode: true
                 ignorePreReleases: "false"
+                fetchReleaseInformation: true
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
