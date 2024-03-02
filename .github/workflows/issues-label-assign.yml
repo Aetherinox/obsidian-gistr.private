@@ -121,11 +121,12 @@ jobs:
           contains( steps.bug_title.outputs.lowercase, 'failed' ) &&
           ( !startsWith( steps.bug_title.outputs.lowercase, 'bug' ) ) )
         run: gh issue edit "$NUMBER" --add-label "$LABELS"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_REPO: ${{ github.repository }}
-          NUMBER: ${{ github.event.issue.number }}
-          TITLE: "Bug: $github.event.issue.title"
+        uses: actions-cool/issues-helper@v3
+        with:
+          actions: 'update-issue'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
+          title: "Bug: $github.event.issue.title"
 
   # ---------------------------------------------------------------------------------------
   # Check Label: BUG
