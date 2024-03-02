@@ -26,7 +26,8 @@
         }
     ],
     "sort": "ASC",
-    "template": "## Commits:\n\n${{ '${{UNCATEGORIZED}}' }}",
+    "template": "asd",
+    "pr_template": "duplicate_filter",
     "empty_template": "- no changes",
     "label_extractor": [
         {
