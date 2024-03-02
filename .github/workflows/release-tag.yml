@@ -134,7 +134,6 @@ jobs:
                 fromTag: "${{ env.last_tag }}"
                 toTag: ${{ github.ref }}
                 configuration: ".github/changelog-configuration.json"
-                commitMode: true
                 ignorePreReleases: false
                 fetchReleaseInformation: true
               env:
