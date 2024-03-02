@@ -30,8 +30,51 @@ env:
   ASSIGN_USER: Aetherinox
   BOT_NAME_1: AdminServ
   BOT_NAME_2: AdminServX
+  LABELS_JSON: |
+    [
+      { "name": "Bug", "color": "d73a4a", "description": "Something isn't working" },
+      { "name": "Feature", "color": "36552B", "description": "Feature request" },
+      { "name": "Urgent", "color": "ccb11d", "description": "This issue required priority." },
+      { "name": "Roadmap", "color": "8F1784", "description": "Feature or bug currently planned for implementation." }
+    ]
+
 
 jobs:
+
+  # ---------------------------------------------------------------------------------------
+  # Verify Existing Bugs
+  # ---------------------------------------------------------------------------------------
+
+  Submission_Labels_Verify:
+    name:  "Verify Labels"
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+
+      - name: Verify Existing Labels
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const labels = JSON.parse(process.env.LABELS_JSON);
+            for (const label of labels) {
+              try {
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name: label.name,
+                  description: label.description || '',
+                  color: label.color
+                });
+              } catch (error) {
+                // Check if the error is because the label already exists
+                if (error.status === 422) {
+                  console.log(`Label '${label.name}' already exists. Skipping.`);
+                } else {
+                  // Log other errors
+                  console.error(`Error creating label '${label.name}': ${error}`);
+                }
+              }
+            }
 
   # ---------------------------------------------------------------------------------------
   # Check Title
