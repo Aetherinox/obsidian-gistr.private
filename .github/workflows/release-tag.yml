@@ -11,23 +11,63 @@ run-name: "Release Product"
 on:
   workflow_dispatch:
     inputs:
-      prerelease:
+      PLUGIN_NAME:
+
+      # ---------------------------------------------------------------------------------------
+      #   Name of the plugin to use when creating the release zip filename
+      #     e.g: gistr-v1.0.0.zip
+      # ---------------------------------------------------------------------------------------
+
+        description:  'Name of Plugin'
+        required:     true
+        default:      'gistr'
+        type:         string
+
+      # ---------------------------------------------------------------------------------------
+      #   ENABLE:   released version will be marked as pre-release
+      #   DISABLE:  release version will be marked as stable / normal release
+      # ---------------------------------------------------------------------------------------
+
+      PRERELEASE:
         description:  "Build RC (Pre-release)"
         required:     true
         default:      false
         type:         boolean
-      commitmode:
+
+      # ---------------------------------------------------------------------------------------
+      #   ENABLE:   the changelog generated in releases tab will only display single commits.
+      #   DISABLE:  the changelog shows pull requests completed based on their labels
+      # ---------------------------------------------------------------------------------------
+
+      CHANGELOG_MODE_COMMIT:
         description:  "Commit Instead of Pull Changelog"
         required:     true
         default:      false
         type:         boolean
-      rc_version:
+
+      # ---------------------------------------------------------------------------------------
+      #   Release Candidate version number
+      #   this will be added to the end of your released app in the releases page.
+      #     e.g: gistr-v1.0.0-rc.1
+      # ---------------------------------------------------------------------------------------
+
+      VERSION_RC:
         description:  "RC (Pre-release) Ver (plugin-rc.v1)"
         required:     false
         type:         string
         default:      1
+
+# ---------------------------------------------------------------------------------------
+#   environment variables
+# ---------------------------------------------------------------------------------------
+
 env:
     PLUGIN_NAME: gistr
+
+# ---------------------------------------------------------------------------------------
+#   jobs
+# ---------------------------------------------------------------------------------------
+
 jobs:
     build:
         runs-on: ubuntu-latest
@@ -57,22 +97,22 @@ jobs:
 
             - name: "[Build]: Stable"
               id: build-st
-              if: ${{ startsWith( inputs.prerelease, false ) }}
+              if: ${{ startsWith( inputs.PRERELEASE, false ) }}
               run: |
                   echo Building STABLE Package .zip PACKAGE_VERSION
                   npm ci
                   npm run build
-                  zip -jr ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip dist/*
+                  zip -jr ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip dist/*
                   ls
 
             - name: "[Build]: Release Candidate"
               id: build-rc
-              if: ${{ startsWith( inputs.prerelease, true ) }}
+              if: ${{ startsWith( inputs.PRERELEASE, true ) }}
               run: |
                   echo Building PRE-RELEASE Package .zip PACKAGE_VERSION
                   npm ci
                   npm run build
-                  zip -jr ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.rc_version }}.zip dist/*
+                  zip -jr ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.VERSION_RC }}.zip dist/*
                   ls
 
             # ---------------------------------------------------------------------------------------
@@ -81,15 +121,15 @@ jobs:
 
             - name: "[Checksum]: Stable"
               id: checksum-st
-              if: ${{ startsWith( inputs.prerelease, false ) }}
+              if: ${{ startsWith( inputs.PRERELEASE, false ) }}
               run: |
-                shasum --algorithm 256 ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip > SHA256SUMS.txt
+                shasum --algorithm 256 ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip > SHA256SUMS.txt
 
             - name: "[Checksum]: Release Candidate"
               id: checksum-rc
-              if: ${{ startsWith( inputs.prerelease, true ) }}
+              if: ${{ startsWith( inputs.PRERELEASE, true ) }}
               run: |
-                shasum --algorithm 256 ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.rc_version }}.zip > SHA256SUMS.txt
+                shasum --algorithm 256 ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.VERSION_RC }}.zip > SHA256SUMS.txt
 
             # ---------------------------------------------------------------------------------------
             #   Contributor Images
@@ -126,7 +166,7 @@ jobs:
                 toTag: ${{ github.ref }}
                 configuration: ".github/changelog-configuration.json"
                 ignorePreReleases: false
-                commitMode: ${{ inputs.commitmode }}
+                commitMode: ${{ inputs.CHANGELOG_MODE_COMMIT }}
                 fetchReleaseInformation: true
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -149,7 +189,7 @@ jobs:
             # ---------------------------------------------------------------------------------------
 
             - name: "[Post]: Stable"
-              if: ${{ startsWith( inputs.prerelease, false ) }}
+              if: ${{ startsWith( inputs.PRERELEASE, false ) }}
               uses: softprops/action-gh-release@v1
               id: bundle-st
               env:
@@ -161,7 +201,7 @@ jobs:
                 draft: false
                 generate_release_notes: false
                 files: |
-                  ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip
+                  ${{ inputs.PLUGIN_NAME }}-${{ inputs.PLUGIN_NAME }}.zip
                   dist/main.js
                   dist/manifest.json
                   dist/styles.css
@@ -172,7 +212,7 @@ jobs:
                   ---
 
             - name: "[Post]: Release Candidate"
-              if: ${{ startsWith( inputs.prerelease, true ) }}
+              if: ${{ startsWith( inputs.PRERELEASE, true ) }}
               uses: softprops/action-gh-release@v1
               id: bundle-rc
               env:
@@ -184,7 +224,7 @@ jobs:
                 draft: false
                 generate_release_notes: false
                 files: |
-                  ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip
+                  ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip
                   dist/main.js
                   dist/manifest.json
                   dist/styles.css
