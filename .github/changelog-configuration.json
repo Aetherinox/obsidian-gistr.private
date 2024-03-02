@@ -1,8 +1,49 @@
 {
+    "categories": [
+        {
+        "title": "### 🚀 Features",
+        "labels": [ "kind/feature", "feature", "feat" ]
+        },
+        {
+        "title": "### ✨ Optimizations",
+        "labels": [ "kind/optimization", "optimization", "perf", "optimize", "style"]
+        },
+        {
+        "title": "### 🐛 Bugfixes",
+        "labels": [ "kind/bugfix", "bugfix", "fix" ]
+        },
+        {
+        "title": "### ✏️ Docs",
+        "labels": [ "kind/docs", "docs", "docs" ]
+        },
+        {
+        "title": "### 🧪 Tests",
+        "labels": [ "kind/test", "test" ]
+        },
+        {
+        "title": "## 📦 Dependencies",
+        "labels": [ "build" ]
+        }
+    ],
     "sort": "ASC",
     "template": "## Commits:\n\n${{ '${{UNCATEGORIZED}}' }}",
-    "pr_template": "- #{{TITLE}} (#{{MERGE_SHA}}) @#{{AUTHOR}}\n\n",
+    "pr_template": "- #{{TITLE}} (#{{MERGE_SHA}}) @#{{AUTHOR}}",
     "empty_template": "- no changes",
+    "label_extractor": [
+        {
+        "pattern": "^(feature|docs|bugfix|optimization|refactor|test):(.*)",
+        "target": "$1"
+        },
+        {
+        "pattern": "^(refactor|feat|perf|optimize|fix|docs|test|build|style)\\(front\\):(.*)",
+        "target": "$1(front)"
+        }
+    ],
+    "duplicate_filter": {
+        "pattern": "github.*",
+        "on_property": "author",
+        "method": "match"
+    },
     "max_tags_to_fetch": 200,
     "max_pull_requests": 200,
     "max_back_track_time_days": 365,
