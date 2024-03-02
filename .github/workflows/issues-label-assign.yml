@@ -89,24 +89,27 @@ jobs:
             }
 
   # ---------------------------------------------------------------------------------------
-  # Check Title
+  #   Check Title
+  #
+  #   this job checks to see if a new issue has certain keywords in the title and body
+  #   and also if the beginning of the title starts with "bug"
+  #
+  #   if not, re-name the issue in the format of
+  #       Bug: Title Name
   # ---------------------------------------------------------------------------------------
 
-  Submission_CheckTitle_Bug:
-    name:  "Title [Bugs]: Check"
+  Submission-Buy-Title-Rename:
+    name:  "[ Bugs ]: Rename Title"
     runs-on: ubuntu-latest
     permissions: write-all
     steps:
-
-      # Check Submission TITLE to assign "BUG" label
-
       - name: ${{ env.LABEL_BUG }} [ Title ] - String Manipulation
         id: bug_title
         uses: ASzc/change-string-case-action@v6
         with:
           string: ${{ github.event.issue.title }}
 
-      - name: ${{ env.LABEL_BUG }} [ Title ] - Check"
+      - name: ${{ env.LABEL_BUG }} [ Title ] - Rename"
         if: |
           github.event.issue &&
           github.event.issue.user.login != '$env.BOT_NAME_1' &&
@@ -128,8 +131,8 @@ jobs:
   # Check Label: BUG
   # ---------------------------------------------------------------------------------------
 
-  Submission_CheckLabel_Bug:
-    name:  "Label [Bugs]: Check"
+  Submission-Buy-Label-Check:
+    name:  "[ Bugs ]: Check Label"
     runs-on: ubuntu-latest
     permissions: write-all
     steps:
@@ -188,8 +191,8 @@ jobs:
   # Check Label: Feature
   # ---------------------------------------------------------------------------------------
 
-  Submission_CheckLabel_Feature:
-    name:  "Label [Feature]: Check"
+  Submission-Feature-Label-Check:
+    name:  "[ Feature ]: Check Label"
     runs-on: ubuntu-latest
     permissions: write-all
     steps:
@@ -244,8 +247,8 @@ jobs:
   # Check Label: Urgent
   # ---------------------------------------------------------------------------------------
 
-  Submission_CheckLabel_Urgent:
-    name:  "Label [Urgent]: Check"
+  Submission-Urgent-Label-Check:
+    name:  "[ Urgent ]: Check Label"
     runs-on: ubuntu-latest
     permissions: write-all
     steps:
@@ -300,8 +303,8 @@ jobs:
   # Check Label: Roadmap
   # ---------------------------------------------------------------------------------------
 
-  Submission_CheckLabel_Roadmap:
-    name:  "Label [Roadmap]: Check"
+  Submission-Roadmap-Label-Check:
+    name:  "[ Roadmap ]: Check Label"
     runs-on: ubuntu-latest
     permissions: write-all
     steps:
