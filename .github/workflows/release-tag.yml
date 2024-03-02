@@ -179,7 +179,7 @@ jobs:
                 tag_name: ${{ env.PACKAGE_VERSION }}
                 target_commitish: ${{ github.event.inputs.branch }}
                 draft: false
-                generate_release_notes: true
+                generate_release_notes: false
                 files: |
                   ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip
                   dist/main.js
