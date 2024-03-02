@@ -76,11 +76,13 @@ jobs:
             - name: "Get Previous Tag" 
               run: echo "TAG_PREVIOUS=$(git describe --tags --abbrev=0 2>/dev/null || echo '')" >> $GITHUB_ENV
 
-            - name: Changelog
-              uses: Bullrich/generate-release-changelog@master
+            - name: Build Changelog
               id: changelog
+              uses: mikepenz/release-changelog-builder-action@v3
+              with:
+                commitMode: true
               env:
-                REPO: ${{ github.repository }}
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             # ---------------------------------------------------------------------------------------
             #   Fetch Changelog
