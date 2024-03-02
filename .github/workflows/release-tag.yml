@@ -12,20 +12,20 @@ on:
   workflow_dispatch:
     inputs:
       prerelease:
-        description: "Build RC (Pre-release)"
-        required: true
-        default: false
-        type: boolean
+        description:  "Build RC (Pre-release)"
+        required:     true
+        default:      false
+        type:         boolean
       commitmode:
-        description: "Commit Instead of Pull Changelog"
-        required: true
-        default: false
-        type: boolean
+        description:  "Commit Instead of Pull Changelog"
+        required:     true
+        default:      false
+        type:         boolean
       rc_version:
-        description: "RC (Pre-release) Version (plugin-rc.v1)"
-        required: false
-        type: string
-        default: 1
+        description:  "RC (Pre-release) Ver (plugin-rc.v1)"
+        required:     false
+        type:         string
+        default:      1
 env:
     PLUGIN_NAME: gistr
 jobs:
