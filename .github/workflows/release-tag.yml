@@ -5,7 +5,7 @@
 #   @url        : https://github.com/Aetherinox
 # ---------------------------------------------------------------------------------------
 
-name: "Release Product Test"
+name: "Release Product"
 run-name: "Release Product"
 
 on:
@@ -201,7 +201,7 @@ jobs:
                 draft: false
                 generate_release_notes: false
                 files: |
-                  ${{ inputs.PLUGIN_NAME }}-${{ inputs.PLUGIN_NAME }}.zip
+                  ${{ inputs.PLUGIN_NAME }}-${{ inputs.PACKAGE_VERSION }}.zip
                   dist/main.js
                   dist/manifest.json
                   dist/styles.css
