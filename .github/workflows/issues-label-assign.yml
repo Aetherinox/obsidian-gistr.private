@@ -125,7 +125,7 @@ jobs:
           actions: 'update-issue'
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.issue.number }}
-          title: "Bug: ${{ github.event.issue.title }}"
+          title: "${{ env.LABEL_BUG }}: ${{ github.event.issue.title }}"
 
   # ---------------------------------------------------------------------------------------
   # Check Label: BUG
