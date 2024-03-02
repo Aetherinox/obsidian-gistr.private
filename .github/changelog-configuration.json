@@ -27,7 +27,7 @@
     ],
     "sort": "ASC",
     "template": "## Changes\n\n${{UNCATEGORIZED}}",
-    "pr_template": "- ${{TITLE}}\n - #{{MERGE_SHA}} @#{{AUTHOR}}",
+    "pr_template": "- ${{TITLE}}\n - <small>(#{{MERGE_SHA}}) @#{{AUTHOR}}</small>",
     "empty_template": "- no changes",
     "label_extractor": [
         {
