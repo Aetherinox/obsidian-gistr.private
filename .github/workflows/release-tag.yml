@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       prerelease:
-        description: "Release Candidate"
+        description: "Build RC (Pre-release)"
         required: true
         default: false
         type: boolean
@@ -22,7 +22,7 @@ on:
         default: false
         type: boolean
       rc_version:
-        description: "RC Version"
+        description: "RC (Pre-release) Version (plugin-rc.v1)"
         required: false
         type: string
         default: 1
