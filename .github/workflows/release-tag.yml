@@ -11,6 +11,10 @@ run-name: "Release Product"
 on:
   workflow_dispatch:
     inputs:
+      branch:
+        description: 'Pre-release branch to release from'
+        type: string
+        required: true
       prerelease:
         description: "Is Release Candidate"
         required: true
