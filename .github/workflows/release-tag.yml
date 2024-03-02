@@ -113,22 +113,16 @@ jobs:
             #     ${{ steps.changelog.outputs.changelog }}
             # ---------------------------------------------------------------------------------------
 
-            - name: "Get Previous Tag" 
-              run: echo "TAG_PREVIOUS=$(git describe --tags --abbrev=0 2>/dev/null || echo '')" >> $GITHUB_ENV
-
-            - name: "[Status]: Print 2"
+            - name: "Build Changelog: Pre Setup"
               run: |
-                echo "Printing Variables"
-                echo "---- VARIABLES ---------------------------------------------------------------"
-                echo "Tag Last ............... ${{ env.last_tag }}"
-                echo "Tag Curr ............... ${{ env.curr_commit }}"
-                echo "---- CHANGELOG ---------------------------------------------------------------"
+                echo "TAG_LAST=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
+                echo "COMMIT_LAST=$(git rev-parse HEAD)" >> $GITHUB_ENV
 
             - name: Build Changelog
               id: changelog
               uses: mikepenz/release-changelog-builder-action@v3
               with:
-                fromTag: "${{ env.last_tag }}"
+                fromTag: "${{ env.TAG_LAST }}"
                 toTag: ${{ github.ref }}
                 configuration: ".github/changelog-configuration.json"
                 ignorePreReleases: false
@@ -144,26 +138,6 @@ jobs:
             - name: "[Changelog]: Get"
               run: |
                 echo "${{ steps.changelog.outputs.changelog }}"
-
-            # ---------------------------------------------------------------------------------------
-            #   Print Status
-            # ---------------------------------------------------------------------------------------
-
-            - name: "[Status]: Print"
-              run: |
-                echo "Printing Variables"
-                echo 
-                echo "---- CHANGELOG ---------------------------------------------------------------"
-                echo "${{ steps.changelog.outputs.changelog }}"
-                echo "---- CHANGELOG ---------------------------------------------------------------"
-                echo ""
-                echo ""
-                echo "---- VARIABLES ---------------------------------------------------------------"
-                echo "Package Version ............ ${{ env.PACKAGE_VERSION }}"
-                echo "Previous Tag ............... ${{ env.TAG_PREVIOUS }}"
-                echo "RC Output ID ............... ${{ steps.bundle-rc.outputs.id }}"
-                echo "R Output ID ................ ${{ steps.bundle-r.outputs.id }}"
-                echo "---- CHANGELOG ---------------------------------------------------------------"
 
             # ---------------------------------------------------------------------------------------
             #   [ Release ]: Post Release
@@ -222,3 +196,24 @@ jobs:
 
                   ${{ steps.changelog.outputs.changelog }}
                   ---
+
+            # ---------------------------------------------------------------------------------------
+            #   Print Status
+            # ---------------------------------------------------------------------------------------
+
+            - name: "[Status]: Print"
+              run: |
+                echo "Printing Variables"
+                echo 
+                echo "---- CHANGELOG ---------------------------------------------------------------"
+                echo "${{ steps.changelog.outputs.changelog }}"
+                echo "---- CHANGELOG ---------------------------------------------------------------"
+                echo ""
+                echo ""
+                echo "---- VARIABLES ---------------------------------------------------------------"
+                echo "Package Version ............ ${{ env.PACKAGE_VERSION }}"
+                echo "Previous Tag ............... ${{ env.TAG_LAST }}"
+                echo "Last Commit ................ ${{ env.COMMIT_LAST }}"
+                echo "RC Output ID ............... ${{ steps.bundle-rc.outputs.id }}"
+                echo "R Output ID ................ ${{ steps.bundle-r.outputs.id }}"
+                echo "---- CHANGELOG ---------------------------------------------------------------"
