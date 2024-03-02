@@ -120,7 +120,6 @@ jobs:
           contains( steps.bug_title.outputs.lowercase, 'fails' ) ||
           contains( steps.bug_title.outputs.lowercase, 'failed' ) &&
           ( !startsWith( steps.bug_title.outputs.lowercase, 'bug' ) ) )
-        run: gh issue edit "$NUMBER" --add-label "$LABELS"
         uses: actions-cool/issues-helper@v3
         with:
           actions: 'update-issue'
