@@ -23,13 +23,13 @@ on:
       - opened
 
 env:
-  LABEL_BUG: Bug
-  LABEL_FEATURE: Feature
-  LABEL_URGENT: Urgent
-  LABEL_ROADMAP: Roadmap
-  ASSIGN_USER: Aetherinox
-  BOT_NAME_1: AdminServ
-  BOT_NAME_2: AdminServX
+  LABEL_BUG:      Bug
+  LABEL_FEATURE:  Feature
+  LABEL_URGENT:   Urgent
+  LABEL_ROADMAP:  Roadmap
+  ASSIGN_USER:    Aetherinox
+  BOT_NAME_1:     AdminServ
+  BOT_NAME_2:     AdminServX
   LABELS_JSON: |
     [
       { "name": "Bug", "color": "d73a4a", "description": "Something isn't working" },
