@@ -84,12 +84,21 @@ jobs:
                 echo "last_tag=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
                 echo "curr_commit=$(git rev-parse HEAD)" >> $GITHUB_ENV
 
+            - name: "[Status]: Print 2"
+              run: |
+                echo "Printing Variables"
+                echo "---- VARIABLES ---------------------------------------------------------------"
+                echo "Tag Last ............... ${{ env.last_tag }}"
+                echo "Tag Curr ............... ${{ env.curr_commit }}"
+                echo "---- CHANGELOG ---------------------------------------------------------------"
+
             - name: Build Changelog
               id: changelog
               uses: mikepenz/release-changelog-builder-action@v3
               with:
                 fromTag: "${{ env.last_tag }}"
                 toTag: ${{ github.ref }}
+                configuration: changelog_config.json
                 commitMode: true
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
