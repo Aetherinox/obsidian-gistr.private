@@ -1,6 +1,6 @@
 {
   "name": "gistr",
-  "version": "1.0.25",
+  "version": "1.0.26",
   "description": "Integrate OpenGist and Github gist snippets in your notes.",
   "main": "main.js",
   "repository": {
