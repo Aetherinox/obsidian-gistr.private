@@ -135,7 +135,7 @@ jobs:
                 toTag: ${{ github.ref }}
                 configuration: ".github/changelog-configuration.json"
                 commitMode: true
-                ignorePreReleases: "false"
+                ignorePreReleases: false
                 fetchReleaseInformation: true
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
