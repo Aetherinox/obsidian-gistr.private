@@ -39,7 +39,7 @@
     "empty_template": "- No major changes to address in this release",
     "label_extractor": [
         {
-        "pattern": "^(feat|feature|bug|bugfix|fix|docs|wiki|build|dependency|dependencies|package|test|optimization|pref|optimize|style|refactor|change|chore|ci|misc|revert|remove|dep|deprecate|deprecated|security):(.*)",
+        "pattern": "^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test){1}(\\([\\w\\-\\.]+\\))?(!)?:(.*)",
         "target": "$1"
         },
         {
