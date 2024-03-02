@@ -32,10 +32,10 @@ env:
   BOT_NAME_2: AdminServX
   LABELS_JSON: |
     [
-      { "name": "Bug", "color": "d73a4a", "description": "Something isn't working" },
-      { "name": "Feature", "color": "36552B", "description": "Feature request" },
-      { "name": "Urgent", "color": "ccb11d", "description": "This issue required priority." },
-      { "name": "Roadmap", "color": "8F1784", "description": "Feature or bug currently planned for implementation." }
+      { "name": ${{ LABEL_BUG }}, "color": "d73a4a", "description": "Something isn't working" },
+      { "name": ${{ LABEL_FEATURE }}, "color": "36552B", "description": "Feature request" },
+      { "name": ${{ LABEL_URGENT }}, "color": "ccb11d", "description": "This issue required priority." },
+      { "name": ${{ LABEL_ROADMAP }}, "color": "8F1784", "description": "Feature or bug currently planned for implementation." }
     ]
 
 
@@ -66,7 +66,7 @@ jobs:
                   color: label.color
                 });
               } catch (error) {
-                // Check if the error is because the label already exists
+                // label already exists
                 if (error.status === 422) {
                   console.log(`Label '${label.name}' already exists. Skipping.`);
                 } else {
