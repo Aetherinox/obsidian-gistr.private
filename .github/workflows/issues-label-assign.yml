@@ -52,7 +52,7 @@ jobs:
     steps:
 
       - name: Verify Existing Labels
-      - uses: actions/github-script@v7
+        uses: actions/github-script@v7
         with:
           script: |
             const labels = JSON.parse(process.env.LABELS_JSON);
