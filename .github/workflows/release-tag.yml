@@ -50,7 +50,7 @@ jobs:
             #   Build Zip
             # ---------------------------------------------------------------------------------------
 
-            - name: "[Build]: Release"
+            - name: "[Build]: Stable"
               id: build
               if: ${{ startsWith( inputs.prerelease, false ) }}
               run: |
@@ -74,8 +74,8 @@ jobs:
             #   [ Release Candidate ]: Checksum
             # ---------------------------------------------------------------------------------------
 
-            - name: "[Checksum]: Release"
-              id: checksum-release
+            - name: "[Checksum]: Stable"
+              id: checksum-release-stable
               if: ${{ startsWith( inputs.prerelease, false ) }}
               run: |
                 shasum --algorithm 256 ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip > SHA256SUMS.txt
@@ -111,15 +111,11 @@ jobs:
             - name: "Get Previous Tag" 
               run: echo "TAG_PREVIOUS=$(git describe --tags --abbrev=0 2>/dev/null || echo '')" >> $GITHUB_ENV
 
-            - name: "[Changelog]: Generate"
+            - name: Build Changelog
               id: changelog
-              uses: jaywcjlove/changelog-generator@main
-              if: env.TAG_PREVIOUS
-              with:
-                token: ${{ secrets.GITHUB_TOKEN }}
-                show-emoji: false
-                # custom-emoji: 'type🐝,feat💄,fix🆎'
-                filter: (^[\s]+?[R|r]elease)|(^[R|r]elease)
+              uses: mikepenz/release-changelog-builder-action@v3
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             # ---------------------------------------------------------------------------------------
             #   Fetch Changelog
@@ -155,13 +151,13 @@ jobs:
             #   outputs:
             #     [RELEASE ID]:
             #       ${{ steps.bundle-rc.outputs.id
-            #       ${{ steps.bundle-r.outputs.id
+            #       ${{ steps.bundle-st.outputs.id
             # ---------------------------------------------------------------------------------------
 
-            - name: "[Post]: Release"
+            - name: "[Post]: Stable"
               if: ${{ startsWith( inputs.prerelease, false ) }}
               uses: softprops/action-gh-release@v1
-              id: bundle-r
+              id: bundle-st
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
@@ -178,6 +174,33 @@ jobs:
                   checksum.txt
                 prerelease: false
                 body: |
+                  # What's Changed
+                  ${{ steps.changelog.outputs.changelog }}
+                  ---
+
+            - name: "[Post]: Release Candidate"
+              if: ${{ startsWith( inputs.prerelease, true ) }}
+              uses: softprops/action-gh-release@v1
+              id: bundle-rc
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                name: v${{ env.PACKAGE_VERSION }}
+                tag_name: ${{ env.PACKAGE_VERSION }}
+                target_commitish: ${{ github.event.inputs.branch }}
+                draft: false
+                generate_release_notes: true
+                files: |
+                  ${{ env.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip
+                  dist/main.js
+                  dist/manifest.json
+                  dist/styles.css
+                  checksum.txt
+                prerelease: false
+                body: |
+                  > [!WARNING]
+                  > This is a **release candidate**, which means it is not a stable release and could contain bugs. You should download it at your own risk.
+
                   # What's Changed
                   ${{ steps.changelog.outputs.changelog }}
                   ---
