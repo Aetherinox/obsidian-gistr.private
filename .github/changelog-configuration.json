@@ -27,7 +27,7 @@
     ],
     "sort": "ASC",
     "template": "## Commits:\n\n${{ '${{UNCATEGORIZED}}' }}",
-    "pr_template": "- #{{TITLE}} (#{{MERGE_SHA}}) @#{{AUTHOR}}\n",
+    "pr_template": "- #{{TITLE}}\n",
     "empty_template": "- no changes",
     "label_extractor": [
         {
