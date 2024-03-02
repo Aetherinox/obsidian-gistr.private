@@ -26,8 +26,8 @@
         }
     ],
     "sort": "ASC",
-    "template": "asd",
-    "pr_template": "duplicate_filter",
+    "template": "## Commits:\n\n${{ '${{UNCATEGORIZED}}' }}",
+    "pr_template": "- #{{TITLE}} (#{{MERGE_SHA}}) @#{{AUTHOR}}\n",
     "empty_template": "- no changes",
     "label_extractor": [
         {
