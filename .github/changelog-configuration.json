@@ -14,7 +14,7 @@
         },
         {
             "title": "### ✏️ Docs",
-            "labels": [ "kind/docs", "docs", "docs", "wiki" ]
+            "labels": [ "kind/docs", "docs", "wiki" ]
         },
         {
             "title": "### 🧪 Tests",
@@ -39,11 +39,11 @@
     "empty_template": "- No major changes to address in this release",
     "label_extractor": [
         {
-        "pattern": "^(feat|feature|fix|docs|build|test|pref|style|refactor|change|chore|ci|misc|revert|remove|dep|deprecated|security):(.*)",
+        "pattern": "^(feat|feature|bug|bugfix|fix|docs|wiki|build|dependency|dependencies|package|test|optimization|pref|optimize|style|refactor|change|chore|ci|misc|revert|remove|dep|deprecate|deprecated|security):(.*)",
         "target": "$1"
         },
         {
-        "pattern": "^(feat|feature|fix|docs|build|test|pref|style|refactor|change|chore|ci|misc|revert|remove|dep|deprecated|security)\\(front\\):(.*)",
+        "pattern": "^(feat|feature|bug|bugfix|fix|docs|wiki|build|dependency|dependencies|package|test|optimization|pref|optimize|style|refactor|change|chore|ci|misc|revert|remove|dep|deprecate|deprecated|security)\\(front\\):(.*)",
         "target": "$1(front)"
         }
     ],
