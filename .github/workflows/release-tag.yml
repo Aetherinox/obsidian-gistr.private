@@ -98,8 +98,9 @@ jobs:
               with:
                 fromTag: "${{ env.last_tag }}"
                 toTag: ${{ github.ref }}
-                configuration: changelog_config.json
+                configuration: ".github/changelog-configuration.json"
                 commitMode: true
+                ignorePreReleases: "false"
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
