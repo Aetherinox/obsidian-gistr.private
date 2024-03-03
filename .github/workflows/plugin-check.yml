@@ -73,10 +73,10 @@ jobs:
                 console.log( 'Found issue: ' + warning );
             }
 
-            const errors = '${{ steps.changed-files.outputs.modified_files }}';
-            const contents = fs.readFileSync( errors, 'utf8' );
+            const filesModified   = '${{ steps.changed-files.outputs.modified_files }}';
+            const contents        = fs.readFileSync( filesModified, 'utf8' );
 
-            console.log( errors )
+            console.log( filesModified )
             console.log( contents )
 
             if ( contents.toLowerCase( ).includes( "innerHTML" ) || contents.toLowerCase( ).includes( "outerHTML" ) )
