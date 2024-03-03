@@ -51,13 +51,13 @@ jobs:
         env:
           ADDED_FILES: ${{ steps.changed-files.outputs.added_files }}
           MODIFIED_FILES: ${{ steps.changed-files.outputs.modified_files }}
-          
+
       - name: Run Check
         uses: actions/github-script@v6
         with:
           script: |
             const fs = require('fs');
-            const errors = ${{ env.MODIFIED_FILES }};
+            const errors = '${{ steps.changed-files.outputs.added_files }}';
 
             console.log( errors )
 
