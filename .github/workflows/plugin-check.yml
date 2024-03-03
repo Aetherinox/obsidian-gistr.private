@@ -96,7 +96,10 @@ jobs:
                     return;
                 }
 
-                console.log( plugin.repository.url )
+                let repoUrl   = plugin.repository.url
+                let url       = repoUrl.split('.')[0]
+
+                console.log( url )
             })();
             
     permissions:
