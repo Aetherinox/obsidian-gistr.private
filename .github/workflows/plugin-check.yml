@@ -79,12 +79,16 @@ jobs:
             console.log( filesModified )
             console.log( filesData )
 
-            if ( filesData.toLowerCase( ).includes( "innerHTML" ) || filesData.toLowerCase( ).includes( "outerHTML" ) )
+            await ( async ( ) =>
             {
-                console.log('yes')
-                addError( `Using \`innerHTML\` and \`outerHTML\` is a security risk. Instead, use the DOM API or the Obsidian helper functions: https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
-            }
 
+                if ( filesData.toLowerCase( ).includes( "innerHTML" ) || filesData.toLowerCase( ).includes( "outerHTML" ) )
+                {
+                    console.log('yes')
+                    addError( `Using \`innerHTML\` and \`outerHTML\` is a security risk. Instead, use the DOM API or the Obsidian helper functions: https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
+                }
+
+            })();
 
             if ( errors.length > 0 || warnings.length > 0 )
             {
@@ -130,7 +134,7 @@ jobs:
                     owner:        context.repo.owner,
                     repo:         context.repo.repo,
                     pull_number:  context.issue.number,
-                    title:        `Review: ${context.issue.title}`
+                    title:        `Review: ${context.payload.pull_request.title}`
                 });
 
                 if( !context.payload.pull_request.labels.filter( label => label.name === 'Changes requested' ).length > 0 )
