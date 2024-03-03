@@ -84,19 +84,8 @@ jobs:
             {
 
 
-                if ( filesData.toLowerCase( ).includes( check_innerHtml.toLowerCase( ) ) || filesData.toLowerCase( ).includes( check_outerHtml.toLowerCase( ) ) )
-                {
-                    addError( `Using \`innerHTML\` and \`outerHTML\` is a security risk. Instead, use the DOM API or the Obsidian helper functions: https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
-                }
-
-
-                if ( filesData.toLowerCase( ).includes( check_asAny.toLowerCase( ) ) )
-                {
-                    addError( `You should not be casting to \`any\` );
-                }
-
               console.log("a");
-                let bContainsStyle  = "asd";
+
               console.log("b");
 
             })();
