@@ -114,7 +114,9 @@ jobs:
                     return;
                 }
 
+                console.log("a")
                 plugin = plugins[ 1 ];
+                console.log("b")
 
                 /*
                     splits up the JSON key:
@@ -124,6 +126,7 @@ jobs:
                         [ 'Aetherinox', 'obsidian-gistr' ]
                 /*
 
+                console.log("c")
                 let pluginUrl = `${plugin.repository.url}`
                 console.log( `${pluginUrl}` )
 
