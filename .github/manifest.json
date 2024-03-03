@@ -5,12 +5,5 @@
     "author": "Aetherinox",
     "description": "Integrate OpenGist and Github gist snippets in your notes.",
     "repo": "Aetherinox/obsidian-gistr"
-  },
-  {
-    "id": "things3-today",
-    "name": "Things3 Today",
-    "author": "wudanyang6",
-    "description": "Manage today's tasks with Things3.",
-    "repo": "wudanyang6/obsidian-things3-today"
   }
 ]
