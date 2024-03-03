@@ -114,7 +114,7 @@ jobs:
                     return;
                 }
 
-                plugin = plugins[ plugins.length - 2 ];
+                plugin = plugins[ plugins.length - 1 ];
 
                 /*
                     splits up the JSON key:
