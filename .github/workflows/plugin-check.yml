@@ -86,14 +86,17 @@ jobs:
             let plugin;
             await ( async ( ) =>
             {
-                try {
-                  plugin = JSON.parse(fs.readFileSync( 'package.json', 'utf8' ) );
-                } catch (e) {
-                  addError( 'Could not parse `package.json`, invalid JSON. ' + e.message );
-                  return;
+                try
+                {
+                    plugin = JSON.parse(fs.readFileSync( 'package.json', 'utf8' ) );
+                }
+                catch ( e )
+                {
+                    addError( 'Could not parse `package.json`, invalid JSON. ' + e.message );
+                    return;
                 }
 
-                console.log( plugin.repository )
+                console.log( plugin.repository.url )
             })();
             
     permissions:
