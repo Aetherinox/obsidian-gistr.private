@@ -100,14 +100,13 @@ jobs:
             await (async () => {
               // Validate plugin repo
 
-              plugin = "
-              {
-                "id": "gistr",
-                "name": "Gistr",
-                "author": "Aetherinox",
-                "description": "Integrate OpenGist and Github gist snippets in your notes.",
-                "repo": "Aetherinox/obsidian-gistr"
-              }"
+              let plugins = [];
+              try {
+                plugins = JSON.parse(fs.readFileSync('plugins.json', 'utf8'));
+              } catch (e) {
+                addError('Could not parse `plugins.json`, invalid JSON. ' + e.message);
+                return;
+              }
 
               let repoInfo = plugin.repo.split('/');
               if (repoInfo.length !== 2) {
