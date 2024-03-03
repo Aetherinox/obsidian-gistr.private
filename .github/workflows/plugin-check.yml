@@ -73,11 +73,19 @@ jobs:
                 console.log( 'Found issue: ' + warning );
             }
 
-            const filesModified       = '${{ steps.changed-files.outputs.modified_files }}';
-            const filesData           = fs.readFileSync( filesModified, 'utf8' );
-            const bContainsStyle      = /([A-Za-z]+\.style\.[A-Za-z]+)/g.test( filesData.toLowerCase( ) );
-            const bContainsGeneric    = /(?:^|(?<= ))(MyPlugin|MyPluginSettings|SampleSettings|SampleSettingTab|SampleModal)(?:(?= )|$)/gim.test( filesData.toLowerCase( ) );
-            const bFuncFetch          = /(fetch)\((.*)\)(\[([^\]]*)\])?/gim.test( filesData.toLowerCase( ) );
+            const filesModified               = '${{ steps.changed-files.outputs.modified_files }}';
+            const filesData                   = fs.readFileSync( filesModified, 'utf8' );
+            const bContainsStyle              = /([A-Za-z]+\.style\.[A-Za-z]+)/g.test( filesData.toLowerCase( ) );
+            const bContainsGeneric            = /(?:^|(?<= ))(MyPlugin|MyPluginSettings|SampleSettings|SampleSettingTab|SampleModal)(?:(?= )|$)/gim.test( filesData.toLowerCase( ) );
+            const bFuncFetch                  = /(fetch)\((.*)\)(\[([^\]]*)\])?/gim.test( filesData.toLowerCase( ) );
+            const bVar                        = /\b(var)\b/g.test( filesData.toLowerCase( ) );
+            const bLookBehind                 = /(\(([?:]<[^()]++|(?1))*\))/gmi.test( filesData.toLowerCase( ) );
+
+            const check_innerHtml             = "innerHTML"
+            const check_outerHtml             = "outerHTML"
+            const check_asAny                 = "as any"
+            const check_asTFile               = "as TFile"
+            const check_depGetUnpinnedLeaf    = "app.workspace.getUnpinnedLeaf"
 
             let error_Generic = "\n" + 
              "- `MyPlugin`\n" + 
@@ -85,10 +93,6 @@ jobs:
              "- `SampleSettings`\n" +
              "- `SampleSettingTab`\n" +
              "- `SampleModal`"
-
-            const check_innerHtml   = "innerHTML"
-            const check_outerHtml   = "outerHTML"
-            const check_asAny       = "as any"
 
             await ( async ( ) =>
             {
@@ -112,6 +116,24 @@ jobs:
                 }
 
                 /*
+                    as TFile
+                */
+
+                if ( filesData.toLowerCase( ).includes( check_asTFile.toLowerCase( ) ) )
+                {
+                    addError( "You should not cast `as TFile`, use `instanceof` instead to check if the item is actually a file or folder" );
+                }
+
+                /*
+                    (Deprecated) app.workspace.getUnpinnedLeaf
+                */
+
+                if ( filesData.toLowerCase( ).includes( check_depGetUnpinnedLeaf.toLowerCase( ) ) )
+                {
+                    addError( "This function is deprecated, use `this.app.workspace.getLeaf( false )` instead" );
+                }
+
+                /*
                     Using inline style
                 */
 
@@ -126,7 +148,16 @@ jobs:
 
                 if ( bFuncFetch == true )
                 {
-                    addError( "Obsidian provides the `requestUrl` method, it will make sure that network requests work on every plattform." );
+                    addError( "Do not make URL calls with `fetch( )`. Obsidian provides the `requestUrl` method which will make sure that network requests work on every plattform." );
+                }
+
+                /*
+                    Using var
+                */
+
+                if ( bVar == true )
+                {
+                    addError( "You should change all instances of `var` to **const** or **let**. var has function-level scope, and can lead to bugs." );
                 }
 
                 /*
