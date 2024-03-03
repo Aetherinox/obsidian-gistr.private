@@ -47,9 +47,12 @@ jobs:
         env:
           ADDED_FILES: ${{ steps.changed-files.outputs.added_files }}
           MODIFIED_FILES: ${{ steps.changed-files.outputs.modified_files }}
-        run: |
-          for file in ${MODIFIED_FILES}; do
-            content=`cat $file`
+      - name: Run Check
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const errors = ${{ env.MODIFIED_FILES }};
 
-            echo $content
-          done
+            console.log( errors )
+
