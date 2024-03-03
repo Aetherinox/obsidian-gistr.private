@@ -105,7 +105,7 @@ jobs:
                     Using inline style
                 */
 
-                const bContainsStyle  = /([A-Za-z]+\.style\.[A-Za-z]+)/g.test( filesData.toLowerCase( ) );
+                const bContainsStyle  = /[A-Za-z]+/g.test( filesData.toLowerCase( ) );
                 if ( bContainsStyle == true )
                 {
                     addError( `asd` );
