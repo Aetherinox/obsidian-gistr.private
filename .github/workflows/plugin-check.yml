@@ -78,14 +78,11 @@ jobs:
             const bContainsStyle      = /([A-Za-z]+\.style\.[A-Za-z]+)/g.test( filesData.toLowerCase( ) );
             const bContainsGeneric    = /(?:^|(?<= ))(MyPlugin|MyPluginSettings|SampleSettings|SampleSettingTab|SampleModal)(?:(?= )|$)/gim.test( filesData.toLowerCase( ) );
 
-            const error_Generic =
-            "
-            - `MyPlugin`
-            - `MyPluginSettings`
-            - `SampleSettings`
-            - `SampleSettingTab`
-            - `SampleModal`
-            "
+            let error_Generic = "<br> - `MyPlugin`\n" + 
+             "- `MyPluginSettings`\n" + 
+             "- `SampleSettings`\n" +
+             "- `SampleSettingTab`\n" +
+             "- `SampleModal`"
 
             const check_innerHtml   = "innerHTML"
             const check_outerHtml   = "outerHTML"
