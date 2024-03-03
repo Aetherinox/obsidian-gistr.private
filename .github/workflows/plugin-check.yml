@@ -87,6 +87,8 @@ jobs:
             const check_asTFile               = "as TFile"
             const check_depGetUnpinnedLeaf    = "app.workspace.getUnpinnedLeaf"
 
+            console.log( bLookBehind )
+
             let error_Generic = "\n" + 
              "- `MyPlugin`\n" + 
              "- `MyPluginSettings`\n" + 
