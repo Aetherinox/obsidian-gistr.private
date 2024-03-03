@@ -79,10 +79,13 @@ jobs:
             console.log( filesModified )
             console.log( filesData )
 
+            const check_innerHtml = "innerHTML"
+            const check_OuterHtml = "outerHTML"
+
             await ( async ( ) =>
             {
-
-                if ( filesData.toLowerCase( ).includes( "innerHTML" ) || filesData.toLowerCase( ).includes( "outerHTML" ) )
+                console.log(`Run Async`);
+                if ( filesData.toLowerCase( ).includes( check_innerHtml.toLowerCase( ) ) || filesData.toLowerCase( ).includes( check_OuterHtml.toLowerCase( ) ) )
                 {
                     console.log('yes')
                     addError( `Using \`innerHTML\` and \`outerHTML\` is a security risk. Instead, use the DOM API or the Obsidian helper functions: https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
