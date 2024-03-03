@@ -94,7 +94,7 @@ jobs:
                   return;
                 }
 
-                plugin = plugins[0];
+                plugin = plugins[1];
 
                 console.log( plugin.repository )
             })();
