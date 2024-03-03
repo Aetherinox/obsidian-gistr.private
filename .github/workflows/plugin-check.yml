@@ -45,7 +45,7 @@ jobs:
 
       - name: List all added files
         run: |
-          for file in ${ADDED_FILES}; do
+          for file in ${MODIFIED_FILES}; do
             echo "$file was added"
           done
         env:
@@ -57,7 +57,7 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            const errors = '${{ steps.changed-files.outputs.added_files }}';
+            const errors = '${{ steps.changed-files.outputs.modified_files }}';
 
             console.log( errors )
 
