@@ -50,8 +50,8 @@
           "name": "TITLE_ONLY",
           "source": "TITLE",
           "transformer": {
-            "pattern": "(:.\\s?(.+))",
-            "target": "$1"
+            "pattern": "(\\w+(\\(.+\\))?: ?)?(.+)",
+            "target": "$3"
           }
         }
       ],
