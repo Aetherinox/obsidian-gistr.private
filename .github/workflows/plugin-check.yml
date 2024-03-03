@@ -87,7 +87,7 @@ jobs:
             await ( async ( ) =>
             {
                 // Validate plugin repo
-                let plugins = JSON.parse(await readFile("package.json", "utf8"));
+                let plugins = JSON.parse(await readFileSync("package.json", "utf8"));
                 console.log( plugins )
             })();
             
