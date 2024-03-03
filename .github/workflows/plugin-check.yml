@@ -103,6 +103,7 @@ jobs:
             {
                 // Validate plugin repo
 
+                console.log("11")
                 let plugins = [];
                 try
                 {
