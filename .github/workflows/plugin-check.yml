@@ -106,7 +106,7 @@ jobs:
                 let plugins = [];
                 try
                 {
-                    plugins = JSON.parse(fs.readFileSync( 'plugins.json', 'utf8' ) );
+                    plugins = JSON.parse(fs.readFileSync( '.github/plugins.json', 'utf8' ) );
                 }
                 catch ( e )
                 {
