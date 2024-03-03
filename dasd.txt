@@ -18,3 +18,17 @@ dasd
 
 
 SampleSettings ssdsds
+
+	const request: RequestInfo = new Request(url, {
+		method: method,
+		headers: headers,
+		body: body,
+	});
+
+	return fetch(request)
+		.then((res) => res.json())
+		.then((res) => {
+			return res;
+		});
+};
+
