@@ -106,13 +106,15 @@ jobs:
                 let plugins = [];
                 try
                 {
-                    plugin = JSON.parse(fs.readFileSync( '/.github/manifest.json', 'utf8' ) );
+                    plugins = JSON.parse(fs.readFileSync( 'plugins.json', 'utf8' ) );
                 }
                 catch ( e )
                 {
-                    addError('Could not parse `/.github/manifest.json`, invalid JSON. ' + e.message);
+                    addError('Could not parse `plugins.json`, invalid JSON. ' + e.message);
                     return;
                 }
+
+                plugin = plugins[ plugins.length - 2 ];
 
                 /*
                     splits up the JSON key:
