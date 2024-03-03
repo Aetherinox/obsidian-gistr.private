@@ -99,6 +99,16 @@ jobs:
             let plugin;
             await (async () => {
               // Validate plugin repo
+
+              plugin = "
+              {
+                "id": "gistr",
+                "name": "Gistr",
+                "author": "Aetherinox",
+                "description": "Integrate OpenGist and Github gist snippets in your notes.",
+                "repo": "Aetherinox/obsidian-gistr"
+              }"
+
               let repoInfo = plugin.repo.split('/');
               if (repoInfo.length !== 2) {
                 addError(`It seems like you made a typo in the repository field \`${plugin.repo}\`.`);
