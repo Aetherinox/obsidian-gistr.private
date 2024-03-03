@@ -171,7 +171,6 @@ jobs:
           github.event.issue.user.login != '$env.BOT_NAME_1' &&
           github.event.issue.user.login != '$env.BOT_NAME_2' &&
           ( contains( steps.bug_body.outputs.lowercase, 'bug' ) ||
-          contains( steps.bug_body.outputs.lowercase, 'issue' ) ||
           contains( steps.bug_body.outputs.lowercase, 'broke' ) ||
           contains( steps.bug_body.outputs.lowercase, 'fails' ) ||
           contains( steps.bug_body.outputs.lowercase, 'failed' ) )
@@ -227,6 +226,7 @@ jobs:
           github.event.issue.user.login != '$env.BOT_NAME_2' &&
           ( contains( steps.feature_title.outputs.lowercase, 'feature' ) ||
           contains( steps.feature_title.outputs.lowercase, 'new' ) ||
+          contains( steps.feature_title.outputs.lowercase, 'add support' ) ||
           contains( steps.feature_title.outputs.lowercase, 'request' ) &&
           ( !startsWith( steps.feature_title.outputs.lowercase, 'feature' ) ) )
         uses: actions-cool/issues-helper@v3
@@ -245,6 +245,7 @@ jobs:
           github.event.issue.user.login != '$env.BOT_NAME_2' &&
           ( contains( steps.feature_title.outputs.lowercase, 'feature' ) ||
           contains( steps.feature_title.outputs.lowercase, 'new' ) ||
+          contains( steps.feature_title.outputs.lowercase, 'add support' ) ||
           contains( steps.feature_title.outputs.lowercase, 'request' ) )
         run: gh issue edit "$NUMBER" --add-label "$LABELS"
         env:
@@ -263,6 +264,8 @@ jobs:
           ( contains( steps.feature_body.outputs.lowercase, 'feature' ) ||
           contains( steps.feature_body.outputs.lowercase, 'new idea' ) ||
           contains( steps.feature_body.outputs.lowercase, 'can you add' ) ||
+          contains( steps.feature_body.outputs.lowercase, 'add support' ) ||
+          contains( steps.feature_body.outputs.lowercase, 'to support this' ) ||
           contains( steps.feature_body.outputs.lowercase, 'request' ) )
         run: gh issue edit "$NUMBER" --add-label "$LABELS"
         env:
