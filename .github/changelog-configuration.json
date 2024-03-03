@@ -6,7 +6,7 @@
         },
         {
             "title": "### ✨ Optimizations",
-            "labels": [ "kind/pref", "optimization", "perf", "optimize" ]
+            "labels": [ "kind/pref", "optimization", "pref", "optimize" ]
         },
         {
             "title": "### 🐛 Bugfixes",
