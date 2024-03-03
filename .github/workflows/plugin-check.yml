@@ -113,8 +113,8 @@ jobs:
                         [ 'Aetherinox', 'obsidian-gistr' ]
                 /*
 
-                let repoInfo = plugin.repository.url;
-                console.log( repoInfo );
+                let repoInfo = plugins.repository.url;
+                console.log( `${repoInfo}` );
                 if ( repoInfo.length !== 2 )
                 {
                     addError( `It seems like you made a typo in the repository field \`${plugin.repo}\`.` );
