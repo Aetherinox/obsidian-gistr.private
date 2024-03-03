@@ -15,3 +15,6 @@ dasd
             // Restore the original background color after a short delay
             contentEl.style.backgroundColor = originalBackgroundColor;
         }, 300); // Adjust the duration of the effect (in milliseconds) as needed
+
+
+SampleSettings ssdsds
