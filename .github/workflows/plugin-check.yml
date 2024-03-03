@@ -77,7 +77,6 @@ jobs:
             const filesData           = fs.readFileSync( filesModified, 'utf8' );
             const bContainsStyle      = /([A-Za-z]+\.style\.[A-Za-z]+)/g.test( filesData.toLowerCase( ) );
             const bContainsGeneric    = /(?:^|(?<= ))(MyPlugin|MyPluginSettings|SampleSettings|SampleSettingTab|SampleModal)(?:(?= )|$)/gim.test( filesData.toLowerCase( ) );
-            const badNames: string[]  = [ "MyPlugin", "MyPluginSettings", "Peter", "Amaka" ]
 
             const check_innerHtml   = "innerHTML"
             const check_outerHtml   = "outerHTML"
@@ -119,7 +118,7 @@ jobs:
 
                 if ( bContainsGeneric == true )
                 {
-                    addError( "Rename sample classes to something that makes sense. You are <b>not</b> allowed to have names" );
+                    addError( "Rename sample classes to something that makes sense. You are not allowed to have names" );
                 }
 
             })();
