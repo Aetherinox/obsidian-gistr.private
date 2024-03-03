@@ -5,5 +5,12 @@
     "author": "Aetherinox",
     "description": "Integrate OpenGist and Github gist snippets in your notes.",
     "repo": "Aetherinox/obsidian-gistr"
+  },
+  {
+    "id": "gistr",
+    "name": "Gistr",
+    "author": "Aetherinox",
+    "description": "Integrate OpenGist and Github gist snippets in your notes.",
+    "repo": "Aetherinox/obsidian-gistr"
   }
 ]
