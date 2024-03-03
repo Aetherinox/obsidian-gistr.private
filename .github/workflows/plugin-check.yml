@@ -97,7 +97,8 @@ jobs:
                 }
 
                 let repoUrl   = plugin.repository.url
-                let url       = repoUrl.split('.')[0]
+                let step1     = repoUrl.substring( repoUrl.indexOf("+") + 1);
+                let url       = (step1.substring(0, step1.lastIndexOf(".")));
 
                 console.log( url )
             })();
