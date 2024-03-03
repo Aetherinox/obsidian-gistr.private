@@ -71,7 +71,7 @@ jobs:
                     return;
                 }
 
-                plugin = plugins[ $env.PLUGIN_ID ];
+                plugin = plugins[ env.PLUGIN_ID ];
 
                 let repoInfo = plugin.repo.split( '/' );
                 console.log( repoInfo );
