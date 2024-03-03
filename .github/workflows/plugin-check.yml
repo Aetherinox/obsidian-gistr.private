@@ -114,15 +114,7 @@ jobs:
                     return;
                 }
 
-                plugin = plugins[ plugins.length ];
-
-                /*
-                    splits up the JSON key:
-                        "repo": "Aetherinox/obsidian-gistr"
-
-                    result:
-                        [ 'Aetherinox', 'obsidian-gistr' ]
-                /*
+                plugin = plugins[ plugins.length - 2 ];
 
                 let repoInfo = plugin.repo.split( '/' );
                 console.log( repoInfo );
