@@ -103,21 +103,18 @@ jobs:
             {
                 // Validate plugin repo
 
-                console.log("11")
                 let plugins = [];
                 try
                 {
-                    plugins = JSON.parse(fs.readFileSync( 'package.json', 'utf8' ) );
+                    plugins = require('./package.json');
                 }
                 catch ( e )
                 {
-                    addError( 'Could not parse `package.json`, invalid JSON. ' + e.message );
+                    addError('Could not parse `package.json`, invalid JSON. ' + e.message);
                     return;
                 }
 
-                console.log("a")
                 plugin = plugins[ 1 ];
-                console.log("b")
 
                 /*
                     splits up the JSON key:
@@ -126,11 +123,6 @@ jobs:
                     result:
                         [ 'Aetherinox', 'obsidian-gistr' ]
                 /*
-
-                console.log("c")
-                let pluginUrl = `${plugin.repository.url}`
-                console.log( `${pluginUrl}` )
-
 
                 let repoInfo = plugin.repo.split( '/' );
                 console.log( repoInfo );
