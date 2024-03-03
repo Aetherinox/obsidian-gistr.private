@@ -103,18 +103,7 @@ jobs:
             {
                 // Validate plugin repo
 
-                let plugins = [];
-                try
-                {
-                    plugins = require('./package.json');
-                }
-                catch ( e )
-                {
-                    addError('Could not parse `package.json`, invalid JSON. ' + e.message);
-                    return;
-                }
-
-                plugin = plugins[ 1 ];
+                let plugins = require('./package.json');
 
                 /*
                     splits up the JSON key:
@@ -124,7 +113,7 @@ jobs:
                         [ 'Aetherinox', 'obsidian-gistr' ]
                 /*
 
-                let repoInfo = plugin.repo.split( '/' );
+                let repoInfo = plugin.repository.url;
                 console.log( repoInfo );
                 if ( repoInfo.length !== 2 )
                 {
