@@ -74,7 +74,7 @@ jobs:
             }
 
             const filesModified     = '${{ steps.changed-files.outputs.modified_files }}';
-            const filesData         = fs.readFileSync( filesModified, 'utf8' );
+            const filesData         = fs.readFileSync( filesModified, 'utf8' ) );
             const bContainsStyle    = /([A-Za-z]+\.style\.[A-Za-z]+)/g.test( filesData.toLowerCase( ) );
 
             const check_innerHtml   = "innerHTML"
