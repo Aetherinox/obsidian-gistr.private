@@ -74,13 +74,14 @@ jobs:
             }
 
             const filesModified   = '${{ steps.changed-files.outputs.modified_files }}';
-            const contents        = fs.readFileSync( filesModified, 'utf8' );
+            const filesData        = fs.readFileSync( filesModified, 'utf8' );
 
             console.log( filesModified )
-            console.log( contents )
+            console.log( filesData )
 
-            if ( contents.toLowerCase( ).includes( "innerHTML" ) || contents.toLowerCase( ).includes( "outerHTML" ) )
+            if ( filesData.toLowerCase( ).includes( "innerHTML" ) || filesData.toLowerCase( ).includes( "outerHTML" ) )
             {
+                console.log('yes')
                 addError( `Using \`innerHTML\` and \`outerHTML\` is a security risk. Instead, use the DOM API or the Obsidian helper functions: https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
             }
 
@@ -129,7 +130,7 @@ jobs:
                     owner:        context.repo.owner,
                     repo:         context.repo.repo,
                     pull_number:  context.issue.number,
-                    title:        `Review: ${process.env.TITLE}`
+                    title:        `Review: ${context.issue.title}`
                 });
 
                 if( !context.payload.pull_request.labels.filter( label => label.name === 'Changes requested' ).length > 0 )
