@@ -50,7 +50,6 @@
           "name": "TITLE_ONLY",
           "source": "TITLE",
           "transformer": {
-            "method": "regexr",
             "pattern": ": ?(.+)|(\\(.+)",
             "target": "$2"
           }
