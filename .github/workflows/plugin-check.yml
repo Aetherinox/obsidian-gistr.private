@@ -30,13 +30,11 @@ jobs:
   plugin-validation:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
           ref: "refs/pull/${{ github.event.number }}/merge"
-      - name: Use Node.js
         uses: actions/setup-node@v2
-      - name: Run Check
         uses: actions/github-script@v6
         with:
           script: |
