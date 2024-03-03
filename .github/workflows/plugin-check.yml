@@ -57,8 +57,128 @@ jobs:
         with:
           script: |
             const fs = require('fs');
+
+            const escapeHtml = (unsafe) => unsafe.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+            const errors = [];
+            const addError = (error) =>
+            {
+                errors.push(`:x: ${error}`);
+                console.log('Found issue: ' + error);
+            };
+
+            const warnings = [];
+            const addWarning = ( warning ) =>
+            {
+                warnings.push(`:warning: ${warning}`);
+                console.log( 'Found issue: ' + warning );
+            }
+
             const errors = '${{ steps.changed-files.outputs.modified_files }}';
             const contents = fs.readFileSync( errors, 'utf8' );
 
             console.log( errors )
             console.log( contents )
+
+            if ( contents.toLowerCase( ).includes( "innerHTML" ) || contents.toLowerCase( ).includes( "outerHTML" ) )
+            {
+                addError( `Using \`innerHTML\` and \`outerHTML\` is a security risk. Instead, use the DOM API or the Obsidian helper functions: https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
+            }
+
+
+            if ( errors.length > 0 || warnings.length > 0 )
+            {
+                let message = [`#### Hello!\n`]
+                message.push(`**I found the following issues in your plugin submission**\n`);
+
+                if ( errors.length > 0 )
+                {
+                    message.push( `**Errors:**\n` );
+                    message = message.concat( errors );
+                    message.push( `\n---\n` );
+                }
+
+                if ( warnings.length > 0 )
+                {
+                    message.push( `**Warnings:**\n` );
+                    message = message.concat( warnings );
+                    message.push( `\n---\n` );
+                }
+
+                message.push(`<sup>This check was done automatically. Do <b>NOT</b> open a new PR for re-validation. Instead, to trigger this check again, make a change to your PR and wait a few minutes, or close and re-open it.</sup>`);
+
+                await github.rest.issues.createComment(
+                {
+                    issue_number:   context.issue.number,
+                    owner:          context.repo.owner,
+                    repo:           context.repo.repo,
+                    body:           message.join('\n'),
+                });
+            }
+            const labels = [];
+
+            if ( errors.length > 0 )
+            {
+                labels.push( "Validation failed" );
+                core.setFailed( "Failed to validate pull request" );
+            }
+
+            if ( errors.length === 0 )
+            {
+                await github.rest.pulls.update(
+                {
+                    owner:        context.repo.owner,
+                    repo:         context.repo.repo,
+                    pull_number:  context.issue.number,
+                    title:        `Add plugin: ${plugin.name}`
+                });
+
+                if( !context.payload.pull_request.labels.filter( label => label.name === 'Changes requested' ).length > 0 )
+                {
+                    labels.push("Ready for review");
+                }
+            }
+
+            if ( context.payload.pull_request.labels.filter( label => label.name === 'Changes requested' ).length > 0 )
+            {
+                labels.push('Changes requested');
+            }
+
+            if ( context.payload.pull_request.labels.filter( label => label.name === 'Additional review required' ).length > 0 )
+            {
+                labels.push( 'Additional review required' );
+            }
+
+            if (context.payload.pull_request.labels.filter(label => label.name === 'Minor changes requested').length > 0)
+            {
+                labels.push( 'Minor changes requested' );
+            }
+
+            if (context.payload.pull_request.labels.filter(label => label.name === 'requires author rebase').length > 0)
+            {
+                labels.push( 'requires author rebase' );
+            }
+
+            if (context.payload.pull_request.labels.filter(label => label.name === 'Installation not recommended').length > 0)
+            {
+                labels.push( 'Installation not recommended' );
+            }
+
+            if (context.payload.pull_request.labels.filter( label => label.name === 'Changes made' ).length > 0 )
+            {
+                labels.push( 'Changes made' );
+            }
+            
+            if ( context.payload.pull_request.labels.filter( label => label.name === 'Skipped code scan' ).length > 0 )
+            {
+                labels.push( 'Skipped code scan' );
+            }
+
+            labels.push( 'Pull Request' );
+
+            await github.rest.issues.setLabels(
+            {
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                labels,
+            });
