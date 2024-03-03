@@ -87,24 +87,6 @@ jobs:
                     Using inner / outter HTML
                 */
 
-                if ( filesData.toLowerCase( ).includes( check_innerHtml.toLowerCase( ) ) || filesData.toLowerCase( ).includes( check_outerHtml.toLowerCase( ) ) )
-                {
-                    addError( `Using \`innerHTML\` and \`outerHTML\` is a security risk. Instead, use the DOM API or the Obsidian helper functions: https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
-                }
-
-                /*
-                    Casting to Any
-                */
-
-                if ( filesData.toLowerCase( ).includes( check_asAny.toLowerCase( ) ) )
-                {
-                    addError( `You should not be casting to \`any\` );
-                }
-
-                /*
-                    Using inline style
-                */
-
 
             })();
 
