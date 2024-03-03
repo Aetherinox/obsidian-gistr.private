@@ -100,7 +100,7 @@ jobs:
 
                 if ( filesData.toLowerCase( ).includes( check_asAny.toLowerCase( ) ) )
                 {
-                    addError( `You should not be casting to \`any\` );
+                    addError( "" );
                 }
 
             })();
