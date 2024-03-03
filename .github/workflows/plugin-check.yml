@@ -86,8 +86,13 @@ jobs:
             let plugin;
             await ( async ( ) =>
             {
-                // Validate plugin repo
-                let plugins = JSON.parse(await readFileSync("package.json", "utf8"));
+                let plugins = [];
+                try {
+                  plugins = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+                } catch (e) {
+                  addError('Could not parse `package.json`, invalid JSON. ' + e.message);
+                  return;
+                }
                 console.log( plugins )
             })();
             
