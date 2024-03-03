@@ -77,6 +77,7 @@ jobs:
             const filesData           = fs.readFileSync( filesModified, 'utf8' );
             const bContainsStyle      = /([A-Za-z]+\.style\.[A-Za-z]+)/g.test( filesData.toLowerCase( ) );
             const bContainsGeneric    = /(?:^|(?<= ))(MyPlugin|MyPluginSettings|SampleSettings|SampleSettingTab|SampleModal)(?:(?= )|$)/gim.test( filesData.toLowerCase( ) );
+            const bFuncFetch          = /(fetch)\((.*)\)(\[([^\]]*)\])?/gim.test( filesData.toLowerCase( ) );
 
             let error_Generic = "\n" + 
              "- `MyPlugin`\n" + 
@@ -117,6 +118,15 @@ jobs:
                 if ( bContainsStyle == true )
                 {
                     addError( "You should avoid assigning `inline styles` via JavaScript or in HTML. Move all of these styles into CSS so that they are more easily adaptable by themes and snippets." );
+                }
+
+                /*
+                    Using fetch
+                */
+
+                if ( bFuncFetch == true )
+                {
+                    addError( "Obsidian provides the `requestUrl` method, it will make sure that network requests work on every plattform." );
                 }
 
                 /*
