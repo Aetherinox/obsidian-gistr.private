@@ -73,30 +73,59 @@ jobs:
                 console.log( 'Found issue: ' + warning );
             }
 
-            const filesModified   = '${{ steps.changed-files.outputs.modified_files }}';
-            const filesData        = fs.readFileSync( filesModified, 'utf8' );
+            const filesModified     = '${{ steps.changed-files.outputs.modified_files }}';
+            const filesData         = fs.readFileSync( filesModified, 'utf8' );
 
-            console.log( filesModified )
-            console.log( filesData )
-
-            const check_innerHtml = "innerHTML"
-            const check_OuterHtml = "outerHTML"
+            const check_innerHtml   = "innerHTML"
+            const check_outerHtml   = "outerHTML"
+            const check_asAny       = "as any"
 
             await ( async ( ) =>
             {
-                console.log(`Run Async`);
-                if ( filesData.toLowerCase( ).includes( check_innerHtml.toLowerCase( ) ) || filesData.toLowerCase( ).includes( check_OuterHtml.toLowerCase( ) ) )
+
+                /*
+                    Using inner / outter HTML
+                */
+
+                if ( filesData.toLowerCase( ).includes( check_innerHtml.toLowerCase( ) ) || filesData.toLowerCase( ).includes( check_outerHtml.toLowerCase( ) ) )
                 {
-                    console.log('yes')
                     addError( `Using \`innerHTML\` and \`outerHTML\` is a security risk. Instead, use the DOM API or the Obsidian helper functions: https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
+                }
+
+                /*
+                    Casting to Any
+                */
+
+                if ( filesData.toLowerCase( ).includes( check_asAny.toLowerCase( ) ) )
+                {
+                    addError( `You should not be casting to \`any\` );
+                }
+
+                /*
+                    Using inline style
+                */
+
+                const bContainsStyle  = /([A-Za-z]+\.style\.[A-Za-z]+)/g.test( filesData.toLowerCase( ) );
+                if ( bContainsStyle == true )
+                {
+                    addError( `You should avoid assigning \`inline styles\` via JavaScript or in HTML. Move all of these styles into CSS so that they are more easily adaptable by themes and snippets.` );
                 }
 
             })();
 
             if ( errors.length > 0 || warnings.length > 0 )
             {
+
+                /*
+                    Greeting
+                */
+
                 let message = [`#### Hello!\n`]
-                message.push(`**I found the following issues in your plugin submission**\n`);
+                message.push( `**I found the following issues in your pull request:**\n` );
+
+                /*
+                    Errors
+                */
 
                 if ( errors.length > 0 )
                 {
@@ -105,6 +134,10 @@ jobs:
                     message.push( `\n---\n` );
                 }
 
+                /*
+                    Warnings
+                */
+
                 if ( warnings.length > 0 )
                 {
                     message.push( `**Warnings:**\n` );
@@ -112,7 +145,7 @@ jobs:
                     message.push( `\n---\n` );
                 }
 
-                message.push(`<sup>This check was done automatically. Do <b>NOT</b> open a new PR for re-validation. Instead, to trigger this check again, make a change to your PR and wait a few minutes, or close and re-open it.</sup>`);
+                message.push( `<sup>This check was done automatically. Do <b>NOT</b> open a new PR for re-validation. Instead, to trigger this check again, make a change to your PR and wait a few minutes, or close and re-open it.</sup>` );
 
                 await github.rest.issues.createComment(
                 {
@@ -122,6 +155,7 @@ jobs:
                     body:           message.join('\n'),
                 });
             }
+    
             const labels = [];
 
             if ( errors.length > 0 )
