@@ -108,7 +108,7 @@ jobs:
                 return;
               }
 
-              plugin = plugins[plugins.length - 1];
+              plugin = plugins[ plugins.length - 2 ];
 
               let repoInfo = plugin.repo.split('/');
               if (repoInfo.length !== 2) {
@@ -126,6 +126,8 @@ jobs:
               } catch (e) {
                 addError(`It seems like you made a typo in the repository field \`${plugin.repo}\`.`);
               }
+
+              console.log("yes")
 
               let manifest = null;
               try {
