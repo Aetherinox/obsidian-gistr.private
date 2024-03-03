@@ -127,7 +127,7 @@ jobs:
 
                 if ( bContainsGeneric == true )
                 {
-                    addError( "Rename sample classes to something that makes sense. You are <b>not</b> allowed to have names such as: ${{ error_Generic }}" );
+                    addError( "Rename sample classes to something that makes sense. You are <b>not</b> allowed to have names" );
                 }
 
             })();
