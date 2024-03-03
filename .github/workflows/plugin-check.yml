@@ -88,11 +88,6 @@ jobs:
                     addError( `Using \`innerHTML\` and \`outerHTML\` is a security risk. Instead, use the DOM API or the Obsidian helper functions https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
                 }
 
-                if ( filesData.toLowerCase( ).includes( check_asAny.toLowerCase( ) ) )
-                {
-                    addError( `You should not be casting to \`any\` );
-                }
-
                 const bContainsStyle  = /([A-Za-z]+\.style\.[A-Za-z]+)/g.test( filesData.toLowerCase( ) );
                 if ( bContainsStyle == true )
                 {
