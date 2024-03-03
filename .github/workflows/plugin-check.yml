@@ -73,15 +73,14 @@ jobs:
                 console.log( 'Found issue: ' + warning );
             }
 
-            console.log("a")
             const filesModified     = '${{ steps.changed-files.outputs.modified_files }}';
             const filesData         = fs.readFileSync( filesModified, 'utf8' );
             const bContainsStyle    = /([A-Za-z]+\.style\.[A-Za-z]+)/g.test( filesData.toLowerCase( ) );
-            console.log("b")
+
             const check_innerHtml   = "innerHTML"
             const check_outerHtml   = "outerHTML"
             const check_asAny       = "as any"
-            console.log("ac")
+
             await ( async ( ) =>
             {
 
@@ -100,7 +99,16 @@ jobs:
 
                 if ( filesData.toLowerCase( ).includes( check_asAny.toLowerCase( ) ) )
                 {
-                    addError( "" );
+                    addError( "dasd" );
+                }
+
+                /*
+                    Using inline style
+                */
+
+                if ( bContainsStyle == true )
+                {
+                    addError( "asdasd" );
                 }
 
             })();
