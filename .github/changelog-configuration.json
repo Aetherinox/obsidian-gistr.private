@@ -51,8 +51,8 @@
           "source": "TITLE",
           "transformer": {
             "method": "regexr",
-            "pattern": "(\\w+(\\(.+\\))?: ?)?(.+)",
-            "target": "$3"
+            "pattern": ": ?(.+)|(\\(.+)",
+            "target": "$2"
           }
         }
       ],
