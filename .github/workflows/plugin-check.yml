@@ -83,6 +83,10 @@ jobs:
             await ( async ( ) =>
             {
 
+                if ( filesData.toLowerCase( ).includes( check_innerHtml.toLowerCase( ) ) || filesData.toLowerCase( ).includes( check_outerHtml.toLowerCase( ) ) )
+                {
+                    addError( `Using \`innerHTML\` and \`outerHTML\` is a security risk. Instead, use the DOM API or the Obsidian helper functions https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
+                }
 
             })();
 
