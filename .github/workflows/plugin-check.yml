@@ -84,12 +84,26 @@ jobs:
             const fs = require('fs');
 
             const escapeHtml = (unsafe) => unsafe.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+            const errors = [];
+            const addError = (error) =>
+            {
+                errors.push(`:x: ${error}`);
+                console.log('Found issue: ' + error);
+            };
+
+            const warnings = [];
+            const addWarning = ( warning ) =>
+            {
+                warnings.push(`:warning: ${warning}`);
+                console.log( 'Found issue: ' + warning );
+            }
+
             let plugin;
             await ( async ( ) =>
             {
                 // Validate plugin repo
-
-                let plugins = require('./package.json');
+                let plugins = JSON.parse(await readFile("package.json", "utf8"));
+                const plugins = '{ "name": "Foo", "description": "Bar" }';
 
                 /*
                     splits up the JSON key:
@@ -100,7 +114,7 @@ jobs:
                 /*
 
                 let repoInfo = plugins.repository.url;
-                console.log( `${repoInfo}` );
+                console.log( `${repoInfo} );
                 if ( repoInfo.length !== 2 )
                 {
                     addError( `It seems like you made a typo in the repository field \`${plugin.repo}\`.` );
@@ -124,10 +138,84 @@ jobs:
 
                 console.log( "Got repo info" )
 
+                let manifest = null;
+                try
+                {
+                    let manifestFile = await github.rest.repos.getContent({
+                      owner,
+                      repo,
+                      path: 'manifest.json',
+                    });
+
+                    manifest = JSON.parse( Buffer.from( manifestFile.data.content, 'base64' ).toString( 'utf-8' ) );
+                }
+                catch ( e )
+                {
+                    addError( `You don't have a \`manifest.json\` at the root of your repo, or it could not be parsed.` );
+                }
 
                 if (manifest)
                 {
                     console.log( "Found manifest.json" )
+
+                    if ( manifest.id !== plugin.id )
+                    {
+                        addError(`Plugin ID mismatch, the ID in this PR (\`${plugin.id}\`) is not the same as the one in your repo (\`${manifest.id}\`). If you just changed your plugin ID, remember to change it in the manifest.json in your repo and your latest GitHub release.`);
+                    }
+
+                    if ( manifest.name !== plugin.name )
+                    {
+                        addError(`Plugin name mismatch, the name in this PR (\`${plugin.name}\`) is not the same as the one in your repo (\`${manifest.name}\`). If you just changed your plugin name, remember to change it in the manifest.json in your repo and your latest GitHub release.`);
+                    }
+
+                    if ( manifest.authorUrl )
+                    {
+                        if ( manifest.authorUrl === "https://obsidian.md" )
+                        {
+                            addError(`The \`authorUrl\` field in your manifest should not point to the Obsidian Website. If you don't have a website you can just point it to your GitHub profile.`);
+                        }
+
+                        if ( manifest.authorUrl.toLowerCase( ).includes( "github.com/" + plugin.repo.toLowerCase( ) ) )
+                        {
+                            addWarning( `The \`authorUrl\` field in your manifest should not point to the GitHub repository of the plugin.` );
+                        }
+                    }
+
+                    if ( manifest.fundingUrl && manifest.fundingUrl === "https://obsidian.md/pricing" )
+                    {
+                        addError( `The \`fundingUrl\` field in your manifest should not point to the Obsidian Website, If you don't have a link were users can donate to you, you can just omit this.` );
+                    }
+
+                    if ( !/^[0-9.]+$/.test( manifest.version ) )
+                    {
+                        addError( 'Your latest version number is not valid. Only numbers and dots are allowed.' );
+                    }
+
+                    try
+                    {
+                        let release = await github.rest.repos.getReleaseByTag(
+                        {
+                            owner,
+                            repo,
+                            tag: manifest.version,
+                        });
+
+                        const assets = release.data.assets || [];
+                        if ( !assets.find(p => p.name === 'main.js' ) )
+                        {
+                            addError( 'Your latest Release is missing the `main.js` file.' );
+                        }
+
+                        if ( !assets.find(p => p.name === 'manifest.json' ) )
+                        {
+                            addError( 'Your latest Release is missing the `manifest.json` file.' );
+                        }
+
+                    }
+                    catch ( e )
+                    {
+                        addError(`Unable to find a release with the tag \`${manifest.version}\`. Make sure that the version in your manifest.json file in your repo points to the correct Github Release.`);
+                    }
                 }
 
                 try
