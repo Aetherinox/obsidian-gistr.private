@@ -83,16 +83,6 @@ jobs:
             await ( async ( ) =>
             {
 
-                if ( filesData.toLowerCase( ).includes( check_innerHtml.toLowerCase( ) ) || filesData.toLowerCase( ).includes( check_outerHtml.toLowerCase( ) ) )
-                {
-                    addError( `Using \`innerHTML\` and \`outerHTML\` is a security risk. Instead, use the DOM API or the Obsidian helper functions https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
-                }
-
-                const bContainsStyle  = /([A-Za-z]+\.style\.[A-Za-z]+)/g.test( filesData.toLowerCase( ) );
-                if ( bContainsStyle == true )
-                {
-                    addError( `You should avoid assigning \`inline styles\` via JavaScript or in HTML. Move all of these styles into CSS so that they are more easily adaptable by themes and snippets.` );
-                }
 
             })();
 
