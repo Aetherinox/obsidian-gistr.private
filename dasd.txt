@@ -5,3 +5,13 @@ sadasd
 
 showErrorTooltip(text.inputEl as any, validationResult);
 dasd
+
+        // Save the current background color
+        const originalBackgroundColor = '';
+
+        // Add a transition effect (e.g., change background color to yellow briefly)
+        contentEl.style.backgroundColor = backgroundColor;
+        setTimeout(() => {
+            // Restore the original background color after a short delay
+            contentEl.style.backgroundColor = originalBackgroundColor;
+        }, 300); // Adjust the duration of the effect (in milliseconds) as needed
