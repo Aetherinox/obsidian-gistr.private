@@ -182,3 +182,7 @@ jobs:
                 repo: context.repo.repo,
                 labels,
             });
+        permissions:
+          contents: read
+          issues: write
+          pull-requests: write
