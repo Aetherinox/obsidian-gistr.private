@@ -108,7 +108,7 @@ jobs:
                 const bContainsStyle  = /([A-Za-z]+\.style\.[A-Za-z]+)/g.test( filesData.toLowerCase( ) );
                 if ( bContainsStyle == true )
                 {
-                    addError( `You should avoid assigning \`inline styles\` via JavaScript or in HTML. Move all of these styles into CSS so that they are more easily adaptable by themes and snippets.` );
+                    addError( `asd` );
                 }
 
             })();
