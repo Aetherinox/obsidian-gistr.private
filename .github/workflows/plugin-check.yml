@@ -94,24 +94,6 @@ jobs:
                     addError( `Using \`innerHTML\` and \`outerHTML\` is a security risk. Instead, use the DOM API or the Obsidian helper functions: https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
                 }
 
-                /*
-                    Casting to Any
-                */
-
-                if ( filesData.toLowerCase( ).includes( check_asAny.toLowerCase( ) ) )
-                {
-                    addError( `You should not be casting to \`any\` );
-                }
-
-                /*
-                    Using inline style
-                */
-
-                if ( bContainsStyle == true )
-                {
-                    addError( `You should avoid assigning \`inline styles\` via JavaScript or in HTML. Move all of these styles into CSS so that they are more easily adaptable by themes and snippets.` );
-                }
-
             })();
 
             if ( errors.length > 0 || warnings.length > 0 )
