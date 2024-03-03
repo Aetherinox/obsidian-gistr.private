@@ -106,10 +106,7 @@ jobs:
                 */
 
                 const bContainsStyle  = /[A-Za-z]+/g.test( filesData.toLowerCase( ) );
-                if ( bContainsStyle == true )
-                {
-                    addError( `asd` );
-                }
+
 
             })();
 
