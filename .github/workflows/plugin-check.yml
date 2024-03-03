@@ -125,7 +125,7 @@ jobs:
                 /*
 
                 let pluginUrl = `${plugin.repository.url}`
-                console.log( pluginUrl )
+                console.log( `${pluginUrl}` )
 
 
                 let repoInfo = plugin.repo.split( '/' );
