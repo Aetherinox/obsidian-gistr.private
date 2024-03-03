@@ -86,15 +86,12 @@ jobs:
             let plugin;
             await ( async ( ) =>
             {
-                let plugins = [];
                 try {
-                  plugins = JSON.parse(fs.readFileSync( 'package.json', 'utf8' ) );
+                  plugin = JSON.parse(fs.readFileSync( 'package.json', 'utf8' ) );
                 } catch (e) {
                   addError( 'Could not parse `package.json`, invalid JSON. ' + e.message );
                   return;
                 }
-
-                plugin = plugins[1];
 
                 console.log( plugin.repository )
             })();
