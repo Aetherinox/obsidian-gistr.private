@@ -95,9 +95,9 @@ jobs:
                     addError( `You should not be casting to \`any\` );
                 }
 
-
-                const bContainsStyle  = "asd";
-
+              console.log("a");
+                let bContainsStyle  = "asd";
+              console.log("b");
 
             })();
 
