@@ -18,7 +18,7 @@ on:
 # ---------------------------------------------------------------------------------------
 
 env:
-    PLUGIN_NAME: gistr
+    PLUGIN_ID: 2
 
 # ---------------------------------------------------------------------------------------
 #   jobs
@@ -71,7 +71,7 @@ jobs:
                     return;
                 }
 
-                plugin = plugins[ plugins.length - 1 ];
+                plugin = plugins[ $env.PLUGIN_ID ];
 
                 let repoInfo = plugin.repo.split( '/' );
                 console.log( repoInfo );
