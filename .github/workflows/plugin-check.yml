@@ -78,7 +78,7 @@ jobs:
             const bContainsStyle      = /([A-Za-z]+\.style\.[A-Za-z]+)/g.test( filesData.toLowerCase( ) );
             const bContainsGeneric    = /(?:^|(?<= ))(MyPlugin|MyPluginSettings|SampleSettings|SampleSettingTab|SampleModal)(?:(?= )|$)/gim.test( filesData.toLowerCase( ) );
 
-            let error_Generic = "" + 
+            let error_Generic = "\n" + 
              "- `MyPlugin`\n" + 
              "- `MyPluginSettings`\n" + 
              "- `SampleSettings`\n" +
