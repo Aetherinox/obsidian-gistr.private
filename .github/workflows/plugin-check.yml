@@ -49,5 +49,7 @@ jobs:
           MODIFIED_FILES: ${{ steps.changed-files.outputs.modified_files }}
         run: |
           for file in ${MODIFIED_FILES}; do
-            echo "$file was added"
+            content=`cat $file`
+
+            echo $content
           done
