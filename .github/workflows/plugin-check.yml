@@ -99,7 +99,7 @@ jobs:
 
                 if ( filesData.toLowerCase( ).includes( check_asAny.toLowerCase( ) ) )
                 {
-                    addError( "dasd" );
+                    addError( "You should not be casting to `any`" );
                 }
 
                 /*
@@ -108,7 +108,7 @@ jobs:
 
                 if ( bContainsStyle == true )
                 {
-                    addError( "asdasd" );
+                    addError( `You should avoid assigning \`inline styles\` via JavaScript or in HTML. Move all of these styles into CSS so that they are more easily adaptable by themes and snippets.` );
                 }
 
             })();
