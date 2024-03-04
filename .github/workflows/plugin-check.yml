@@ -130,13 +130,14 @@ jobs:
                 const bContainsGeneric            = /(?:^|(?<= ))(MyPlugin|MyPluginSettings|SampleSettings|SampleSettingTab|SampleModal|Sample Plugin|my-plugin)(?:(?= )|$)/gim.test( filesData );
                 const bFuncFetch                  = /(fetch)\((.*)\)(\[([^\]]*)\])?/gim.test( filesData );
                 const bVar                        = /^(?:var|)\s(\w+)\s*=\s*/gm.test( filesData );
-                const bLookBehind                 = /(\(([?:]<[^()]+|)*\))/gmi.test( filesData );
+                const bLookBehind                 = /\(\?<[=!].*?\)/gmi.test( filesData );
                 const bMarkdownHtmlNode           = /new\s+NodeHtmlMarkdown/gmi.test( filesData );
                 const bAsTFile                    = /as\s+TFile/g.test( filesData );
                 const bAsTFolder                  = /as\s+TFolder/g.test( filesData );
                 const bAsAny                      = /\((.*? as Any\s*)\)/gi.test( filesData );
-                const bInnerHTML                  = /^\s?[a-zA-Z0-9_]+\.innerHTML*\s?.*$/gm.test( filesData );
-                const bOuterHTML                  = /^\s?[a-zA-Z0-9_]+\.outerHTML*\s?.*$/gm.test( filesData );
+                const bInnerHTML                  = /^\s?.*[a-zA-Z0-9_]+\.innerHTML*\s?.*$/gm.test( filesData );
+                const bOuterHTML                  = /^\s?.*[a-zA-Z0-9_]+\.outerHTML*\s?.*$/gm.test( filesData );
+                const bFuncConsoleLog             = /(console.log)\((.*)\)(\[([^\]]*)\])?/gim.test( filesData );
 
                 const check_depGetUnpinnedLeaf    = "app.workspace.getUnpinnedLeaf"
 
@@ -254,6 +255,15 @@ jobs:
                   if ( bContainsGeneric == true )
                   {
                       addError( "Rename sample classes to something that makes sense. You are not allowed to have names such as: " + error_Generic );
+                  }
+
+                  /*
+                      console.log found
+                  */
+
+                  if ( bFuncConsoleLog == true )
+                  {
+                      addWarning( "Avoid unnecessary logging or ensure logging only occurs in development environment." );
                   }
 
                   if ( errors.length > 0 || warnings.length > 0 )
