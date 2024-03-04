@@ -97,7 +97,11 @@ jobs:
             "- `MyPluginSettings`\n" + 
             "- `SampleSettings`\n" +
             "- `SampleSettingTab`\n" +
-            "- `SampleModal`"
+            "- `SampleModal`\n"
+
+            let warn_BadWords = "\n" + 
+            "- `Obsidian`\n" + 
+            "- `Settings`\n"
 
             /*
                 Loop files
@@ -127,7 +131,6 @@ jobs:
                 const filesModified               = file;
                 const filesData                   = fs.readFileSync( filesModified, 'utf8' );
                 const bContainsStyle              = /([A-Za-z]+\.style\.[A-Za-z]+)/gi.test( filesData );
-                const bContainsGeneric            = /(?:^|(?<= ))(MyPlugin|MyPluginSettings|SampleSettings|SampleSettingTab|SampleModal|Sample Plugin|my-plugin)(?:(?= )|$)/gim.test( filesData );
                 const bFuncFetch                  = /(fetch)\((.*)\)(\[([^\]]*)\])?/gim.test( filesData );
                 const bVar                        = /^(?:var|)\s(\w+)\s*=\s*/gm.test( filesData );
                 const bLookBehind                 = /\(\?<[=!].*?\)/gmi.test( filesData );
@@ -141,6 +144,10 @@ jobs:
                 const bFuncSetTimeout             = /(setTimeout)\((.*)\)(\[([^\]]*)\])?/gim.test( filesData );
                 const bFuncFS_Chk1                = /(require)\s?\((\s?(?:'|")fs(?:'|"))\s?\)?/gim.test( filesData );
                 const bFuncFS_Chk2                = /from\s+(?:'|")fs(?:'|")\s?/gim.test( filesData );
+                const bFuncFS_ExistsSync          = /(fs.existsSync)\((.*)\)(\[([^\]]*)\])?/gm.test( filesData );
+                const bFuncFS_MkdirSync           = /(fs.mkdirSync)\((.*)\)(\[([^\]]*)\])?/gm.test( filesData );
+                const bFoundBadWord               = /(?:'|").*(Obsidian|Settings|General).*(?:'|")?/gmi.test( filesData );
+                const bContainsGeneric            = /(?:^|(?<= ))(MyPlugin|MyPluginSettings|SampleSettings|SampleSettingTab|SampleModal|Sample Plugin|my-plugin)(?:(?= )|$)/gim.test( filesData );
 
                 const check_depGetUnpinnedLeaf    = "app.workspace.getUnpinnedLeaf"
 
@@ -270,12 +277,39 @@ jobs:
                   }
 
                   /*
+                      require("fs") / fs.existsSync
+                  */
+
+                  if ( bFuncFS_ExistsSync == true  )
+                  {
+                      addError( "`fs` import only available from Node.js runtime, this will throw errors for users running Obsidian on mobile. For `fs.existsSync( )`, utilize Obsidian API -> `this.app.vault.adapter.exists( )`" );
+                  }
+
+                  /*
+                      require("fs") / fs.mkdirSync
+                  */
+
+                  if ( bFuncFS_MkdirSync == true  )
+                  {
+                      addError( "`fs` import only available from Node.js runtime, this will throw errors for users running Obsidian on mobile. For `fs.mkdirSync( )`, utilize Obsidian API -> `this.app.vault.adapter.mkdir( )`" );
+                  }
+
+                  /*
                       console.log found
                   */
 
                   if ( bFuncConsoleLog == true )
                   {
                       addWarning( "Avoid unnecessary logging or ensure logging only occurs in development environment." );
+                  }
+
+                  /*
+                      Bad words found
+                  */
+
+                  if ( bFoundBadWord == true )
+                  {
+                      addWarning( "A restricted word was found in your code. Obsidian developers do not allow words in strings such as: " + warn_BadWords );
                   }
 
                   /*
