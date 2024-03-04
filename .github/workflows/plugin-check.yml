@@ -99,14 +99,14 @@ jobs:
             message.push        ( "\n<br />\n\n---\n<br />\n\n" );
             message.push        ( "### Statistics\n" );
 
-            let message =
+            let md_table =
             '
               | asd | asdasd |
               | --- | --- |
               | aa | aa |
             '
             
-            message.push        ( message );
+            message.push        ( md_table );
 
             let error_Generic = "\n" + 
             "- `MyPlugin`\n" + 
