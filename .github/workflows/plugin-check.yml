@@ -99,15 +99,15 @@ jobs:
             message.push        ( `The details of our automated scan for your pull request are listed below. If our scan detected errors, they must be corrected before this pull request will be advanced to the review stage:\n` );
 
             message.push        ( "\n<br />\n\n---\n<br />\n\n" );
-            message.push        ( "### Statistics\n" );
+            message.push        ( "### About\n" );
             
             let md_table =
             `
               | Category | Value |
               | --- | --- |
-              | Repo | ` + context.repo.repo + ` |
-              | Source Branch | [ ` + context.payload.pull_request.base.ref + `](https://github.com/` + context.repo.owner + `/` + context.repo.repo + `/tree/` + context.payload.pull_request.base.ref + `) |
-              | Target Branch | [ ` + context.payload.pull_request.head.ref + `](https://github.com/` + context.repo.owner + `/` + context.repo.repo + `/tree/` + context.payload.pull_request.head.ref + `) |
+              | Repo | [ ` + context.repo.repo + ` ](https://github.com/` + context.repo.owner + `/` + context.repo.repo + `) |
+              | Branch: Source | [ ` + context.payload.pull_request.base.ref + `](https://github.com/` + context.repo.owner + `/` + context.repo.repo + `/tree/` + context.payload.pull_request.base.ref + `) |
+              | Branch: Target | [ ` + context.payload.pull_request.head.ref + `](https://github.com/` + context.repo.owner + `/` + context.repo.repo + `/tree/` + context.payload.pull_request.head.ref + `) |
               | Added Files | ${{ steps.changed-files.outputs.added_files_count }} |
               | Modified Files | ${{ steps.changed-files.outputs.all_modified_files_count }} |
               | Renamed Files | ${{ steps.changed-files.outputs.renamed_files_count }} |
