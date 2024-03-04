@@ -339,7 +339,7 @@ jobs:
                 labels.push( 'Skipped code scan' );
             }
 
-            labels.push( ${{ env.LABEL_CHECK_PULL_REQ }} );
+            labels.push( "asd" );
 
             await github.rest.issues.setLabels(
             {
