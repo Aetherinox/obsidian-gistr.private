@@ -89,7 +89,7 @@ jobs:
             const files_List    = `${{ steps.changed-files.outputs.modified_files }}`
             const files_Array   = files_List.split(',')
 
-            let message = [ `## Report\n` ]
+            let message = [ "## Automatic Self-Check - #" + context.issue.number + "\n" ]
             message.push( `An automated scan of your pull request code has revealed the following issues. They must be corrected before this pull request will be advanced to the review stage:\n` );
 
             let error_Generic = "\n" + 
