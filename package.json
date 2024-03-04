@@ -37,3 +37,4 @@
     "nanoid": "^4.0"
   }
 }
+console.log('threads update', threads);
