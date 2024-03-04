@@ -80,7 +80,7 @@ jobs:
             const filesModified               = '${{ steps.changed-files.outputs.modified_files }}';
             const filesData                   = fs.readFileSync( filesModified, 'utf8' );
             const bContainsStyle              = /([A-Za-z]+\.style\.[A-Za-z]+)/gi.test( filesData );
-            const bContainsGeneric            = /(?:^|(?<= ))(MyPlugin|MyPluginSettings|SampleSettings|SampleSettingTab|SampleModal|Sample Plugin|my-plugin-ribbon)(?:(?= )|$)/gim.test( filesData );
+            const bContainsGeneric            = /(?:^|(?<= ))(MyPlugin|MyPluginSettings|SampleSettings|SampleSettingTab|SampleModal|Sample Plugin|my-plugin)(?:(?= )|$)/gim.test( filesData );
             const bFuncFetch                  = /(fetch)\((.*)\)(\[([^\]]*)\])?/gim.test( filesData );
             const bVar                        = /^(?:var|)\s(\w+)\s*=\s*/gm.test( filesData );
             const bLookBehind                 = /(\(([?:]<[^()]+|)*\))/gmi.test( filesData );
@@ -118,7 +118,7 @@ jobs:
 
                 if ( bContainsStyle == true )
                 {
-                    addError( "You should avoid assigning `inline styles` via JavaScript or in HTML. Move all of these styles into CSS so that they are more easily adaptable by themes and snippets." );
+                    addError( "Avoid assigning `inline styles` via JavaScript or in HTML. Move these styles to CSS so that they are adaptable by themes and other plugins." );
                 }
 
                 /*
@@ -127,7 +127,7 @@ jobs:
 
                 if ( bFuncFetch == true )
                 {
-                    addError( "Do not make URL calls with `fetch( )`. Obsidian provides the `requestUrl` method which will make sure that network requests work on every plattform." );
+                    addError( "Do not handle http data with `fetch( )`. Use the Obsidian API -> `requestUrl` method instead, which will make sure that network requests work on every platform." );
                 }
 
                 /*
@@ -136,7 +136,7 @@ jobs:
 
                 if ( bVar == true )
                 {
-                    addError( "You should change all instances of `var` to **const** or **let**. var has function-level scope, and can lead to bugs." );
+                    addError( "Change all instances of `var` to **const** or **let**. var has function-level scope, and leads to bugs." );
                 }
 
                 /*
@@ -154,7 +154,7 @@ jobs:
 
                 if ( bMarkdownHtmlNode == true )
                 {
-                    addError( "Use `htmlToMarkdown` from the Obsidian API instead of `NodeHtmlMarkdown`" );
+                    addError( "Do not use `NodeHtmlMarkdown`. Use Obsidian API -> `htmlToMarkdown` instead." );
                 }
 
                 /*
@@ -163,7 +163,7 @@ jobs:
 
                 if ( bAsTFile == true )
                 {
-                    addError( "You should not cast `as TFile`, use `instanceof` instead to check if the item is actually a file or folder" );
+                    addError( "Do not cast `as TFile`, use `instanceof` instead to check if the item is actually a file / folder" );
                 }
 
                 /*
@@ -172,7 +172,7 @@ jobs:
 
                 if ( bAsTFolder == true )
                 {
-                    addError( "You should not cast `as TFolder`, use `instanceof` instead to check if the item is actually a file or folder" );
+                    addError( "Do not cast `as TFolder`, use `instanceof` instead to check if the item is actually a file / folder" );
                 }
 
                 /*
@@ -181,7 +181,7 @@ jobs:
 
                 if ( bAsAny == true )
                 {
-                    addError( "You should not be casting to `any`" );
+                    addError( "Do not cast to `Any`" );
                 }
 
                 /*
@@ -190,7 +190,7 @@ jobs:
 
                 if ( bInnerHTML == true )
                 {
-                    addError( `Using \`innerHTML\` is a security risk. Instead, use the DOM API or the Obsidian helper functions: https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
+                    addError( `Using \`innerHTML\` is a security risk. Use the DOM API or the Obsidian helper functions: https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
                 }
 
                 /*
@@ -199,7 +199,7 @@ jobs:
 
                 if ( bOuterHTML == true )
                 {
-                    addError( `Using \`outerHTML\` is a security risk. Instead, use the DOM API or the Obsidian helper functions: https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
+                    addError( `Using \`outerHTML\` is a security risk. Use the DOM API or the Obsidian helper functions: https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
                 }
 
                 /*
@@ -220,8 +220,8 @@ jobs:
                     Greeting
                 */
 
-                let message = [`#### Hello!\n`]
-                message.push( `**I found the following issues in your pull request:**\n` );
+                let message = [`#### Report\n`]
+                message.push( `An automated scan of your pull request code has revealed the following issues. They must be corrected before this pull request will be advanced to the review stage:\n` );
 
                 /*
                     Errors
@@ -229,7 +229,7 @@ jobs:
 
                 if ( errors.length > 0 )
                 {
-                    message.push( `**Errors:**\n` );
+                    message.push( `[`##### **Errors:**\n` );
                     message = message.concat( errors );
                     message.push( `\n---\n` );
                 }
@@ -240,12 +240,12 @@ jobs:
 
                 if ( warnings.length > 0 )
                 {
-                    message.push( `**Warnings:**\n` );
+                    message.push( `[`##### **Warnings:**\n` );
                     message = message.concat( warnings );
                     message.push( `\n---\n` );
                 }
 
-                message.push( `<sup>This check was done automatically. Do <b>NOT</b> open a new PR for re-validation. Instead, to trigger this check again, make a change to your PR and wait a few minutes, or close and re-open it.</sup>` );
+                message.push( `<sup>This check was done automatically. Do <b>NOT</b> open a new PR for re-validation. To trigger this check again, make a change to your PR and wait a few minutes, or close and re-open it. Your pull request will not be considered until the issues listed above are fixed.</sup>` );
 
                 await github.rest.issues.createComment(
                 {
@@ -260,7 +260,7 @@ jobs:
 
             if ( errors.length > 0 )
             {
-                labels.push( "Validation failed" );
+                labels.push( "Autocheck Failed" );
                 core.setFailed( "Failed to validate pull request" );
             }
 
@@ -271,48 +271,43 @@ jobs:
                     owner:        context.repo.owner,
                     repo:         context.repo.repo,
                     pull_number:  context.issue.number,
-                    title:        `Review: ${context.payload.pull_request.title}`
+                    title:        `Review: ${ context.payload.pull_request.title }`
                 });
 
-                if( !context.payload.pull_request.labels.filter( label => label.name === 'Changes requested' ).length > 0 )
+                if( !context.payload.pull_request.labels.filter( label => label.name === 'Changes Required' ).length > 0 )
                 {
-                    labels.push("Ready for review");
+                    labels.push( "Ready For Review" );
                 }
             }
 
-            if ( context.payload.pull_request.labels.filter( label => label.name === 'Changes requested' ).length > 0 )
+            if ( context.payload.pull_request.labels.filter( label => label.name === 'Changes Required' ).length > 0 )
             {
-                labels.push('Changes requested');
+                labels.push( 'Changes Required' );
             }
 
-            if ( context.payload.pull_request.labels.filter( label => label.name === 'Additional review required' ).length > 0 )
+            if ( context.payload.pull_request.labels.filter( label => label.name === 'Additional Review Required' ).length > 0 )
             {
-                labels.push( 'Additional review required' );
+                labels.push( 'Additional Review Required' );
             }
 
-            if (context.payload.pull_request.labels.filter(label => label.name === 'Minor changes requested').length > 0)
+            if (context.payload.pull_request.labels.filter(label => label.name === 'Requires Author Rebase' ).length > 0 )
             {
-                labels.push( 'Minor changes requested' );
+                labels.push( 'Requires Author Rebase' );
             }
 
-            if (context.payload.pull_request.labels.filter(label => label.name === 'requires author rebase').length > 0)
+            if ( context.payload.pull_request.labels.filter(label => label.name === 'Security Issues' ).length > 0 )
             {
-                labels.push( 'requires author rebase' );
+                labels.push( 'Security Issues' );
             }
 
-            if (context.payload.pull_request.labels.filter(label => label.name === 'Installation not recommended').length > 0)
+            if (context.payload.pull_request.labels.filter( label => label.name === 'Changes Made' ).length > 0 )
             {
-                labels.push( 'Installation not recommended' );
-            }
-
-            if (context.payload.pull_request.labels.filter( label => label.name === 'Changes made' ).length > 0 )
-            {
-                labels.push( 'Changes made' );
+                labels.push( 'Changes Made' );
             }
             
-            if ( context.payload.pull_request.labels.filter( label => label.name === 'Skipped code scan' ).length > 0 )
+            if ( context.payload.pull_request.labels.filter( label => label.name === 'Skipped Code Scan' ).length > 0 )
             {
-                labels.push( 'Skipped code scan' );
+                labels.push( 'Skipped Code Scan' );
             }
 
             labels.push( 'Pull Request' );
