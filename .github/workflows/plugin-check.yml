@@ -78,19 +78,20 @@ jobs:
         env:
           ADDED_FILES: ${{ steps.changed-files.outputs.added_files }}
           MODIFIED_FILES: ${{ steps.changed-files.outputs.modified_files }}
+          CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
 
       - name: Run Check
         uses: actions/github-script@v6
         with:
           script: |
-            const fs          = require('fs');
-            const escapeHtml  = ( unsafe ) => unsafe.replace( /&/g, '&amp;' ).replace( /</g, '&lt;' ).replace( />/g, '&gt;' ).replace( /"/g, '&quot;' ).replace( /'/g, '&#039;' );
+            const fs            = require('fs');
+            const escape_html   = ( unsafe ) => unsafe.replace( /&/g, '&amp;' ).replace( /</g, '&lt;' ).replace( />/g, '&gt;' ).replace( /"/g, '&quot;' ).replace( /'/g, '&#039;' );
 
-            const files_List    = `${{ steps.changed-files.outputs.modified_files }}`
+            const files_List    = `${{ steps.changed-files.outputs.all_changed_files }}`
             const files_Array   = files_List.split(',')
 
-            let message = [ "## Automatic Self-Check - #" + context.issue.number + "\n" ]
-            message.push( `An automated scan of your pull request code has revealed the following issues. They must be corrected before this pull request will be advanced to the review stage:\n` );
+            let message         = [ "## Automatic Self-Check - #" + context.issue.number + "\n" ]
+            message.push        ( `The details of our automated scan for your pull request are listed below. If our scan detected errors, they must be corrected before this pull request will be advanced to the review stage:\n` );
 
             let error_Generic = "\n" + 
             "- `MyPlugin`\n" + 
@@ -148,7 +149,6 @@ jobs:
                 const bFuncFS_MkdirSync           = /(fs.mkdirSync)\((.*)\)(\[([^\]]*)\])?/gm.test( filesData );
                 const bFoundBadWord               = /(?:'|").*(Obsidian|Settings|General).*(?:'|")?/gmi.test( filesData );
                 const bContainsGeneric            = /(?:^|(?<= ))(MyPlugin|MyPluginSettings|SampleSettings|SampleSettingTab|SampleModal|Sample Plugin|my-plugin)(?:(?= )|$)/gim.test( filesData );
-
                 const check_depGetUnpinnedLeaf    = "app.workspace.getUnpinnedLeaf"
 
                 /*
@@ -160,7 +160,7 @@ jobs:
                   message         = message.concat( warnings );
 
                   /*
-                      (Deprecated) app.workspace.getUnpinnedLeaf
+                      ( Deprecated ) app.workspace.getUnpinnedLeaf
                   */
 
                   if ( filesData.toLowerCase( ).includes( check_depGetUnpinnedLeaf.toLowerCase( ) ) )
@@ -295,6 +295,15 @@ jobs:
                   }
 
                   /*
+                      Generic Calls
+                  */
+
+                  if ( bContainsGeneric == true )
+                  {
+                      addError( "Rename sample classes to something that makes sense. You are not allowed to have names such as: " + error_Generic );
+                  }
+
+                  /*
                       console.log found
                   */
 
@@ -310,15 +319,6 @@ jobs:
                   if ( bFoundBadWord == true && file != "package.json" && file != "manifest.json" )
                   {
                       addWarning( "A restricted word was found in your code. Obsidian developers do not allow words in strings such as: " + warn_BadWords );
-                  }
-
-                  /*
-                      Generic Calls
-                  */
-
-                  if ( bContainsGeneric == true )
-                  {
-                      addError( "Rename sample classes to something that makes sense. You are not allowed to have names such as: " + error_Generic );
                   }
 
                   if ( errors.length > 0 || warnings.length > 0 )
