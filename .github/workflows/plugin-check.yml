@@ -105,7 +105,7 @@ jobs:
             `
               | Category | Value |
               | --- | --- |
-              | Repo | context.repo.repo |
+              | Repo | ` + context.repo.repo + ` |
               | Added Files | ${{ steps.changed-files.outputs.added_files_count }} |
               | Modified Files | ${{ steps.changed-files.outputs.all_modified_files_count }} |
               | Renamed Files | ${{ steps.changed-files.outputs.renamed_files_count }} |
