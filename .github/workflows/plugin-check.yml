@@ -138,11 +138,14 @@ jobs:
                 const bInnerHTML                  = /^\s?.*[a-zA-Z0-9_]+\.innerHTML*\s?.*$/gm.test( filesData );
                 const bOuterHTML                  = /^\s?.*[a-zA-Z0-9_]+\.outerHTML*\s?.*$/gm.test( filesData );
                 const bFuncConsoleLog             = /(console.log)\((.*)\)(\[([^\]]*)\])?/gim.test( filesData );
+                const bFuncSetTimeout             = /(setTimeout)\((.*)\)(\[([^\]]*)\])?/gim.test( filesData );
+                const bFuncFS_Chk1                = /(require)\s?\((\s?(?:'|")fs(?:'|"))\s?\)?/gim.test( filesData );
+                const bFuncFS_Chk2                = /from\s+(?:'|")fs(?:'|")\s?/gim.test( filesData );
 
                 const check_depGetUnpinnedLeaf    = "app.workspace.getUnpinnedLeaf"
 
                 /*
-                    Greeting
+                    Header
                 */
 
                   message.push    ( "\n<br />\n\n---\n<br />\n" );
@@ -255,6 +258,24 @@ jobs:
                   if ( bContainsGeneric == true )
                   {
                       addError( "Rename sample classes to something that makes sense. You are not allowed to have names such as: " + error_Generic );
+                  }
+
+                  /*
+                      setTimeout
+                  */
+
+                  if ( bFuncSetTimeout == true )
+                  {
+                      addError( "Do not utilize `setTimeout`, utilize Obsidian API -> `sleep`. E.g: `await sleep( X )`" );
+                  }
+
+                  /*
+                      require("fs")
+                  */
+
+                  if ( bFuncFS_Chk1 == true || bFuncFS_Chk2 == true  )
+                  {
+                      addError( "`fs` import only available from Node.js runtime, this will throw errors for users running Obsidian on mobile" );
                   }
 
                   /*
