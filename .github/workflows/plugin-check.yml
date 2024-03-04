@@ -95,6 +95,14 @@ jobs:
             const files_List    = `${{ steps.changed-files.outputs.modified_files }}`
             const files_Array   = files_List.split(',')
 
+            for ( const point of files_Array )
+            {
+                  console.log( point );
+                  console.log(point); // second consoleLog
+                  console.log(point.id); // third consoleLog
+            }
+
+
             console.log( files_List );
 
             console.log( files_Array );
