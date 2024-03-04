@@ -92,8 +92,8 @@ jobs:
                 console.log   ( 'Found issue: ' + error );
             };
 
-            const files_List    = ${{ steps.changed-files.outputs.added_files }};
-            const files_Array   = files_List.split(',');
+            const files_List    = ${{ steps.changed-files.outputs.added_files }}
+            const files_Array   = files_List.split(',')
 
             console.log( files_List );
 
