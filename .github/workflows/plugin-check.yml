@@ -382,23 +382,31 @@ jobs:
             }
 
             message.push    ( `\n---\n` );
-            message.push( `<sup>This check was done automatically. Do <b>NOT</b> open a new PR for re-validation. Instead, to trigger this check again, make a change to your PR and wait a few minutes, or close and re-open it.</sup>` );
+            message.push    ( `<sup>This check was done automatically. Do <b>NOT</b> open a new PR for re-validation. Instead, to trigger this check again, make a change to your PR and wait a few minutes, or close and re-open it.</sup>` );
 
-            await github.rest.issues.createComment(
-            {
-                issue_number:   context.issue.number,
-                owner:          context.repo.owner,
-                repo:           context.repo.repo,
-                body:           message.join('\n'),
-            });
+            const labels    = [];
 
-            const labels = [];
+            /*
+                Has Errors
+            */
 
             if ( bHasError == true )
             {
                 labels.push( "Validation failed" );
                 core.setFailed( "Failed to validate pull request" );
+
+                await github.rest.pulls.update(
+                {
+                    owner:        context.repo.owner,
+                    repo:         context.repo.repo,
+                    pull_number:  context.issue.number,
+                    title:        `PR ${ context.issue.number }: ${ context.payload.pull_request.title }`
+                } );
             }
+
+            /*
+                No Errors
+            */
 
             if ( bHasError == false )
             {
@@ -407,46 +415,36 @@ jobs:
                     owner:        context.repo.owner,
                     repo:         context.repo.repo,
                     pull_number:  context.issue.number,
-                    title:        `Review: ${context.payload.pull_request.title}`
-                });
+                    title:        `PR ${ context.issue.number }: ${ context.payload.pull_request.title }`
+                } );
 
-                if( !context.payload.pull_request.labels.filter( label => label.name === 'Changes requested' ).length > 0 )
-                {
+                if ( !context.payload.pull_request.labels.filter( label => label.name === 'Changes requested' ).length > 0 )
                     labels.push("Ready for review");
-                }
             }
 
             if ( context.payload.pull_request.labels.filter( label => label.name === "${{ env.LABEL_CHECK_CHANGES_REQ }}" ).length > 0 )
-            {
                 labels.push( "${{ env.LABEL_CHECK_CHANGES_REQ }}" );
-            }
 
             if ( context.payload.pull_request.labels.filter( label => label.name === "${{ env.LABEL_CHECK_REVIEW_REQ }}" ).length > 0 )
-            {
                 labels.push( "${{ env.LABEL_CHECK_REVIEW_REQ }}" );
-            }
 
             if (context.payload.pull_request.labels.filter(label => label.name === "${{ env.LABEL_CHECK_REBASE_REQ }}" ).length > 0 )
-            {
                 labels.push( "${{ env.LABEL_CHECK_REBASE_REQ }}" );
-            }
 
             if ( context.payload.pull_request.labels.filter(label => label.name === "${{ env.LABEL_CHECK_SECURITY_ERR }}" ).length > 0 )
-            {
                 labels.push( "${{ env.LABEL_CHECK_SECURITY_ERR }}" );
-            }
 
             if (context.payload.pull_request.labels.filter( label => label.name === "${{ env.LABEL_CHECK_STATUS_CHGMADE }}" ).length > 0 )
-            {
                 labels.push( "${{ env.LABEL_CHECK_STATUS_CHGMADE }}" );
-            }
             
             if ( context.payload.pull_request.labels.filter( label => label.name === "${{ env.LABEL_CHECK_SCAN_SKIPPED }}" ).length > 0 )
-            {
                 labels.push( "${{ env.LABEL_CHECK_SCAN_SKIPPED }}" );
-            }
 
             labels.push( "${{ env.LABEL_CHECK_PULL_REQ }}" );
+
+            /*
+                Set Label
+            */
 
             await github.rest.issues.setLabels(
             {
@@ -454,7 +452,20 @@ jobs:
                 owner:          context.repo.owner,
                 repo:           context.repo.repo,
                 labels,
-            });
+            } );
+
+            /*
+                Create Comment
+            */
+
+            await github.rest.issues.createComment(
+            {
+                issue_number:   context.issue.number,
+                owner:          context.repo.owner,
+                repo:           context.repo.repo,
+                body:           message.join('\n'),
+            } );
+
     permissions:
       contents: read
       issues: write
