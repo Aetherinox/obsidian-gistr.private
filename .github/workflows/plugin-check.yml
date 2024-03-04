@@ -265,7 +265,7 @@ jobs:
 
                       if ( errors.length > 0 )
                       {
-                          message.push    ( "\n\n\n> [!CAUTION]\n> The file `" + file + "` contains the following errors:\n\n<br>\n\n" );
+                          message.push    ( "\n\n\n> [!CAUTION]\n> Errors must be fixed prior to a pull request being reviewed and accepted. The file `" + file + "` contains the following errors:\n\n<br>\n\n" );
                           message         = message.concat( errors );
                       }
 
@@ -275,7 +275,7 @@ jobs:
 
                       if ( warnings.length > 0 )
                       {
-                          message.push    ( "\n\n\n> [!WARNING]\n> The file `" + file + "` contains the following warnings:\n\n<br>\n\n" );
+                          message.push    ( "\n\n\n> [!WARNING]\n> Warnings are suggestions that do not require fixing, but are recommended before this pull request is reviewed and accepted. The file `" + file + "` contains the following warnings:\n\n<br>\n\n" );
                           message         = message.concat( warnings );
                       }
 
