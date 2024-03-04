@@ -100,11 +100,11 @@ jobs:
             message.push        ( "### Statistics\n" );
 
             let md_table =
-            "
+            `
               | asd | asdasd |
               | --- | --- |
               | aa | aa |
-            ";
+            `;
             
             message.push        ( md_table );
 
