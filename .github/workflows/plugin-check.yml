@@ -256,48 +256,58 @@ jobs:
                         addError( "Rename sample classes to something that makes sense. You are not allowed to have names such as: " + error_Generic );
                     }
 
+                    if ( errors.length > 0 || warnings.length > 0 )
+                    {
+
+                        /*
+                            Errors
+                        */
+
+                        if ( errors.length > 0 )
+                        {
+                            message.push    ( `### **Errors:**\n` );
+                            message         = message.concat( errors );
+                            message.push    ( `\n---\n` );
+                        }
+
+                        /*
+                            Warnings
+                        */
+
+                        if ( warnings.length > 0 )
+                        {
+                            message.push    ( `### **Warnings:**\n` );
+                            message         = message.concat( warnings );
+                            message.push    ( `\n---\n` );
+                        }
+
+                        await github.rest.issues.createComment(
+                        {
+                            issue_number:   context.issue.number,
+                            owner:          context.repo.owner,
+                            repo:           context.repo.repo,
+                            body:           message.join('\n'),
+                        });
+                    }
+
+
             }
 
 
 
 
 
-            if ( errors.length > 0 || warnings.length > 0 )
+
+            message.push( `<sup>This check was done automatically. Do <b>NOT</b> open a new PR for re-validation. Instead, to trigger this check again, make a change to your PR and wait a few minutes, or close and re-open it.</sup>` );
+
+            await github.rest.issues.createComment(
             {
+                issue_number:   context.issue.number,
+                owner:          context.repo.owner,
+                repo:           context.repo.repo,
+                body:           message.join('\n'),
+            });
 
-                /*
-                    Errors
-                */
-
-                if ( errors.length > 0 )
-                {
-                    message.push    ( `### **Errors:**\n` );
-                    message         = message.concat( errors );
-                    message.push    ( `\n---\n` );
-                }
-
-                /*
-                    Warnings
-                */
-
-                if ( warnings.length > 0 )
-                {
-                    message.push    ( `### **Warnings:**\n` );
-                    message         = message.concat( warnings );
-                    message.push    ( `\n---\n` );
-                }
-
-                message.push( `<sup>This check was done automatically. Do <b>NOT</b> open a new PR for re-validation. Instead, to trigger this check again, make a change to your PR and wait a few minutes, or close and re-open it.</sup>` );
-
-                await github.rest.issues.createComment(
-                {
-                    issue_number:   context.issue.number,
-                    owner:          context.repo.owner,
-                    repo:           context.repo.repo,
-                    body:           message.join('\n'),
-                });
-            }
-    
             const labels = [];
 
             if ( errors.length > 0 )
