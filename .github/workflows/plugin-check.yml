@@ -146,7 +146,7 @@ jobs:
 
 
                   message.push    ( `\n---\n` );
-                  message.push    ( filesModified );
+                  message.push    ( `### ` + filesModified + `\n );
                   message         = message.concat( warnings );
 
                   /*
@@ -266,9 +266,8 @@ jobs:
 
                       if ( errors.length > 0 )
                       {
-                          message.push    ( `### **Errors:**\n` );
+                          message.push    ( `#### **Errors:**\n` );
                           message         = message.concat( errors );
-                          message.push    ( `\n---\n` );
                       }
 
                       /*
@@ -277,9 +276,8 @@ jobs:
 
                       if ( warnings.length > 0 )
                       {
-                          message.push    ( `### **Warnings:**\n` );
+                          message.push    ( `#### **Warnings:**\n` );
                           message         = message.concat( warnings );
-                          message.push    ( `\n---\n` );
                       }
 
                       await github.rest.issues.createComment(
@@ -292,6 +290,7 @@ jobs:
                   }
             }
 
+            message.push    ( `\n---\n` );
             message.push( `<sup>This check was done automatically. Do <b>NOT</b> open a new PR for re-validation. Instead, to trigger this check again, make a change to your PR and wait a few minutes, or close and re-open it.</sup>` );
 
             await github.rest.issues.createComment(
