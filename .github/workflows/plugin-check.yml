@@ -79,7 +79,7 @@ jobs:
             const bContainsGeneric            = /(?:^|(?<= ))(MyPlugin|MyPluginSettings|SampleSettings|SampleSettingTab|SampleModal)(?:(?= )|$)/gim.test( filesData.toLowerCase( ) );
             const bFuncFetch                  = /(fetch)\((.*)\)(\[([^\]]*)\])?/gim.test( filesData.toLowerCase( ) );
             const bVar                        = /\b(var)\b/g.test( filesData.toLowerCase( ) );
-            const bLookBehind                 = /(\(([?:]<[^()]++|(?1))*\))/gmi.test( filesData.toLowerCase( ) );
+            const bLookBehind                 = /(\(([?:]<[^()]+|)*\))/gmi.test( filesData.toLowerCase( ) );
 
             const check_innerHtml             = "innerHTML"
             const check_outerHtml             = "outerHTML"
@@ -87,7 +87,7 @@ jobs:
             const check_asTFile               = "as TFile"
             const check_depGetUnpinnedLeaf    = "app.workspace.getUnpinnedLeaf"
 
-            console.log( bLookBehind )
+            console.log( bLookBehind)
 
             let error_Generic = "\n" + 
              "- `MyPlugin`\n" + 
@@ -160,6 +160,15 @@ jobs:
                 if ( bVar == true )
                 {
                     addError( "You should change all instances of `var` to **const** or **let**. var has function-level scope, and can lead to bugs." );
+                }
+
+                /*
+                    Using lookbehind
+                */
+
+                if ( bLookBehind == true )
+                {
+                    addError( "Lookbehinds are not supported in iOS < 16.4" );
                 }
 
                 /*
