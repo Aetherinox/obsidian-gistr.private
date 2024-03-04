@@ -244,8 +244,8 @@ jobs:
                     Greeting
                 */
 
-                let message         = [ `#### Report\n` ]
-                message.push        ( `An automated scan of your pull request code has revealed the following issues. They must be corrected before this pull request will be advanced to the review stage:\n` );
+                let message = [`#### Report\n`]
+                message.push( `An automated scan of your pull request code has revealed the following issues. They must be corrected before this pull request will be advanced to the review stage:\n` );
 
                 /*
                     Errors
@@ -254,8 +254,8 @@ jobs:
                 if ( errors.length > 0 )
                 {
                     message.push( `**Errors:**\n` );
-                    message         = message.concat( errors );
-                    message.push    ( `\n---\n` );
+                    message = message.concat( errors );
+                    message.push( `\n---\n` );
                 }
 
                 /*
@@ -265,18 +265,18 @@ jobs:
                 if ( warnings.length > 0 )
                 {
                     message.push( `**Warnings:**\n` );
-                    message         = message.concat( warnings );
-                    message.push    ( `\n---\n` );
+                    message = message.concat( warnings );
+                    message.push( `\n---\n` );
                 }
 
-                message.push( `<sup>This check was done automatically. Do <b>NOT</b> open a new PR for re-validation. To trigger this check again, make a change to your PR and wait a few minutes, or close and re-open it. Your pull request will not be considered until the issues listed above are fixed.</sup>` );
+                message.push( `<sup>This check was done automatically. Do <b>NOT</b> open a new PR for re-validation. Instead, to trigger this check again, make a change to your PR and wait a few minutes, or close and re-open it.</sup>` );
 
                 await github.rest.issues.createComment(
                 {
                     issue_number:   context.issue.number,
                     owner:          context.repo.owner,
                     repo:           context.repo.repo,
-                    body:           message.join( '\n' ),
+                    body:           message.join('\n'),
                 });
             }
     
