@@ -244,7 +244,7 @@ jobs:
                     Greeting
                 */
 
-                let message = [`#### Report\n`]
+                let message = [ `#### Report\n` ]
                 message.push( `An automated scan of your pull request code has revealed the following issues. They must be corrected before this pull request will be advanced to the review stage:\n` );
 
                 /*
@@ -253,7 +253,7 @@ jobs:
 
                 if ( errors.length > 0 )
                 {
-                    message.push    ( `[##### **Errors:**\n` );
+                    message.push    ( `##### **Errors:**\n` );
                     message         = message.concat( errors );
                     message.push    ( `\n---\n` );
                 }
@@ -264,7 +264,7 @@ jobs:
 
                 if ( warnings.length > 0 )
                 {
-                    message.push    ( `[##### **Warnings:**\n` );
+                    message.push    ( `##### **Warnings:**\n` );
                     message         = message.concat( warnings );
                     message.push    ( `\n---\n` );
                 }
