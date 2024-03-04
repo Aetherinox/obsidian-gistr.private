@@ -80,8 +80,10 @@ jobs:
           MODIFIED_FILES:   ${{ steps.changed-files.outputs.modified_files }}
           CHANGED_FILES:    ${{ steps.changed-files.outputs.all_changed_files }}
           COUNT_ADDED:      ${{ steps.changed-files.outputs.added_files_count }}
-          COUNT_MODIFIED:   ${{ steps.changed-files.outputs.all_modified_files_count }}
+          COUNT_MODIFIED:   ${{ steps.changed-files.outputs.modified_files_count }}
           COUNT_DELETED:    ${{ steps.changed-files.outputs.deleted_files_count }}
+          COUNT_RENAMED:    ${{ steps.changed-files.outputs.renamed_files_count }}
+          COUNT_COPIED:     ${{ steps.changed-files.outputs.copied_files_count }}
 
       - name: Run Check
         uses: actions/github-script@v6
@@ -105,6 +107,9 @@ jobs:
               | --- | --- |
               | Added Files | ${{ steps.changed-files.outputs.added_files_count }} |
               | Modified Files | ${{ steps.changed-files.outputs.all_modified_files_count }} |
+              | Renamed Files | ${{ steps.changed-files.outputs.renamed_files_count }} |
+              | Copied Files | ${{ steps.changed-files.outputs.deleted_files_count }} |
+              | Deleted Files | ${{ steps.changed-files.outputs.deleted_files_count }} |
             `;
             
             message.push        ( md_table );
