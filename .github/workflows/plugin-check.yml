@@ -367,14 +367,6 @@ jobs:
                           message.push    ( "\n\n\n> [!WARNING]\n> Warnings are suggestions that do not require fixing, but are recommended before this pull request is reviewed and accepted.<br />The file `" + file + "` contains the following warnings:\n\n<br>\n\n" );
                           message         = message.concat( warnings );
                       }
-
-                      await github.rest.issues.createComment(
-                      {
-                          issue_number:   context.issue.number,
-                          owner:          context.repo.owner,
-                          repo:           context.repo.repo,
-                          body:           message.join('\n'),
-                      });
                   }
                   else
                   {
@@ -384,14 +376,6 @@ jobs:
 
             message.push    ( `\n---\n` );
             message.push( `<sup>This check was done automatically. Do <b>NOT</b> open a new PR for re-validation. Instead, to trigger this check again, make a change to your PR and wait a few minutes, or close and re-open it.</sup>` );
-
-            await github.rest.issues.createComment(
-            {
-                issue_number:   context.issue.number,
-                owner:          context.repo.owner,
-                repo:           context.repo.repo,
-                body:           message.join('\n'),
-            });
 
             const labels = [];
 
@@ -446,6 +430,14 @@ jobs:
             {
                 labels.push( "${{ env.LABEL_CHECK_SCAN_SKIPPED }}" );
             }
+
+            await github.rest.issues.createComment(
+            {
+                issue_number:   context.issue.number,
+                owner:          context.repo.owner,
+                repo:           context.repo.repo,
+                body:           message.join('\n'),
+            });
 
             labels.push( "${{ env.LABEL_CHECK_PULL_REQ }}" );
 
