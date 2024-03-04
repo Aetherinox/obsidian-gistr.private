@@ -144,7 +144,7 @@ jobs:
                     Greeting
                 */
 
-                  message.push    ( "\n<br />\n---\n<br />\n" );
+                  message.push    ( "\n<br />\n\n---\n<br />\n" );
                   message.push    ( "### " + filesModified + "\n" );
                   message         = message.concat( warnings );
 
