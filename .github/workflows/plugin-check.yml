@@ -85,22 +85,9 @@ jobs:
           script: |
             const fs          = require('fs');
             const escapeHtml  = ( unsafe ) => unsafe.replace( /&/g, '&amp;' ).replace( /</g, '&lt;' ).replace( />/g, '&gt;' ).replace( /"/g, '&quot;' ).replace( /'/g, '&#039;' );
-            const errors      = [];
-            const addError    = ( error ) =>
-            {
-                errors.push   ( `:x: ${error}` );
-                console.log   ( 'Found issue: ' + error );
-            };
 
             const files_List    = `${{ steps.changed-files.outputs.modified_files }}`
             const files_Array   = files_List.split(',')
-
-            const warnings    = [];
-            const addWarning  = ( warning ) =>
-            {
-                warnings.push ( `:warning: ${warning}` );
-                console.log   ( 'Found issue: ' + warning );
-            }
 
             let message = [ `## Report\n` ]
             message.push( `An automated scan of your pull request code has revealed the following issues. They must be corrected before this pull request will be advanced to the review stage:\n` );
@@ -111,6 +98,20 @@ jobs:
 
             for ( const file of files_Array )
             {
+
+                const errors      = [];
+                const addError    = ( error ) =>
+                {
+                    errors.push   ( `:x: ${error}` );
+                    console.log   ( 'Found issue: ' + error );
+                };
+
+                const warnings    = [];
+                const addWarning  = ( warning ) =>
+                {
+                    warnings.push ( `:warning: ${warning}` );
+                    console.log   ( 'Found issue: ' + warning );
+                }
 
                 /*
                     Regex Searches
@@ -144,159 +145,152 @@ jobs:
                 */
 
 
-                    message.push    ( `\n---\n` );
-                    message.push    ( filesModified );
-                    message         = message.concat( warnings );
+                  message.push    ( `\n---\n` );
+                  message.push    ( filesModified );
+                  message         = message.concat( warnings );
 
-                    /*
-                        (Deprecated) app.workspace.getUnpinnedLeaf
-                    */
+                  /*
+                      (Deprecated) app.workspace.getUnpinnedLeaf
+                  */
 
-                    if ( filesData.toLowerCase( ).includes( check_depGetUnpinnedLeaf.toLowerCase( ) ) )
-                    {
-                        addError( "This function is deprecated, use `this.app.workspace.getLeaf( false )` instead" );
-                    }
+                  if ( filesData.toLowerCase( ).includes( check_depGetUnpinnedLeaf.toLowerCase( ) ) )
+                  {
+                      addError( "This function is deprecated, use `this.app.workspace.getLeaf( false )` instead" );
+                  }
 
-                    /*
-                        Using inline style
-                    */
+                  /*
+                      Using inline style
+                  */
 
-                    if ( bContainsStyle == true )
-                    {
-                        addError( "Avoid assigning `inline styles` via JavaScript or in HTML. Move these styles to CSS so that they are adaptable by themes and other plugins." );
-                    }
+                  if ( bContainsStyle == true )
+                  {
+                      addError( "Avoid assigning `inline styles` via JavaScript or in HTML. Move these styles to CSS so that they are adaptable by themes and other plugins." );
+                  }
 
-                    /*
-                        Using fetch
-                    */
+                  /*
+                      Using fetch
+                  */
 
-                    if ( bFuncFetch == true )
-                    {
-                        addError( "Do not handle http data with `fetch( )`. Use the Obsidian API -> `requestUrl` method instead, which will make sure that network requests work on every platform." );
-                    }
+                  if ( bFuncFetch == true )
+                  {
+                      addError( "Do not handle http data with `fetch( )`. Use the Obsidian API -> `requestUrl` method instead, which will make sure that network requests work on every platform." );
+                  }
 
-                    /*
-                        Using var
-                    */
+                  /*
+                      Using var
+                  */
 
-                    if ( bVar == true )
-                    {
-                        addError( "Change all instances of `var` to **const** or **let**. var has function-level scope, and leads to bugs." );
-                    }
+                  if ( bVar == true )
+                  {
+                      addError( "Change all instances of `var` to **const** or **let**. var has function-level scope, and leads to bugs." );
+                  }
 
-                    /*
-                        Using lookbehind
-                    */
+                  /*
+                      Using lookbehind
+                  */
 
-                    if ( bLookBehind == true )
-                    {
-                        addError( "Lookbehinds are not supported in iOS < 16.4" );
-                    }
+                  if ( bLookBehind == true )
+                  {
+                      addError( "Lookbehinds are not supported in iOS < 16.4" );
+                  }
 
-                    /*
-                        Using HTML Node
-                    */
+                  /*
+                      Using HTML Node
+                  */
 
-                    if ( bMarkdownHtmlNode == true )
-                    {
-                        addError( "Do not use `NodeHtmlMarkdown`. Use Obsidian API -> `htmlToMarkdown` instead." );
-                    }
+                  if ( bMarkdownHtmlNode == true )
+                  {
+                      addError( "Do not use `NodeHtmlMarkdown`. Use Obsidian API -> `htmlToMarkdown` instead." );
+                  }
 
-                    /*
-                        As TFile
-                    */
+                  /*
+                      As TFile
+                  */
 
-                    if ( bAsTFile == true )
-                    {
-                        addError( "Do not cast `as TFile`, use `instanceof` instead to check if the item is actually a file / folder" );
-                    }
+                  if ( bAsTFile == true )
+                  {
+                      addError( "Do not cast `as TFile`, use `instanceof` instead to check if the item is actually a file / folder" );
+                  }
 
-                    /*
-                        As TFolder
-                    */
+                  /*
+                      As TFolder
+                  */
 
-                    if ( bAsTFolder == true )
-                    {
-                        addError( "Do not cast `as TFolder`, use `instanceof` instead to check if the item is actually a file / folder" );
-                    }
+                  if ( bAsTFolder == true )
+                  {
+                      addError( "Do not cast `as TFolder`, use `instanceof` instead to check if the item is actually a file / folder" );
+                  }
 
-                    /*
-                        Casting to Any
-                    */
+                  /*
+                      Casting to Any
+                  */
 
-                    if ( bAsAny == true )
-                    {
-                        addError( "Do not cast to `Any`" );
-                    }
+                  if ( bAsAny == true )
+                  {
+                      addError( "Do not cast to `Any`" );
+                  }
 
-                    /*
-                        innerHTML
-                    */
+                  /*
+                      innerHTML
+                  */
 
-                    if ( bInnerHTML == true )
-                    {
-                        addError( `Using \`innerHTML\` is a security risk. Use the DOM API or the Obsidian helper functions: https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
-                    }
+                  if ( bInnerHTML == true )
+                  {
+                      addError( `Using \`innerHTML\` is a security risk. Use the DOM API or the Obsidian helper functions: https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
+                  }
 
-                    /*
-                        outerHTML
-                    */
+                  /*
+                      outerHTML
+                  */
 
-                    if ( bOuterHTML == true )
-                    {
-                        addError( `Using \`outerHTML\` is a security risk. Use the DOM API or the Obsidian helper functions: https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
-                    }
+                  if ( bOuterHTML == true )
+                  {
+                      addError( `Using \`outerHTML\` is a security risk. Use the DOM API or the Obsidian helper functions: https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
+                  }
 
-                    /*
-                        Generic Calls
-                    */
+                  /*
+                      Generic Calls
+                  */
 
-                    if ( bContainsGeneric == true )
-                    {
-                        addError( "Rename sample classes to something that makes sense. You are not allowed to have names such as: " + error_Generic );
-                    }
+                  if ( bContainsGeneric == true )
+                  {
+                      addError( "Rename sample classes to something that makes sense. You are not allowed to have names such as: " + error_Generic );
+                  }
 
-                    if ( errors.length > 0 || warnings.length > 0 )
-                    {
+                  if ( errors.length > 0 || warnings.length > 0 )
+                  {
 
-                        /*
-                            Errors
-                        */
+                      /*
+                          Errors
+                      */
 
-                        if ( errors.length > 0 )
-                        {
-                            message.push    ( `### **Errors:**\n` );
-                            message         = message.concat( errors );
-                            message.push    ( `\n---\n` );
-                        }
+                      if ( errors.length > 0 )
+                      {
+                          message.push    ( `### **Errors:**\n` );
+                          message         = message.concat( errors );
+                          message.push    ( `\n---\n` );
+                      }
 
-                        /*
-                            Warnings
-                        */
+                      /*
+                          Warnings
+                      */
 
-                        if ( warnings.length > 0 )
-                        {
-                            message.push    ( `### **Warnings:**\n` );
-                            message         = message.concat( warnings );
-                            message.push    ( `\n---\n` );
-                        }
+                      if ( warnings.length > 0 )
+                      {
+                          message.push    ( `### **Warnings:**\n` );
+                          message         = message.concat( warnings );
+                          message.push    ( `\n---\n` );
+                      }
 
-                        await github.rest.issues.createComment(
-                        {
-                            issue_number:   context.issue.number,
-                            owner:          context.repo.owner,
-                            repo:           context.repo.repo,
-                            body:           message.join('\n'),
-                        });
-                    }
-
-
+                      await github.rest.issues.createComment(
+                      {
+                          issue_number:   context.issue.number,
+                          owner:          context.repo.owner,
+                          repo:           context.repo.repo,
+                          body:           message.join('\n'),
+                      });
+                  }
             }
-
-
-
-
-
 
             message.push( `<sup>This check was done automatically. Do <b>NOT</b> open a new PR for re-validation. Instead, to trigger this check again, make a change to your PR and wait a few minutes, or close and re-open it.</sup>` );
 
