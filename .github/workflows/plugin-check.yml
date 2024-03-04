@@ -252,15 +252,6 @@ jobs:
                   }
 
                   /*
-                      Generic Calls
-                  */
-
-                  if ( bContainsGeneric == true )
-                  {
-                      addError( "Rename sample classes to something that makes sense. You are not allowed to have names such as: " + error_Generic );
-                  }
-
-                  /*
                       setTimeout
                   */
 
@@ -285,6 +276,15 @@ jobs:
                   if ( bFuncConsoleLog == true )
                   {
                       addWarning( "Avoid unnecessary logging or ensure logging only occurs in development environment." );
+                  }
+
+                  /*
+                      Generic Calls
+                  */
+
+                  if ( bContainsGeneric == true )
+                  {
+                      addError( "Rename sample classes to something that makes sense. You are not allowed to have names such as: " + error_Generic );
                   }
 
                   if ( errors.length > 0 || warnings.length > 0 )
