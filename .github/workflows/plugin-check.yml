@@ -95,18 +95,6 @@ jobs:
             const files_List    = `${{ steps.changed-files.outputs.modified_files }}`
             const files_Array   = files_List.split(',')
 
-            for ( const point of files_Array )
-            {
-                  console.log( "-------------------" );
-                  console.log( point );
-                                    console.log( "-------------------" );
-            }
-
-
-            console.log( files_List );
-
-            console.log( files_Array );
-
             const warnings    = [];
             const addWarning  = ( warning ) =>
             {
@@ -114,145 +102,162 @@ jobs:
                 console.log   ( 'Found issue: ' + warning );
             }
 
+
             /*
-                Regex Searches
+                Loop files
             */
 
-            const filesModified               = '${{ steps.changed-files.outputs.modified_files }}';
-            const filesData                   = fs.readFileSync( filesModified, 'utf8' );
-            const bContainsStyle              = /([A-Za-z]+\.style\.[A-Za-z]+)/gi.test( filesData );
-            const bContainsGeneric            = /(?:^|(?<= ))(MyPlugin|MyPluginSettings|SampleSettings|SampleSettingTab|SampleModal|Sample Plugin|my-plugin)(?:(?= )|$)/gim.test( filesData );
-            const bFuncFetch                  = /(fetch)\((.*)\)(\[([^\]]*)\])?/gim.test( filesData );
-            const bVar                        = /^(?:var|)\s(\w+)\s*=\s*/gm.test( filesData );
-            const bLookBehind                 = /(\(([?:]<[^()]+|)*\))/gmi.test( filesData );
-            const bMarkdownHtmlNode           = /new\s+NodeHtmlMarkdown/gmi.test( filesData );
-            const bAsTFile                    = /as\s+TFile/g.test( filesData );
-            const bAsTFolder                  = /as\s+TFolder/g.test( filesData );
-            const bAsAny                      = /\((.*? as Any\s*)\)/gi.test( filesData );
-            const bInnerHTML                  = /^\s?[a-zA-Z0-9_]+\.innerHTML*\s?.*$/gm.test( filesData );
-            const bOuterHTML                  = /^\s?[a-zA-Z0-9_]+\.outerHTML*\s?.*$/gm.test( filesData );
-
-            const check_depGetUnpinnedLeaf    = "app.workspace.getUnpinnedLeaf"
-
-            let error_Generic = "\n" + 
-             "- `MyPlugin`\n" + 
-             "- `MyPluginSettings`\n" + 
-             "- `SampleSettings`\n" +
-             "- `SampleSettingTab`\n" +
-             "- `SampleModal`"
-
-            await ( async ( ) =>
+            for ( const file of files_Array )
             {
 
-                /*
-                    (Deprecated) app.workspace.getUnpinnedLeaf
-                */
+              /*
+                  Regex Searches
+              */
 
-                if ( filesData.toLowerCase( ).includes( check_depGetUnpinnedLeaf.toLowerCase( ) ) )
-                {
-                    addError( "This function is deprecated, use `this.app.workspace.getLeaf( false )` instead" );
-                }
+              const filesModified               = '' + file + '';
+              const filesData                   = fs.readFileSync( filesModified, 'utf8' );
+              const bContainsStyle              = /([A-Za-z]+\.style\.[A-Za-z]+)/gi.test( filesData );
+              const bContainsGeneric            = /(?:^|(?<= ))(MyPlugin|MyPluginSettings|SampleSettings|SampleSettingTab|SampleModal|Sample Plugin|my-plugin)(?:(?= )|$)/gim.test( filesData );
+              const bFuncFetch                  = /(fetch)\((.*)\)(\[([^\]]*)\])?/gim.test( filesData );
+              const bVar                        = /^(?:var|)\s(\w+)\s*=\s*/gm.test( filesData );
+              const bLookBehind                 = /(\(([?:]<[^()]+|)*\))/gmi.test( filesData );
+              const bMarkdownHtmlNode           = /new\s+NodeHtmlMarkdown/gmi.test( filesData );
+              const bAsTFile                    = /as\s+TFile/g.test( filesData );
+              const bAsTFolder                  = /as\s+TFolder/g.test( filesData );
+              const bAsAny                      = /\((.*? as Any\s*)\)/gi.test( filesData );
+              const bInnerHTML                  = /^\s?[a-zA-Z0-9_]+\.innerHTML*\s?.*$/gm.test( filesData );
+              const bOuterHTML                  = /^\s?[a-zA-Z0-9_]+\.outerHTML*\s?.*$/gm.test( filesData );
 
-                /*
-                    Using inline style
-                */
+              const check_depGetUnpinnedLeaf    = "app.workspace.getUnpinnedLeaf"
 
-                if ( bContainsStyle == true )
-                {
-                    addError( "Avoid assigning `inline styles` via JavaScript or in HTML. Move these styles to CSS so that they are adaptable by themes and other plugins." );
-                }
+              let error_Generic = "\n" + 
+              "- `MyPlugin`\n" + 
+              "- `MyPluginSettings`\n" + 
+              "- `SampleSettings`\n" +
+              "- `SampleSettingTab`\n" +
+              "- `SampleModal`"
 
-                /*
-                    Using fetch
-                */
+              await ( async ( ) =>
+              {
 
-                if ( bFuncFetch == true )
-                {
-                    addError( "Do not handle http data with `fetch( )`. Use the Obsidian API -> `requestUrl` method instead, which will make sure that network requests work on every platform." );
-                }
+                  /*
+                      (Deprecated) app.workspace.getUnpinnedLeaf
+                  */
 
-                /*
-                    Using var
-                */
+                  if ( filesData.toLowerCase( ).includes( check_depGetUnpinnedLeaf.toLowerCase( ) ) )
+                  {
+                      addError( "This function is deprecated, use `this.app.workspace.getLeaf( false )` instead" );
+                  }
 
-                if ( bVar == true )
-                {
-                    addError( "Change all instances of `var` to **const** or **let**. var has function-level scope, and leads to bugs." );
-                }
+                  /*
+                      Using inline style
+                  */
 
-                /*
-                    Using lookbehind
-                */
+                  if ( bContainsStyle == true )
+                  {
+                      addError( "Avoid assigning `inline styles` via JavaScript or in HTML. Move these styles to CSS so that they are adaptable by themes and other plugins." );
+                  }
 
-                if ( bLookBehind == true )
-                {
-                    addError( "Lookbehinds are not supported in iOS < 16.4" );
-                }
+                  /*
+                      Using fetch
+                  */
 
-                /*
-                    Using HTML Node
-                */
+                  if ( bFuncFetch == true )
+                  {
+                      addError( "Do not handle http data with `fetch( )`. Use the Obsidian API -> `requestUrl` method instead, which will make sure that network requests work on every platform." );
+                  }
 
-                if ( bMarkdownHtmlNode == true )
-                {
-                    addError( "Do not use `NodeHtmlMarkdown`. Use Obsidian API -> `htmlToMarkdown` instead." );
-                }
+                  /*
+                      Using var
+                  */
 
-                /*
-                    As TFile
-                */
+                  if ( bVar == true )
+                  {
+                      addError( "Change all instances of `var` to **const** or **let**. var has function-level scope, and leads to bugs." );
+                  }
 
-                if ( bAsTFile == true )
-                {
-                    addError( "Do not cast `as TFile`, use `instanceof` instead to check if the item is actually a file / folder" );
-                }
+                  /*
+                      Using lookbehind
+                  */
 
-                /*
-                    As TFolder
-                */
+                  if ( bLookBehind == true )
+                  {
+                      addError( "Lookbehinds are not supported in iOS < 16.4" );
+                  }
 
-                if ( bAsTFolder == true )
-                {
-                    addError( "Do not cast `as TFolder`, use `instanceof` instead to check if the item is actually a file / folder" );
-                }
+                  /*
+                      Using HTML Node
+                  */
 
-                /*
-                    Casting to Any
-                */
+                  if ( bMarkdownHtmlNode == true )
+                  {
+                      addError( "Do not use `NodeHtmlMarkdown`. Use Obsidian API -> `htmlToMarkdown` instead." );
+                  }
 
-                if ( bAsAny == true )
-                {
-                    addError( "Do not cast to `Any`" );
-                }
+                  /*
+                      As TFile
+                  */
 
-                /*
-                    innerHTML
-                */
+                  if ( bAsTFile == true )
+                  {
+                      addError( "Do not cast `as TFile`, use `instanceof` instead to check if the item is actually a file / folder" );
+                  }
 
-                if ( bInnerHTML == true )
-                {
-                    addError( `Using \`innerHTML\` is a security risk. Use the DOM API or the Obsidian helper functions: https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
-                }
+                  /*
+                      As TFolder
+                  */
 
-                /*
-                    outerHTML
-                */
+                  if ( bAsTFolder == true )
+                  {
+                      addError( "Do not cast `as TFolder`, use `instanceof` instead to check if the item is actually a file / folder" );
+                  }
 
-                if ( bOuterHTML == true )
-                {
-                    addError( `Using \`outerHTML\` is a security risk. Use the DOM API or the Obsidian helper functions: https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
-                }
+                  /*
+                      Casting to Any
+                  */
 
-                /*
-                    Generic Calls
-                */
+                  if ( bAsAny == true )
+                  {
+                      addError( "Do not cast to `Any`" );
+                  }
 
-                if ( bContainsGeneric == true )
-                {
-                    addError( "Rename sample classes to something that makes sense. You are not allowed to have names such as: " + error_Generic );
-                }
+                  /*
+                      innerHTML
+                  */
 
-            })();
+                  if ( bInnerHTML == true )
+                  {
+                      addError( `Using \`innerHTML\` is a security risk. Use the DOM API or the Obsidian helper functions: https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
+                  }
+
+                  /*
+                      outerHTML
+                  */
+
+                  if ( bOuterHTML == true )
+                  {
+                      addError( `Using \`outerHTML\` is a security risk. Use the DOM API or the Obsidian helper functions: https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
+                  }
+
+                  /*
+                      Generic Calls
+                  */
+
+                  if ( bContainsGeneric == true )
+                  {
+                      addError( "Rename sample classes to something that makes sense. You are not allowed to have names such as: " + error_Generic );
+                  }
+
+              })();
+
+
+
+
+            }
+
+
+
+
 
             if ( errors.length > 0 || warnings.length > 0 )
             {
