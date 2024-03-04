@@ -124,10 +124,6 @@ jobs:
              "- `SampleSettingTab`\n" +
              "- `SampleModal`"
 
-              message.push    ( `${{ steps.changed-files.outputs.modified_files }}` );
-              message         = message.concat( warnings );
-              message.push    ( `\n---\n` );
-
             await ( async ( ) =>
             {
 
@@ -250,6 +246,10 @@ jobs:
 
                 let message = [ `## Report\n` ]
                 message.push( `An automated scan of your pull request code has revealed the following issues. They must be corrected before this pull request will be advanced to the review stage:\n` );
+
+              message.push    ( `${{ steps.changed-files.outputs.modified_files }}` );
+              message         = message.concat( warnings );
+              message.push    ( `\n---\n` );
 
                 /*
                     Errors
