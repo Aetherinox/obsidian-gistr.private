@@ -98,8 +98,8 @@ jobs:
             const files_Array   = files_List.split(',')
 
             let message         = [ "## Automatic Self-Check - #" + context.issue.number + "\n" ]
+            message.push        ( "\n<br />\n" );
             message.push        ( `The details of our automated scan for your pull request are listed below. If our scan detected errors, they must be corrected before this pull request will be advanced to the review stage:\n` );
-
             message.push        ( "\n<br />\n\n---\n<br />\n\n" );
             message.push        ( "## About\n" );
 
