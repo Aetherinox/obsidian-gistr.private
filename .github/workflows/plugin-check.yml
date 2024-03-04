@@ -124,12 +124,12 @@ jobs:
              "- `SampleSettingTab`\n" +
              "- `SampleModal`"
 
+              message.push    ( `${{ steps.changed-files.outputs.modified_files }}` );
+              message         = message.concat( warnings );
+              message.push    ( `\n---\n` );
+
             await ( async ( ) =>
             {
-
-                    message.push    ( `${{ steps.changed-files.outputs.modified_files }}` );
-                    message         = message.concat( warnings );
-                    message.push    ( `\n---\n` );
 
                 /*
                     (Deprecated) app.workspace.getUnpinnedLeaf
