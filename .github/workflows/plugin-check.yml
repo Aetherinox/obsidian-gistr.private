@@ -84,7 +84,6 @@ jobs:
           COUNT_DELETED:    ${{ steps.changed-files.outputs.deleted_files_count }}
           COUNT_RENAMED:    ${{ steps.changed-files.outputs.renamed_files_count }}
           COUNT_COPIED:     ${{ steps.changed-files.outputs.copied_files_count }}
-          NAME_REPO:        ${{ env.GITHUB_REPOSITORY }}
 
       - name: Run Check
         uses: actions/github-script@v6
@@ -107,9 +106,8 @@ jobs:
               | Category | Value |
               | --- | --- |
               | Repo | ` + context.repo.repo + ` |
-              | ${{ env.NAME_REPO }} | asd |
-              | ${{ env.GITHUB_REPOSITORY }} | aaaaaaaaa |
-              | Target Branch | sad |
+              | Source Branch | [ ` + context.payload.pull_request.base.ref + `](https://github.com/` + context.repo.owner + `/` + context.repo.repo + `/tree/` + context.payload.pull_request.base.ref + `) |
+              | Target Branch | [ ` + context.payload.pull_request.head.ref + `](https://github.com/` + context.repo.owner + `/` + context.repo.repo + `/tree/` + context.payload.pull_request.head.ref + `) |
               | Added Files | ${{ steps.changed-files.outputs.added_files_count }} |
               | Modified Files | ${{ steps.changed-files.outputs.all_modified_files_count }} |
               | Renamed Files | ${{ steps.changed-files.outputs.renamed_files_count }} |
