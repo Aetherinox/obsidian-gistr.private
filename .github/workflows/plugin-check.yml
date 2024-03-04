@@ -101,9 +101,10 @@ jobs:
 
             let md_table =
             `
-              | asd | asdasd |
+              | Category | Value |
               | --- | --- |
-              | aa | aa |
+              | Added Files | ${{ steps.changed-files.outputs.added_files_count }} |
+              | Modified Files | ${{ steps.changed-files.outputs.all_modified_files_count }} |
             `;
             
             message.push        ( md_table );
