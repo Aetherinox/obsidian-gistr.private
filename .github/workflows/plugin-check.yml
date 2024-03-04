@@ -304,48 +304,43 @@ jobs:
                 }
             }
 
-            if ( context.payload.pull_request.labels.filter( label => label.name === 'Changes requested' ).length > 0 )
+            if ( context.payload.pull_request.labels.filter( label => label.name === ${{ env.LABEL_CHECK_CHANGES_REQ }} ).length > 0 )
             {
-                labels.push('Changes requested');
+                labels.push( ${{ env.LABEL_CHECK_CHANGES_REQ }} );
             }
 
-            if ( context.payload.pull_request.labels.filter( label => label.name === 'Additional review required' ).length > 0 )
+            if ( context.payload.pull_request.labels.filter( label => label.name === ${{ env.LABEL_CHECK_REVIEW_REQ }} ).length > 0 )
             {
-                labels.push( 'Additional review required' );
+                labels.push( ${{ env.LABEL_CHECK_REVIEW_REQ }} );
             }
 
-            if (context.payload.pull_request.labels.filter(label => label.name === 'Minor changes requested').length > 0)
+            if (context.payload.pull_request.labels.filter(label => label.name === ${{ env.LABEL_CHECK_REBASE_REQ }} ).length > 0 )
             {
-                labels.push( 'Minor changes requested' );
+                labels.push( ${{ env.LABEL_CHECK_REBASE_REQ }} );
             }
 
-            if (context.payload.pull_request.labels.filter(label => label.name === 'requires author rebase').length > 0)
+            if ( context.payload.pull_request.labels.filter(label => label.name === ${{ env.LABEL_CHECK_SECURITY_ERR }} ).length > 0 )
             {
-                labels.push( 'requires author rebase' );
+                labels.push( ${{ env.LABEL_CHECK_SECURITY_ERR }} );
             }
 
-            if (context.payload.pull_request.labels.filter(label => label.name === 'Installation not recommended').length > 0)
+            if (context.payload.pull_request.labels.filter( label => label.name === ${{ env.LABEL_CHECK_STATUS_CHGMADE }} ).length > 0 )
             {
-                labels.push( 'Installation not recommended' );
-            }
-
-            if (context.payload.pull_request.labels.filter( label => label.name === 'Changes made' ).length > 0 )
-            {
-                labels.push( 'Changes made' );
+                labels.push( ${{ env.LABEL_CHECK_STATUS_CHGMADE }} );
             }
             
-            if ( context.payload.pull_request.labels.filter( label => label.name === 'Skipped code scan' ).length > 0 )
+            if ( context.payload.pull_request.labels.filter( label => label.name === ${{ env.LABEL_CHECK_SCAN_SKIPPED }} ).length > 0 )
             {
-                labels.push( 'Skipped code scan' );
+                labels.push( ${{ env.LABEL_CHECK_SCAN_SKIPPED }} );
             }
 
-            labels.push( 'Pull Request' );
+            labels.push( ${{ env.LABEL_CHECK_PULL_REQ }} );
 
             await github.rest.issues.setLabels(
             {
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
+                issue_number:   context.issue.number,
+                owner:          context.repo.owner,
+                repo:           context.repo.repo,
                 labels,
             });
     permissions:
