@@ -102,8 +102,8 @@ jobs:
                 console.log   ( 'Found issue: ' + warning );
             }
 
-              let message = [ `## Report\n` ]
-              message.push( `An automated scan of your pull request code has revealed the following issues. They must be corrected before this pull request will be advanced to the review stage:\n` );
+            let message = [ `## Report\n` ]
+            message.push( `An automated scan of your pull request code has revealed the following issues. They must be corrected before this pull request will be advanced to the review stage:\n` );
 
             /*
                 Loop files
@@ -116,7 +116,7 @@ jobs:
                     Regex Searches
                 */
 
-                const filesModified               = '' + file + '';
+                const filesModified               = file;
                 const filesData                   = fs.readFileSync( filesModified, 'utf8' );
                 const bContainsStyle              = /([A-Za-z]+\.style\.[A-Za-z]+)/gi.test( filesData );
                 const bContainsGeneric            = /(?:^|(?<= ))(MyPlugin|MyPluginSettings|SampleSettings|SampleSettingTab|SampleModal|Sample Plugin|my-plugin)(?:(?= )|$)/gim.test( filesData );
@@ -143,9 +143,9 @@ jobs:
                     Greeting
                 */
 
-                message.push    ( '' + filesModified + '' );
-                message         = message.concat( warnings );
                 message.push    ( `\n---\n` );
+                message.push    ( filesModified );
+                message         = message.concat( warnings );
 
                 await ( async ( ) =>
                 {
