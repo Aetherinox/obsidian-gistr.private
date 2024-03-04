@@ -23,20 +23,6 @@ on:
 
 env:
     PLUGIN_ID: 1
-    LABEL_BUG:      Bug
-    LABEL_FEATURE:  Feature
-    LABEL_URGENT:   Urgent
-    LABEL_ROADMAP:  Roadmap
-    ASSIGN_USER:    Aetherinox
-    BOT_NAME_1:     AdminServ
-    BOT_NAME_2:     AdminServX
-    LABELS_JSON: |
-      [
-        { "name": "Bug", "color": "d73a4a", "description": "Something isn't working" },
-        { "name": "Feature", "color": "36552B", "description": "Feature request" },
-        { "name": "Urgent", "color": "ccb11d", "description": "This issue required priority." },
-        { "name": "Roadmap", "color": "8F1784", "description": "Feature or bug currently planned for implementation." }
-      ]
 
 # ---------------------------------------------------------------------------------------
 #   jobs
