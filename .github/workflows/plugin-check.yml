@@ -189,7 +189,7 @@ jobs:
                 */
 
                   message.push    ( "\n<br />\n\n---\n<br />\n" );
-                  message.push    ( "### " + filesModified + "\n" );
+                  message.push    ( "### 📄 " + filesModified + "\n" );
                   message         = message.concat( warnings );
 
                   /*
@@ -387,7 +387,7 @@ jobs:
                 footer
             */
 
-            message.push    ( `\n---\n` );
+            message.push    ( "\n<br />\n\n---\n<br />\n" );
             message.push    ( `<sup>This check was done automatically. Do <b>NOT</b> open a new PR for re-validation. Instead, to trigger this check again, make a change to your PR and wait a few minutes, or close and re-open it.</sup>` );
 
             /*
