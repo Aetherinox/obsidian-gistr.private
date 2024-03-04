@@ -22,7 +22,32 @@ on:
 # ---------------------------------------------------------------------------------------
 
 env:
-    PLUGIN_ID: 1
+    PLUGIN_ID:                    1
+    LABEL_CHECK_FAILED:           Autocheck Failed
+    LABEL_CHECK_CHANGES_REQ:      Changes Required
+    LABEL_CHECK_REVIEW_READY:     Ready For Review
+    LABEL_CHECK_REVIEW_REQ:       Additional Review Required
+    LABEL_CHECK_REBASE_REQ:       Requires Author Rebase
+    LABEL_CHECK_SECURITY_ERR:     Security Issues
+    LABEL_CHECK_STATUS_CHGMADE:   Changes Made
+    LABEL_CHECK_SCAN_SKIPPED:     Skipped Code Scan
+    LABEL_CHECK_PULL_REQ:         Pull Request
+
+    ASSIGN_USER:    Aetherinox
+    BOT_NAME_1:     AdminServ
+    BOT_NAME_2:     AdminServX
+    LABELS_JSON: |
+      [
+        { "name": "Autocheck Failed",           "color": "d73a4a", "description": "Something isn't working" },
+        { "name": "Changes Required",           "color": "36552B", "description": "Feature request" },
+        { "name": "Ready For Review",           "color": "ccb11d", "description": "This issue required priority." },
+        { "name": "Additional Review Required", "color": "8F1784", "description": "Feature or bug currently planned for implementation." },
+        { "name": "Requires Author Rebase",     "color": "8F1784", "description": "Feature or bug currently planned for implementation." },
+        { "name": "Security Issues",            "color": "8F1784", "description": "Feature or bug currently planned for implementation." },
+        { "name": "Changes Made",               "color": "8F1784", "description": "Feature or bug currently planned for implementation." },
+        { "name": "Skipped Code Scan",          "color": "8F1784", "description": "Feature or bug currently planned for implementation." },
+        { "name": "Pull Request",               "color": "8F1784", "description": "Feature or bug currently planned for implementation." }
+      ]
 
 # ---------------------------------------------------------------------------------------
 #   jobs
@@ -56,21 +81,20 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const fs = require('fs');
-
-            const escapeHtml = (unsafe) => unsafe.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
-            const errors = [];
-            const addError = (error) =>
+            const fs          = require('fs');
+            const escapeHtml  = ( unsafe ) => unsafe.replace( /&/g, '&amp;' ).replace( /</g, '&lt;' ).replace( />/g, '&gt;' ).replace( /"/g, '&quot;' ).replace( /'/g, '&#039;' );
+            const errors      = [];
+            const addError    = ( error ) =>
             {
-                errors.push(`:x: ${error}`);
-                console.log('Found issue: ' + error);
+                errors.push   ( `:x: ${error}` );
+                console.log   ( 'Found issue: ' + error );
             };
 
-            const warnings = [];
-            const addWarning = ( warning ) =>
+            const warnings    = [];
+            const addWarning  = ( warning ) =>
             {
-                warnings.push(`:warning: ${warning}`);
-                console.log( 'Found issue: ' + warning );
+                warnings.push ( `:warning: ${warning}` );
+                console.log   ( 'Found issue: ' + warning );
             }
 
             /*
@@ -220,8 +244,8 @@ jobs:
                     Greeting
                 */
 
-                let message = [`#### Report\n`]
-                message.push( `An automated scan of your pull request code has revealed the following issues. They must be corrected before this pull request will be advanced to the review stage:\n` );
+                let message         = [ `#### Report\n` ]
+                message.push        ( `An automated scan of your pull request code has revealed the following issues. They must be corrected before this pull request will be advanced to the review stage:\n` );
 
                 /*
                     Errors
@@ -230,8 +254,8 @@ jobs:
                 if ( errors.length > 0 )
                 {
                     message.push( `**Errors:**\n` );
-                    message = message.concat( errors );
-                    message.push( `\n---\n` );
+                    message         = message.concat( errors );
+                    message.push    ( `\n---\n` );
                 }
 
                 /*
@@ -241,18 +265,18 @@ jobs:
                 if ( warnings.length > 0 )
                 {
                     message.push( `**Warnings:**\n` );
-                    message = message.concat( warnings );
-                    message.push( `\n---\n` );
+                    message         = message.concat( warnings );
+                    message.push    ( `\n---\n` );
                 }
 
-                message.push( `<sup>This check was done automatically. Do <b>NOT</b> open a new PR for re-validation. Instead, to trigger this check again, make a change to your PR and wait a few minutes, or close and re-open it.</sup>` );
+                message.push( `<sup>This check was done automatically. Do <b>NOT</b> open a new PR for re-validation. To trigger this check again, make a change to your PR and wait a few minutes, or close and re-open it. Your pull request will not be considered until the issues listed above are fixed.</sup>` );
 
                 await github.rest.issues.createComment(
                 {
                     issue_number:   context.issue.number,
                     owner:          context.repo.owner,
                     repo:           context.repo.repo,
-                    body:           message.join('\n'),
+                    body:           message.join( '\n' ),
                 });
             }
     
@@ -260,7 +284,7 @@ jobs:
 
             if ( errors.length > 0 )
             {
-                labels.push( "Validation failed" );
+                labels.push( ${{ env.LABEL_CHECK_FAILED }} );
                 core.setFailed( "Failed to validate pull request" );
             }
 
@@ -268,60 +292,55 @@ jobs:
             {
                 await github.rest.pulls.update(
                 {
-                    owner:        context.repo.owner,
-                    repo:         context.repo.repo,
-                    pull_number:  context.issue.number,
-                    title:        `Review: ${context.payload.pull_request.title}`
+                    owner:          context.repo.owner,
+                    repo:           context.repo.repo,
+                    pull_number:    context.issue.number,
+                    title:          `Review: ${ context.payload.pull_request.title }`
                 });
 
-                if( !context.payload.pull_request.labels.filter( label => label.name === 'Changes requested' ).length > 0 )
+                if( !context.payload.pull_request.labels.filter( label => label.name === ${{ env.LABEL_CHECK_CHANGES_REQ }} ).length > 0 )
                 {
-                    labels.push("Ready for review");
+                    labels.push( ${{ env.LABEL_CHECK_REVIEW_READY }} );
                 }
             }
 
-            if ( context.payload.pull_request.labels.filter( label => label.name === 'Changes requested' ).length > 0 )
+            if ( context.payload.pull_request.labels.filter( label => label.name === ${{ env.LABEL_CHECK_CHANGES_REQ }} ).length > 0 )
             {
-                labels.push('Changes requested');
+                labels.push( ${{ env.LABEL_CHECK_CHANGES_REQ }} );
             }
 
-            if ( context.payload.pull_request.labels.filter( label => label.name === 'Additional review required' ).length > 0 )
+            if ( context.payload.pull_request.labels.filter( label => label.name === ${{ env.LABEL_CHECK_REVIEW_REQ }} ).length > 0 )
             {
-                labels.push( 'Additional review required' );
+                labels.push( ${{ env.LABEL_CHECK_REVIEW_REQ }} );
             }
 
-            if (context.payload.pull_request.labels.filter(label => label.name === 'Minor changes requested').length > 0)
+            if (context.payload.pull_request.labels.filter(label => label.name === ${{ env.LABEL_CHECK_REBASE_REQ }} ).length > 0 )
             {
-                labels.push( 'Minor changes requested' );
+                labels.push( ${{ env.LABEL_CHECK_REBASE_REQ }} );
             }
 
-            if (context.payload.pull_request.labels.filter(label => label.name === 'requires author rebase').length > 0)
+            if ( context.payload.pull_request.labels.filter(label => label.name === ${{ env.LABEL_CHECK_SECURITY_ERR }} ).length > 0 )
             {
-                labels.push( 'requires author rebase' );
+                labels.push( ${{ env.LABEL_CHECK_SECURITY_ERR }} );
             }
 
-            if (context.payload.pull_request.labels.filter(label => label.name === 'Installation not recommended').length > 0)
+            if (context.payload.pull_request.labels.filter( label => label.name === ${{ env.LABEL_CHECK_STATUS_CHGMADE }} ).length > 0 )
             {
-                labels.push( 'Installation not recommended' );
-            }
-
-            if (context.payload.pull_request.labels.filter( label => label.name === 'Changes made' ).length > 0 )
-            {
-                labels.push( 'Changes made' );
+                labels.push( ${{ env.LABEL_CHECK_STATUS_CHGMADE }} );
             }
             
-            if ( context.payload.pull_request.labels.filter( label => label.name === 'Skipped code scan' ).length > 0 )
+            if ( context.payload.pull_request.labels.filter( label => label.name === ${{ env.LABEL_CHECK_SCAN_SKIPPED }} ).length > 0 )
             {
-                labels.push( 'Skipped code scan' );
+                labels.push( ${{ env.LABEL_CHECK_SCAN_SKIPPED }} );
             }
 
-            labels.push( 'Pull Request' );
+            labels.push( ${{ env.LABEL_CHECK_PULL_REQ }} );
 
             await github.rest.issues.setLabels(
             {
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
+                issue_number:   context.issue.number,
+                owner:          context.repo.owner,
+                repo:           context.repo.repo,
                 labels,
             });
     permissions:
