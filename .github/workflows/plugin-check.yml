@@ -143,12 +143,12 @@ jobs:
                     Greeting
                 */
 
-                message.push    ( `\n---\n` );
-                message.push    ( filesModified );
-                message         = message.concat( warnings );
-
                 await ( async ( ) =>
                 {
+
+                    message.push    ( `\n---\n` );
+                    message.push    ( filesModified );
+                    message         = message.concat( warnings );
 
                     /*
                         (Deprecated) app.workspace.getUnpinnedLeaf
