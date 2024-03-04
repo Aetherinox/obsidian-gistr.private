@@ -22,16 +22,17 @@ on:
 # ---------------------------------------------------------------------------------------
 
 env:
-    PLUGIN_ID:                    1
-    LABEL_CHECK_FAILED:           Autocheck Failed
-    LABEL_CHECK_CHANGES_REQ:      Changes Required
-    LABEL_CHECK_REVIEW_READY:     Ready For Review
-    LABEL_CHECK_REVIEW_REQ:       Additional Review Required
-    LABEL_CHECK_REBASE_REQ:       Requires Author Rebase
-    LABEL_CHECK_SECURITY_ERR:     Security Issues
-    LABEL_CHECK_STATUS_CHGMADE:   Changes Made
-    LABEL_CHECK_SCAN_SKIPPED:     Skipped Code Scan
-    LABEL_CHECK_PULL_REQ:         Pull Request
+    PLUGIN_ID: 1
+    LABEL_BUG:      Autocheck Failed
+    LABEL_FEATURE:  Changes Required
+    LABEL_URGENT:   Ready For Review
+    LABEL_ROADMAP:  Changes Required
+    LABEL_ROADMAP:  Additional Review Required
+    LABEL_ROADMAP:  Requires Author Rebase
+    LABEL_ROADMAP:  Security Issues
+    LABEL_ROADMAP:  Changes Made
+    LABEL_ROADMAP:  Skipped Code Scan
+    LABEL_ROADMAP:  Pull Request
 
     ASSIGN_USER:    Aetherinox
     BOT_NAME_1:     AdminServ
@@ -43,7 +44,7 @@ env:
         { "name": "Urgent", "color": "ccb11d", "description": "This issue required priority." },
         { "name": "Roadmap", "color": "8F1784", "description": "Feature or bug currently planned for implementation." }
       ]
-
+      
 # ---------------------------------------------------------------------------------------
 #   jobs
 # ---------------------------------------------------------------------------------------
