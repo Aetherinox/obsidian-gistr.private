@@ -271,21 +271,21 @@ jobs:
                     owner:        context.repo.owner,
                     repo:         context.repo.repo,
                     pull_number:  context.issue.number,
-                    title:        `Review: ${ context.payload.pull_request.title }`
+                    title:        `Review: ${context.payload.pull_request.title}`
                 });
 
-                if( !context.payload.pull_request.labels.filter( label => label.name === 'Changes Required' ).length > 0 )
+                if( !context.payload.pull_request.labels.filter( label => label.name === 'Changes requested' ).length > 0 )
                 {
-                    labels.push( "Ready For Review" );
+                    labels.push( "Ready for review" );
                 }
             }
 
-            if ( context.payload.pull_request.labels.filter( label => label.name === 'Changes Required' ).length > 0 )
+            if ( context.payload.pull_request.labels.filter( label => label.name === 'Changes requested' ).length > 0 )
             {
                 labels.push( 'Changes Required' );
             }
 
-            if ( context.payload.pull_request.labels.filter( label => label.name === 'Additional Review Required' ).length > 0 )
+            if ( context.payload.pull_request.labels.filter( label => label.name === 'Additional review required' ).length > 0 )
             {
                 labels.push( 'Additional Review Required' );
             }
@@ -300,14 +300,14 @@ jobs:
                 labels.push( 'Security Issues' );
             }
 
-            if (context.payload.pull_request.labels.filter( label => label.name === 'Changes Made' ).length > 0 )
+            if (context.payload.pull_request.labels.filter( label => label.name === 'Changes made' ).length > 0 )
             {
-                labels.push( 'Changes Made' );
+                labels.push( 'Changes made' );
             }
             
-            if ( context.payload.pull_request.labels.filter( label => label.name === 'Skipped Code Scan' ).length > 0 )
+            if ( context.payload.pull_request.labels.filter( label => label.name === 'Skipped code scan' ).length > 0 )
             {
-                labels.push( 'Skipped Code Scan' );
+                labels.push( 'Skipped code scan' );
             }
 
             labels.push( 'Pull Request' );
