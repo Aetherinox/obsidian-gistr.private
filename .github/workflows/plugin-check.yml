@@ -280,7 +280,7 @@ jobs:
 
             if ( errors.length > 0 )
             {
-                labels.push( ${{ env.LABEL_CHECK_FAILED }} );
+                labels.push( "Autocheck Failed" );
                 core.setFailed( "Failed to validate pull request" );
             }
 
@@ -294,38 +294,38 @@ jobs:
                     title:        `Review: ${ context.payload.pull_request.title }`
                 });
 
-                if( !context.payload.pull_request.labels.filter( label => label.name === ${{ env.LABEL_CHECK_CHANGES_REQ }} ).length > 0 )
+                if( !context.payload.pull_request.labels.filter( label => label.name === 'Changes Required' ).length > 0 )
                 {
-                    labels.push( ${{ env.LABEL_CHECK_REVIEW_READY }} );
+                    labels.push( "Ready For Review" );
                 }
             }
 
-            if ( context.payload.pull_request.labels.filter( label => label.name === ${{ env.LABEL_CHECK_CHANGES_REQ }} ).length > 0 )
+            if ( context.payload.pull_request.labels.filter( label => label.name === 'Changes Required' ).length > 0 )
             {
-                labels.push( ${{ env.LABEL_CHECK_CHANGES_REQ }} );
+                labels.push( 'Changes Required' );
             }
 
-            if ( context.payload.pull_request.labels.filter( label => label.name === ${{ env.LABEL_CHECK_REVIEW_REQ }} ).length > 0 )
+            if ( context.payload.pull_request.labels.filter( label => label.name === 'Additional Review Required' ).length > 0 )
             {
-                labels.push( ${{ env.LABEL_CHECK_REVIEW_REQ }} );
+                labels.push( 'Additional Review Required' );
             }
 
-            if (context.payload.pull_request.labels.filter(label => label.name === ${{ env.LABEL_CHECK_REBASE_REQ }} ).length > 0 )
+            if (context.payload.pull_request.labels.filter(label => label.name === 'Requires Author Rebase' ).length > 0 )
             {
-                labels.push( ${{ env.LABEL_CHECK_REBASE_REQ }} );
+                labels.push( 'Requires Author Rebase' );
             }
 
-            if ( context.payload.pull_request.labels.filter(label => label.name === ${{ env.LABEL_CHECK_SECURITY_ERR }} ).length > 0 )
+            if ( context.payload.pull_request.labels.filter(label => label.name === 'Security Issues' ).length > 0 )
             {
-                labels.push( ${{ env.LABEL_CHECK_SECURITY_ERR }} );
+                labels.push( 'Security Issues' );
             }
 
-            if (context.payload.pull_request.labels.filter( label => label.name === ${{ env.LABEL_CHECK_STATUS_CHGMADE }} ).length > 0 )
+            if (context.payload.pull_request.labels.filter( label => label.name === 'Changes Made' ).length > 0 )
             {
-                labels.push( ${{ env.LABEL_CHECK_STATUS_CHGMADE }} );
+                labels.push( 'Changes Made' );
             }
             
-            if ( context.payload.pull_request.labels.filter( label => label.name === ${{ env.LABEL_CHECK_SCAN_SKIPPED }} ).length > 0 )
+            if ( context.payload.pull_request.labels.filter( label => label.name === 'Skipped Code Scan' ).length > 0 )
             {
                 labels.push( 'Skipped Code Scan' );
             }
