@@ -92,6 +92,13 @@ jobs:
             let message = [ `## Report\n` ]
             message.push( `An automated scan of your pull request code has revealed the following issues. They must be corrected before this pull request will be advanced to the review stage:\n` );
 
+            let error_Generic = "\n" + 
+            "- `MyPlugin`\n" + 
+            "- `MyPluginSettings`\n" + 
+            "- `SampleSettings`\n" +
+            "- `SampleSettingTab`\n" +
+            "- `SampleModal`"
+
             /*
                 Loop files
             */
@@ -133,20 +140,12 @@ jobs:
 
                 const check_depGetUnpinnedLeaf    = "app.workspace.getUnpinnedLeaf"
 
-                let error_Generic = "\n" + 
-                "- `MyPlugin`\n" + 
-                "- `MyPluginSettings`\n" + 
-                "- `SampleSettings`\n" +
-                "- `SampleSettingTab`\n" +
-                "- `SampleModal`"
-
                 /*
                     Greeting
                 */
 
-
-                  message.push    ( `\n---\n` );
-                  message.push    ( `### ` + filesModified + `\n );
+                  message.push    ( "\n---\n" );
+                  message.push    ( "### " + filesModified + "\n" );
                   message         = message.concat( warnings );
 
                   /*
