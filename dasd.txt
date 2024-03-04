@@ -32,3 +32,8 @@ SampleSettings ssdsds
 		});
 };
 
+new RegExp(/(?<=!\[[^\]]+\]\()(?<link>[^)]+)(?=\))/g);
+new RegExp(/(?<=\w+[ ])(?<level>\d+)-(?<index>\d+)[ ](?<name>.+)/);
+
+test
+
