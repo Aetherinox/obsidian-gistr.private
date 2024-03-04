@@ -106,6 +106,7 @@ jobs:
               | Category | Value |
               | --- | --- |
               | Repo | ` + context.repo.repo + ` |
+              | Target Branch | ` + context.payload.pull_request.base.ref + ` |
               | Added Files | ${{ steps.changed-files.outputs.added_files_count }} |
               | Modified Files | ${{ steps.changed-files.outputs.all_modified_files_count }} |
               | Renamed Files | ${{ steps.changed-files.outputs.renamed_files_count }} |
