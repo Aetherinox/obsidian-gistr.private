@@ -30,6 +30,7 @@ env:
     LABEL_CHECK_REBASE_REQ:       Requires Author Rebase
     LABEL_CHECK_SECURITY_ERR:     Security Issues
     LABEL_CHECK_STATUS_CHGMADE:   Changes Made
+    LABEL_CHECK_STATUS_FAILED:    Validation Failed
     LABEL_CHECK_SCAN_SKIPPED:     Skipped Code Scan
     LABEL_CHECK_PULL_REQ:         Pull Request
 
@@ -91,6 +92,7 @@ jobs:
           script: |
             const fs            = require('fs');
             const escape_html   = ( unsafe ) => unsafe.replace( /&/g, '&amp;' ).replace( /</g, '&lt;' ).replace( />/g, '&gt;' ).replace( /"/g, '&quot;' ).replace( /'/g, '&#039;' );
+            const labels        = [];
 
             const files_List    = `${{ steps.changed-files.outputs.all_changed_files }}`
             const files_Array   = files_List.split(',')
@@ -381,10 +383,12 @@ jobs:
                   }
             }
 
+            /*
+                footer
+            */
+
             message.push    ( `\n---\n` );
             message.push    ( `<sup>This check was done automatically. Do <b>NOT</b> open a new PR for re-validation. Instead, to trigger this check again, make a change to your PR and wait a few minutes, or close and re-open it.</sup>` );
-
-            const labels    = [];
 
             /*
                 Has Errors
@@ -392,16 +396,8 @@ jobs:
 
             if ( bHasError == true )
             {
-                labels.push( "Validation failed" );
-                core.setFailed( "Failed to validate pull request" );
-
-                await github.rest.pulls.update(
-                {
-                    owner:        context.repo.owner,
-                    repo:         context.repo.repo,
-                    pull_number:  context.issue.number,
-                    title:        `PR ${ context.issue.number }: ${ context.payload.pull_request.title }`
-                } );
+                labels.push( "${{ LABEL_CHECK_STATUS_FAILED }}" );
+                core.setFailed( "Pull Request Failed Autocheck: ${ context.issue.number }: ${ context.payload.pull_request.title }" );
             }
 
             /*
@@ -418,9 +414,13 @@ jobs:
                     title:        `PR ${ context.issue.number }: ${ context.payload.pull_request.title }`
                 } );
 
-                if ( !context.payload.pull_request.labels.filter( label => label.name === 'Changes requested' ).length > 0 )
-                    labels.push("Ready for review");
+                if ( !context.payload.pull_request.labels.filter( label => label.name === "${{ env.LABEL_CHECK_CHANGES_REQ }}" ).length > 0 )
+                    labels.push( "${{ env.LABEL_CHECK_REVIEW_READY }}" );
             }
+
+            /*
+                Determine Label
+            */
 
             if ( context.payload.pull_request.labels.filter( label => label.name === "${{ env.LABEL_CHECK_CHANGES_REQ }}" ).length > 0 )
                 labels.push( "${{ env.LABEL_CHECK_CHANGES_REQ }}" );
