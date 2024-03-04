@@ -100,14 +100,14 @@ jobs:
 
             message.push        ( "\n<br />\n\n---\n<br />\n\n" );
             message.push        ( "### Statistics\n" );
-
+            
             let md_table =
             `
               | Category | Value |
               | --- | --- |
               | Repo | ` + context.repo.repo + ` |
-              | Source Branch | ` + context.payload.pull_request.head.ref + ` |
-              | Target Branch | ` + context.payload.pull_request.base.ref + ` |
+              | Source Branch | [` + context.payload.pull_request.base.ref + `](https://github.com/${{ GITHUB_REPOSITORY }}/`tree/` + context.payload.pull_request.base.ref + `/` ) |
+              | Target Branch | [` + context.payload.pull_request.base.ref + `](https://github.com/${{ GITHUB_REPOSITORY }}/`tree/` + context.payload.pull_request.head.ref + `/` ) |
               | Added Files | ${{ steps.changed-files.outputs.added_files_count }} |
               | Modified Files | ${{ steps.changed-files.outputs.all_modified_files_count }} |
               | Renamed Files | ${{ steps.changed-files.outputs.renamed_files_count }} |
