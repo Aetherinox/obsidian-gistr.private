@@ -1,12 +1,12 @@
 # ---------------------------------------------------------------------------------------
 #   @parent     : github workflow
-#   @desc       : check plugin
+#   @desc       : pull request autocheck
 #   @author     : Aetherinox
 #   @url        : https://github.com/Aetherinox
 # ---------------------------------------------------------------------------------------
 
-name: "Plugin Check"
-run-name: "Plugin Check"
+name: "Pull Request: Autocheck"
+run-name: "Pull Request: Autocheck"
 
 on:
   pull_request:
