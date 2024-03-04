@@ -110,148 +110,156 @@ jobs:
             for ( const file of files_Array )
             {
 
-              /*
-                  Regex Searches
-              */
+                /*
+                    Regex Searches
+                */
 
-              const filesModified               = '' + file + '';
-              const filesData                   = fs.readFileSync( filesModified, 'utf8' );
-              const bContainsStyle              = /([A-Za-z]+\.style\.[A-Za-z]+)/gi.test( filesData );
-              const bContainsGeneric            = /(?:^|(?<= ))(MyPlugin|MyPluginSettings|SampleSettings|SampleSettingTab|SampleModal|Sample Plugin|my-plugin)(?:(?= )|$)/gim.test( filesData );
-              const bFuncFetch                  = /(fetch)\((.*)\)(\[([^\]]*)\])?/gim.test( filesData );
-              const bVar                        = /^(?:var|)\s(\w+)\s*=\s*/gm.test( filesData );
-              const bLookBehind                 = /(\(([?:]<[^()]+|)*\))/gmi.test( filesData );
-              const bMarkdownHtmlNode           = /new\s+NodeHtmlMarkdown/gmi.test( filesData );
-              const bAsTFile                    = /as\s+TFile/g.test( filesData );
-              const bAsTFolder                  = /as\s+TFolder/g.test( filesData );
-              const bAsAny                      = /\((.*? as Any\s*)\)/gi.test( filesData );
-              const bInnerHTML                  = /^\s?[a-zA-Z0-9_]+\.innerHTML*\s?.*$/gm.test( filesData );
-              const bOuterHTML                  = /^\s?[a-zA-Z0-9_]+\.outerHTML*\s?.*$/gm.test( filesData );
+                const filesModified               = '' + file + '';
+                const filesData                   = fs.readFileSync( filesModified, 'utf8' );
+                const bContainsStyle              = /([A-Za-z]+\.style\.[A-Za-z]+)/gi.test( filesData );
+                const bContainsGeneric            = /(?:^|(?<= ))(MyPlugin|MyPluginSettings|SampleSettings|SampleSettingTab|SampleModal|Sample Plugin|my-plugin)(?:(?= )|$)/gim.test( filesData );
+                const bFuncFetch                  = /(fetch)\((.*)\)(\[([^\]]*)\])?/gim.test( filesData );
+                const bVar                        = /^(?:var|)\s(\w+)\s*=\s*/gm.test( filesData );
+                const bLookBehind                 = /(\(([?:]<[^()]+|)*\))/gmi.test( filesData );
+                const bMarkdownHtmlNode           = /new\s+NodeHtmlMarkdown/gmi.test( filesData );
+                const bAsTFile                    = /as\s+TFile/g.test( filesData );
+                const bAsTFolder                  = /as\s+TFolder/g.test( filesData );
+                const bAsAny                      = /\((.*? as Any\s*)\)/gi.test( filesData );
+                const bInnerHTML                  = /^\s?[a-zA-Z0-9_]+\.innerHTML*\s?.*$/gm.test( filesData );
+                const bOuterHTML                  = /^\s?[a-zA-Z0-9_]+\.outerHTML*\s?.*$/gm.test( filesData );
 
-              const check_depGetUnpinnedLeaf    = "app.workspace.getUnpinnedLeaf"
+                const check_depGetUnpinnedLeaf    = "app.workspace.getUnpinnedLeaf"
 
-              let error_Generic = "\n" + 
-              "- `MyPlugin`\n" + 
-              "- `MyPluginSettings`\n" + 
-              "- `SampleSettings`\n" +
-              "- `SampleSettingTab`\n" +
-              "- `SampleModal`"
+                let error_Generic = "\n" + 
+                "- `MyPlugin`\n" + 
+                "- `MyPluginSettings`\n" + 
+                "- `SampleSettings`\n" +
+                "- `SampleSettingTab`\n" +
+                "- `SampleModal`"
 
-              await ( async ( ) =>
-              {
+                let message = [ `## Report\n` ]
+                message.push( `An automated scan of your pull request code has revealed the following issues. They must be corrected before this pull request will be advanced to the review stage:\n` );
 
-                  /*
-                      (Deprecated) app.workspace.getUnpinnedLeaf
-                  */
+                /*
+                    Greeting
+                */
 
-                  if ( filesData.toLowerCase( ).includes( check_depGetUnpinnedLeaf.toLowerCase( ) ) )
-                  {
-                      addError( "This function is deprecated, use `this.app.workspace.getLeaf( false )` instead" );
-                  }
+                message.push    ( '' + filesModified + '' );
+                message         = message.concat( warnings );
+                message.push    ( `\n---\n` );
 
-                  /*
-                      Using inline style
-                  */
+                await ( async ( ) =>
+                {
 
-                  if ( bContainsStyle == true )
-                  {
-                      addError( "Avoid assigning `inline styles` via JavaScript or in HTML. Move these styles to CSS so that they are adaptable by themes and other plugins." );
-                  }
+                    /*
+                        (Deprecated) app.workspace.getUnpinnedLeaf
+                    */
 
-                  /*
-                      Using fetch
-                  */
+                    if ( filesData.toLowerCase( ).includes( check_depGetUnpinnedLeaf.toLowerCase( ) ) )
+                    {
+                        addError( "This function is deprecated, use `this.app.workspace.getLeaf( false )` instead" );
+                    }
 
-                  if ( bFuncFetch == true )
-                  {
-                      addError( "Do not handle http data with `fetch( )`. Use the Obsidian API -> `requestUrl` method instead, which will make sure that network requests work on every platform." );
-                  }
+                    /*
+                        Using inline style
+                    */
 
-                  /*
-                      Using var
-                  */
+                    if ( bContainsStyle == true )
+                    {
+                        addError( "Avoid assigning `inline styles` via JavaScript or in HTML. Move these styles to CSS so that they are adaptable by themes and other plugins." );
+                    }
 
-                  if ( bVar == true )
-                  {
-                      addError( "Change all instances of `var` to **const** or **let**. var has function-level scope, and leads to bugs." );
-                  }
+                    /*
+                        Using fetch
+                    */
 
-                  /*
-                      Using lookbehind
-                  */
+                    if ( bFuncFetch == true )
+                    {
+                        addError( "Do not handle http data with `fetch( )`. Use the Obsidian API -> `requestUrl` method instead, which will make sure that network requests work on every platform." );
+                    }
 
-                  if ( bLookBehind == true )
-                  {
-                      addError( "Lookbehinds are not supported in iOS < 16.4" );
-                  }
+                    /*
+                        Using var
+                    */
 
-                  /*
-                      Using HTML Node
-                  */
+                    if ( bVar == true )
+                    {
+                        addError( "Change all instances of `var` to **const** or **let**. var has function-level scope, and leads to bugs." );
+                    }
 
-                  if ( bMarkdownHtmlNode == true )
-                  {
-                      addError( "Do not use `NodeHtmlMarkdown`. Use Obsidian API -> `htmlToMarkdown` instead." );
-                  }
+                    /*
+                        Using lookbehind
+                    */
 
-                  /*
-                      As TFile
-                  */
+                    if ( bLookBehind == true )
+                    {
+                        addError( "Lookbehinds are not supported in iOS < 16.4" );
+                    }
 
-                  if ( bAsTFile == true )
-                  {
-                      addError( "Do not cast `as TFile`, use `instanceof` instead to check if the item is actually a file / folder" );
-                  }
+                    /*
+                        Using HTML Node
+                    */
 
-                  /*
-                      As TFolder
-                  */
+                    if ( bMarkdownHtmlNode == true )
+                    {
+                        addError( "Do not use `NodeHtmlMarkdown`. Use Obsidian API -> `htmlToMarkdown` instead." );
+                    }
 
-                  if ( bAsTFolder == true )
-                  {
-                      addError( "Do not cast `as TFolder`, use `instanceof` instead to check if the item is actually a file / folder" );
-                  }
+                    /*
+                        As TFile
+                    */
 
-                  /*
-                      Casting to Any
-                  */
+                    if ( bAsTFile == true )
+                    {
+                        addError( "Do not cast `as TFile`, use `instanceof` instead to check if the item is actually a file / folder" );
+                    }
 
-                  if ( bAsAny == true )
-                  {
-                      addError( "Do not cast to `Any`" );
-                  }
+                    /*
+                        As TFolder
+                    */
 
-                  /*
-                      innerHTML
-                  */
+                    if ( bAsTFolder == true )
+                    {
+                        addError( "Do not cast `as TFolder`, use `instanceof` instead to check if the item is actually a file / folder" );
+                    }
 
-                  if ( bInnerHTML == true )
-                  {
-                      addError( `Using \`innerHTML\` is a security risk. Use the DOM API or the Obsidian helper functions: https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
-                  }
+                    /*
+                        Casting to Any
+                    */
 
-                  /*
-                      outerHTML
-                  */
+                    if ( bAsAny == true )
+                    {
+                        addError( "Do not cast to `Any`" );
+                    }
 
-                  if ( bOuterHTML == true )
-                  {
-                      addError( `Using \`outerHTML\` is a security risk. Use the DOM API or the Obsidian helper functions: https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
-                  }
+                    /*
+                        innerHTML
+                    */
 
-                  /*
-                      Generic Calls
-                  */
+                    if ( bInnerHTML == true )
+                    {
+                        addError( `Using \`innerHTML\` is a security risk. Use the DOM API or the Obsidian helper functions: https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
+                    }
 
-                  if ( bContainsGeneric == true )
-                  {
-                      addError( "Rename sample classes to something that makes sense. You are not allowed to have names such as: " + error_Generic );
-                  }
+                    /*
+                        outerHTML
+                    */
 
-              })();
+                    if ( bOuterHTML == true )
+                    {
+                        addError( `Using \`outerHTML\` is a security risk. Use the DOM API or the Obsidian helper functions: https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
+                    }
 
+                    /*
+                        Generic Calls
+                    */
 
+                    if ( bContainsGeneric == true )
+                    {
+                        addError( "Rename sample classes to something that makes sense. You are not allowed to have names such as: " + error_Generic );
+                    }
 
+                })();
 
             }
 
@@ -261,17 +269,6 @@ jobs:
 
             if ( errors.length > 0 || warnings.length > 0 )
             {
-
-                /*
-                    Greeting
-                */
-
-                let message = [ `## Report\n` ]
-                message.push( `An automated scan of your pull request code has revealed the following issues. They must be corrected before this pull request will be advanced to the review stage:\n` );
-
-              message.push    ( `${{ steps.changed-files.outputs.modified_files }}` );
-              message         = message.concat( warnings );
-              message.push    ( `\n---\n` );
 
                 /*
                     Errors
