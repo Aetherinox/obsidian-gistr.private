@@ -265,7 +265,7 @@ jobs:
 
                       if ( errors.length > 0 )
                       {
-                          message.push    ( "\n<br>\n\n> [!CAUTION]\n> The file `" + file + "` contains the following errors:\n\n<br>\n\n" );
+                          message.push    ( "\n\n\n> [!CAUTION]\n> The file `" + file + "` contains the following errors:\n\n<br>\n\n" );
                           message         = message.concat( errors );
                       }
 
@@ -275,7 +275,7 @@ jobs:
 
                       if ( warnings.length > 0 )
                       {
-                          message.push    ( "\n<br>\n\n> [!WARNING]\n> The file `" + file + "` contains the following warnings:\n\n<br>\n\n" );
+                          message.push    ( "\n\n\n> [!WARNING]\n> The file `" + file + "` contains the following warnings:\n\n<br>\n\n" );
                           message         = message.concat( warnings );
                       }
 
