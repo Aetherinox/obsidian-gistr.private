@@ -106,7 +106,7 @@ jobs:
               | Category | Value |
               | --- | --- |
               | Repo | ` + context.repo.repo + ` |
-              | Source Branch ${{ GITHUB_REPOSITORY }} | asd |
+              | Source Branch ${{ env.GITHUB_REPOSITORY }} | asd |
               | Target Branch | sad |
               | Added Files | ${{ steps.changed-files.outputs.added_files_count }} |
               | Modified Files | ${{ steps.changed-files.outputs.all_modified_files_count }} |
