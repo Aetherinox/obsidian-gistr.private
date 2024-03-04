@@ -397,7 +397,7 @@ jobs:
             if ( bHasError == true )
             {
                 labels.push( "${{ env.LABEL_CHECK_STATUS_FAILED }}" );
-                core.setFailed( "Pull Request Failed Autocheck: ${ context.issue.number }: ${ context.payload.pull_request.title }" );
+                core.setFailed( "Pull Request Failed Autocheck: " + context.issue.number + ": " + context.payload.pull_request.title + "." );
             }
 
             /*
