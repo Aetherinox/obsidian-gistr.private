@@ -102,6 +102,8 @@ jobs:
                 console.log   ( 'Found issue: ' + warning );
             }
 
+              let message = [ `## Report\n` ]
+              message.push( `An automated scan of your pull request code has revealed the following issues. They must be corrected before this pull request will be advanced to the review stage:\n` );
 
             /*
                 Loop files
@@ -136,9 +138,6 @@ jobs:
                 "- `SampleSettings`\n" +
                 "- `SampleSettingTab`\n" +
                 "- `SampleModal`"
-
-                let message = [ `## Report\n` ]
-                message.push( `An automated scan of your pull request code has revealed the following issues. They must be corrected before this pull request will be advanced to the review stage:\n` );
 
                 /*
                     Greeting
