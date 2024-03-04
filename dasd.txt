@@ -1,6 +1,6 @@
 dasd asdasd asdasd ad sdsdsd
-innerHTML( this )
-
+logElem.innerHTML += `${timeStr}: ${msg}<br/>`;
+logElem.outerHTML += `${timeStr}: ${msg}<br/>`;
 sadasd
 
 showErrorTooltip(text.inputEl as any, validationResult);
