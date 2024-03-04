@@ -76,9 +76,12 @@ jobs:
             echo "$file was added"
           done
         env:
-          ADDED_FILES: ${{ steps.changed-files.outputs.added_files }}
-          MODIFIED_FILES: ${{ steps.changed-files.outputs.modified_files }}
-          CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+          ADDED_FILES:      ${{ steps.changed-files.outputs.added_files }}
+          MODIFIED_FILES:   ${{ steps.changed-files.outputs.modified_files }}
+          CHANGED_FILES:    ${{ steps.changed-files.outputs.all_changed_files }}
+          COUNT_ADDED:      ${{ steps.changed-files.outputs.added_files_count }}
+          COUNT_MODIFIED:   ${{ steps.changed-files.outputs.all_modified_files_count }}
+          COUNT_DELETED:    ${{ steps.changed-files.outputs.deleted_files_count }}
 
       - name: Run Check
         uses: actions/github-script@v6
@@ -95,7 +98,15 @@ jobs:
 
             message.push        ( "\n<br />\n\n---\n<br />\n\n" );
             message.push        ( "### Statistics\n" );
-            message.push        ( "\n<br />\n\n---\n<br />\n\n" );
+
+            let message =
+            '
+              | asd | asdasd |
+              | --- | --- |
+              | aa | aa |
+            '
+            
+            message.push        ( message );
 
             let error_Generic = "\n" + 
             "- `MyPlugin`\n" + 
