@@ -260,7 +260,7 @@ jobs:
 
             if ( errors.length > 0 )
             {
-                labels.push( "Autocheck Failed" );
+                labels.push( "Check Failed" );
                 core.setFailed( "Failed to validate pull request" );
             }
 
@@ -276,28 +276,33 @@ jobs:
 
                 if( !context.payload.pull_request.labels.filter( label => label.name === 'Changes requested' ).length > 0 )
                 {
-                    labels.push( "Ready for review" );
+                    labels.push("Ready for review");
                 }
             }
 
             if ( context.payload.pull_request.labels.filter( label => label.name === 'Changes requested' ).length > 0 )
             {
-                labels.push( 'Changes Required' );
+                labels.push('Changes requested');
             }
 
             if ( context.payload.pull_request.labels.filter( label => label.name === 'Additional review required' ).length > 0 )
             {
-                labels.push( 'Additional Review Required' );
+                labels.push( 'Additional review required' );
             }
 
-            if (context.payload.pull_request.labels.filter(label => label.name === 'Requires Author Rebase' ).length > 0 )
+            if (context.payload.pull_request.labels.filter(label => label.name === 'Minor changes requested').length > 0)
             {
-                labels.push( 'Requires Author Rebase' );
+                labels.push( 'Minor changes requested' );
             }
 
-            if ( context.payload.pull_request.labels.filter(label => label.name === 'Security Issues' ).length > 0 )
+            if (context.payload.pull_request.labels.filter(label => label.name === 'requires author rebase').length > 0)
             {
-                labels.push( 'Security Issues' );
+                labels.push( 'requires author rebase' );
+            }
+
+            if (context.payload.pull_request.labels.filter(label => label.name === 'Installation not recommended').length > 0)
+            {
+                labels.push( 'Installation not recommended' );
             }
 
             if (context.payload.pull_request.labels.filter( label => label.name === 'Changes made' ).length > 0 )
