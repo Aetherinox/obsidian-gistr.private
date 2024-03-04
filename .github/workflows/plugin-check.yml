@@ -143,8 +143,6 @@ jobs:
                     Greeting
                 */
 
-                await ( async ( ) =>
-                {
 
                     message.push    ( `\n---\n` );
                     message.push    ( filesModified );
@@ -257,8 +255,6 @@ jobs:
                     {
                         addError( "Rename sample classes to something that makes sense. You are not allowed to have names such as: " + error_Generic );
                     }
-
-                })();
 
             }
 
