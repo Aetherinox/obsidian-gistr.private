@@ -38,15 +38,10 @@ env:
     BOT_NAME_2:     AdminServX
     LABELS_JSON: |
       [
-        { "name": "Autocheck Failed",           "color": "d73a4a", "description": "Something isn't working" },
-        { "name": "Changes Required",           "color": "36552B", "description": "Feature request" },
-        { "name": "Ready For Review",           "color": "ccb11d", "description": "This issue required priority." },
-        { "name": "Additional Review Required", "color": "8F1784", "description": "Feature or bug currently planned for implementation." },
-        { "name": "Requires Author Rebase",     "color": "8F1784", "description": "Feature or bug currently planned for implementation." },
-        { "name": "Security Issues",            "color": "8F1784", "description": "Feature or bug currently planned for implementation." },
-        { "name": "Changes Made",               "color": "8F1784", "description": "Feature or bug currently planned for implementation." },
-        { "name": "Skipped Code Scan",          "color": "8F1784", "description": "Feature or bug currently planned for implementation." },
-        { "name": "Pull Request",               "color": "8F1784", "description": "Feature or bug currently planned for implementation." }
+        { "name": "Bug", "color": "d73a4a", "description": "Something isn't working" },
+        { "name": "Feature", "color": "36552B", "description": "Feature request" },
+        { "name": "Urgent", "color": "ccb11d", "description": "This issue required priority." },
+        { "name": "Roadmap", "color": "8F1784", "description": "Feature or bug currently planned for implementation." }
       ]
 
 # ---------------------------------------------------------------------------------------
@@ -332,10 +327,10 @@ jobs:
             
             if ( context.payload.pull_request.labels.filter( label => label.name === ${{ env.LABEL_CHECK_SCAN_SKIPPED }} ).length > 0 )
             {
-                labels.push( ${{ env.LABEL_CHECK_SCAN_SKIPPED }} );
+                labels.push( 'Skipped Code Scan' );
             }
 
-            labels.push( ${{ env.LABEL_CHECK_PULL_REQ }} );
+            labels.push( 'Pull Request' );
 
             await github.rest.issues.setLabels(
             {
