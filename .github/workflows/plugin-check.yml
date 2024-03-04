@@ -97,9 +97,9 @@ jobs:
 
             for ( const point of files_Array )
             {
+                  console.log( "-------------------" );
                   console.log( point );
-                  console.log(point); // second consoleLog
-                  console.log(point.id); // third consoleLog
+                                    console.log( "-------------------" );
             }
 
 
