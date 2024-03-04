@@ -5,7 +5,7 @@
   "main": "main.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Aetherinox/obsidian-gistr.git"
+    "url": "git+https://github.com/Aetherinox/obsidian-gistr.gita"
   },
   "scripts": {
     "dev": "rollup --config rollup.config.js -w",
