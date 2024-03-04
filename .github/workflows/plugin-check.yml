@@ -304,7 +304,7 @@ jobs:
                 }
             }
 
-            labels.push( `##### filesModified ${{ filesModified }}` )
+            labels.push( `##### filesModified ` + filesModified )
 
             if ( context.payload.pull_request.labels.filter( label => label.name === ${{ env.LABEL_CHECK_CHANGES_REQ }} ).length > 0 )
             {
