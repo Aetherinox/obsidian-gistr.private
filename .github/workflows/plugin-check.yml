@@ -23,17 +23,10 @@ on:
 
 env:
     PLUGIN_ID: 1
-    LABEL_BUG:      Autocheck Failed
-    LABEL_FEATURE:  Changes Required
-    LABEL_URGENT:   Ready For Review
-    LABEL_ROADMAP:  Changes Required
-    LABEL_ROADMAP:  Additional Review Required
-    LABEL_ROADMAP:  Requires Author Rebase
-    LABEL_ROADMAP:  Security Issues
-    LABEL_ROADMAP:  Changes Made
-    LABEL_ROADMAP:  Skipped Code Scan
-    LABEL_ROADMAP:  Pull Request
-
+    LABEL_BUG:      Bug
+    LABEL_FEATURE:  Feature
+    LABEL_URGENT:   Urgent
+    LABEL_ROADMAP:  Roadmap
     ASSIGN_USER:    Aetherinox
     BOT_NAME_1:     AdminServ
     BOT_NAME_2:     AdminServX
@@ -44,7 +37,7 @@ env:
         { "name": "Urgent", "color": "ccb11d", "description": "This issue required priority." },
         { "name": "Roadmap", "color": "8F1784", "description": "Feature or bug currently planned for implementation." }
       ]
-      
+
 # ---------------------------------------------------------------------------------------
 #   jobs
 # ---------------------------------------------------------------------------------------
