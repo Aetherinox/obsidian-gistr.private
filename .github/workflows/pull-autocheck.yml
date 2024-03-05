@@ -449,15 +449,28 @@ jobs:
                 No Errors
             */
 
+            const pr_title_append = `PR ${ context.issue.number }:`
+
+            console.log( `${ pr_title_append } ${ context.payload.pull_request.title }` )
+
             if ( bHasError == false )
             {
-                await github.rest.pulls.update(
+
+                /*
+                    change pr title
+                */
+
+                const pr_title_append = `PR ${ context.issue.number }:`
+                if ( !startsWith( steps.bug_title.outputs.lowercase, pr_title_append ) )
                 {
-                    owner:        context.repo.owner,
-                    repo:         context.repo.repo,
-                    pull_number:  context.issue.number,
-                    title:        `PR ${ context.issue.number }: ${ context.payload.pull_request.title }`
-                } );
+                    await github.rest.pulls.update(
+                    {
+                        owner:        context.repo.owner,
+                        repo:         context.repo.repo,
+                        pull_number:  context.issue.number,
+                        title:        `${ pr_title_append } ${ context.payload.pull_request.title }`
+                    } );
+                }
 
                 if ( !context.payload.pull_request.labels.filter( label => label.name === "${{ env.LABEL_CHECK_CHANGES_REQ }}" ).length > 0 )
                     labels.push( "${{ env.LABEL_CHECK_REVIEW_READY }}" );
