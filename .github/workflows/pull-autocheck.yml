@@ -407,7 +407,7 @@ jobs:
                 }
                 else
                 {
-                    message.push    ( "\n<br>\n\n> [!NOTE]\n> The file `" + file + "` contains no errors\n\n<br>\n\n" );
+                    message.push    ( "\n\n\n> [!NOTE]\n> The file `" + file + "` contains no errors\n\n<br>\n\n" );
                 }
             }
 
