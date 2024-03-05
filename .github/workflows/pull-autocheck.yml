@@ -139,26 +139,26 @@ jobs:
 
             const files_skipped     = [];
 
+            const errors      = [];
+            const addError    = ( error ) =>
+            {
+                errors.push   ( `:x: ${error}` );
+                console.log   ( 'Found issue: ' + error );
+
+                bHasError     = true;
+            };
+
+            const warnings    = [];
+            const addWarning  = ( warning ) =>
+            {
+                warnings.push ( `:warning: ${warning}` );
+                console.log   ( 'Found issue: ' + warning );
+
+                bHasWarning   = true;
+            }
+
             for ( const file of files_Array )
             {
-
-                const errors      = [];
-                const addError    = ( error ) =>
-                {
-                    errors.push   ( `:x: ${error}` );
-                    console.log   ( 'Found issue: ' + error );
-
-                    bHasError     = true;
-                };
-
-                const warnings    = [];
-                const addWarning  = ( warning ) =>
-                {
-                    warnings.push ( `:warning: ${warning}` );
-                    console.log   ( 'Found issue: ' + warning );
-
-                    bHasWarning   = true;
-                }
 
                 /*
                     Regex Searches
