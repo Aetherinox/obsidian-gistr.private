@@ -105,9 +105,8 @@ jobs:
 
             let bHasError       = false;
             let bHasWarning     = false;
-            let date_created    = dateFormat( `context.payload.pull_request.created_at`, "mmmm dddd yyyy, h:MM:ss TT" );
+            let date_created    = dateFormat( `${ context.payload.pull_request.created_at }`, "mmmm dddd yyyy, h:MM:ss TT" );
             
-
             /*
                 context.payload.pull_request.base.repo.owner.login
             */
