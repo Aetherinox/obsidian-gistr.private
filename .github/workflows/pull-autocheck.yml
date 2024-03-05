@@ -106,12 +106,31 @@ jobs:
             let bHasError       = false;
             let bHasWarning     = false;
             
+
+            /*
+                context.payload.pull_request.base.repo.owner.login
+
+                ref: context.payload.pull_request.head.ref,
+                sha: context.payload.pull_request.head.sha,
+                title: context.payload.pull_request.title,
+                author: context.payload.pull_request.user.login,
+                number: context.payload.pull_request.number,
+                labels: context.payload.pull_request.labels,
+                updated_at: context.payload.pull_request.updated_at,
+                html_url: context.payload.pull_request.html_url,
+
+            */
+
             let md_table =
             `
               | Category | Value |
               | --- | --- |
+              | Title | ` + context.payload.pull_request.title + ` |
+              | Num | ` + context.payload.pull_request.number + ` |
+              | URL | ` + context.payload.pull_request.html_url + ` |
+              | Author | ` + context.payload.pull_request.user.login + ` |
               | Repo | [ ` + context.repo.repo + ` ](https://github.com/` + context.repo.owner + `/` + context.repo.repo + `) |
-              | Author | ` + context.payload.pull_request.user.login + `
+              | Repo: Base | ` + context.payload.pull_request.base.repo.name + `
               | Branch: Source | [ ` + context.payload.pull_request.base.ref + `](https://github.com/` + context.repo.owner + `/` + context.repo.repo + `/tree/` + context.payload.pull_request.base.ref + `) |
               | Branch: Target | [ ` + context.payload.pull_request.head.ref + `](https://github.com/` + context.repo.owner + `/` + context.repo.repo + `/tree/` + context.payload.pull_request.head.ref + `) |
               | Added Files | ${{ steps.changed-files.outputs.added_files_count }} |
