@@ -90,7 +90,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const fs            = require('fs');
+            const fs            = require( 'fs' );
             const escape_html   = ( unsafe ) => unsafe.replace( /&/g, '&amp;' ).replace( /</g, '&lt;' ).replace( />/g, '&gt;' ).replace( /"/g, '&quot;' ).replace( /'/g, '&#039;' );
             const labels        = [];
 
@@ -124,7 +124,7 @@ jobs:
                 hours 				= hours ? hours : 12;
                 minutes 			= minutes.toString( ).padStart( 2, '0' );
 
-                let mergeTime = month + '.' + day + '.' + year + ' ' + hours + ':' + minutes + ' ' + x;
+                let mergeTime       = month + '.' + day + '.' + year + ' ' + hours + ':' + minutes + ' ' + x;
 
                 return mergeTime;
             }
@@ -169,7 +169,7 @@ jobs:
                 Loop files
             */
 
-            const files_skipped     = [];
+            const files_skipped = [];
 
             const files_skipList =
             [
@@ -177,7 +177,11 @@ jobs:
                 "package-lock.json",
                 "index.js",
                 ".github",
+                ".gitea",
+                ".gitnignore",
+                ".md",
                 ".yml",
+                "plugins.json",
             ];
 
             for ( const file of files_Array )
@@ -187,7 +191,7 @@ jobs:
                 const addError    = ( error ) =>
                 {
                     errors.push   ( `:x: ${error}` );
-                    console.log   ( 'Found issue: ' + error );
+                    console.log   ( 'Found Issues: ' + error );
 
                     bHasError     = true;
                 };
@@ -196,7 +200,7 @@ jobs:
                 const addWarning  = ( warning ) =>
                 {
                     warnings.push ( `:warning: ${warning}` );
-                    console.log   ( 'Found issue: ' + warning );
+                    console.log   ( 'Found Warnings: ' + warning );
 
                     bHasWarning   = true;
                 }
