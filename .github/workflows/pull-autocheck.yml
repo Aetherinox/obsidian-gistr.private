@@ -139,7 +139,7 @@ jobs:
             `
               | Category | Value |
               | --- | --- |
-              | Title | [ ` + context.payload.pull_request.title + ` ](https://github.com/` + context.repo.owner + `/` + context.repo.repo + `/` + context.payload.pull_request.number + `) |
+              | Title | [ ` + context.payload.pull_request.title + ` ](https://github.com/` + context.repo.owner + `/pull/` + context.repo.repo + `/` + context.payload.pull_request.number + `) |
               | Created | [ ` + date_created + ` ](https://worldtimebuddy.com) |
               | ID | ` + context.payload.pull_request.html_url + ` |
               | Author | [ ` + context.payload.pull_request.user.login + ` ](https://github.com/` + context.repo.owner + `/) |
