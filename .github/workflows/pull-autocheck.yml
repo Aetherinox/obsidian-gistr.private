@@ -129,7 +129,7 @@ jobs:
                 return mergeTime;
             }
 
-            let date_created    = dateTimeformat( date );
+            let date_created    = dateTimeformat( date  + " UTC");
             
             /*
                 context.payload.pull_request.base.repo.owner.login
