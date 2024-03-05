@@ -157,6 +157,15 @@ jobs:
                 bHasWarning   = true;
             }
 
+            const files_skipList =
+            [
+                "package.json",
+                "package-lock.json",
+                "index.js",
+                ".github",
+                ".yml",
+            ];
+
             for ( const file of files_Array )
             {
 
@@ -186,6 +195,14 @@ jobs:
                 const bContainsGeneric              = /(?:^|(?<= ))(MyPlugin|MyPluginSettings|SampleSettings|SampleSettingTab|SampleModal|Sample Plugin|my-plugin)(?:(?= )|$)/gim.test( filesData );
                 const check_depGetUnpinnedLeaf      = "app.workspace.getUnpinnedLeaf"
 
+                const bFileSkip         = files_skipList.some( s => s.includes( file_current ) || file_current.includes( s ) );
+
+                if ( bFileSkip == true )
+                {
+                    files_skipped.push( file_current );
+                    continue;
+                }
+
                 /*
                     Header
                 */
@@ -202,25 +219,6 @@ jobs:
                     E.g:    any file which resides in the .github folder will be skipped.
                             any file which ends in .yml will be skipped.
                 */
-
-                const files_skipList =
-                [
-                    "package.json",
-                    "package-lock.json",
-                    "index.js",
-                    ".github",
-                    ".yml",
-                ];
-
-                const bFileSkip         = files_skipList.some( s => s.includes( file_current ) || file_current.includes( s ) );
-
-                console.log( "bFileSkip ..... " + bFileSkip )
-
-                if ( bFileSkip == true )
-                {
-                    files_skipped.push( file_current );
-                    continue;
-                }
 
                 /*
                     ( Deprecated ) app.workspace.getUnpinnedLeaf
@@ -415,6 +413,10 @@ jobs:
 
             if ( files_skipped.length > 0 )
             {
+                message.push        ( "\n<br />\n\n---\n<br />\n" );
+                message.push        ( "### ❌ Skipped Files\n" );
+                message             = message.concat( warnings );
+
                 message.push    ( "\n\n\n> [!TIP]\n> The following file(s) have been skipped:\n\n<br>\n\n" );
                 message         = message.concat( warnings );
 
