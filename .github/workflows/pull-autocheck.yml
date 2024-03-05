@@ -148,19 +148,8 @@ jobs:
                 ".yml",
             ];
 
-            const notices    = [];
-            const addNotice  = ( notice ) =>
-            {
-                notices.push ( `:notice: ${notice}` );
-                console.log   ( 'Notice: ' + notice );
-
-                bHasNotice   = true;
-            }
-
             for ( const file of files_Array )
             {
-
-                notices    = [];
 
                 const errors      = [];
                 const addError    = ( error ) =>
@@ -426,10 +415,8 @@ jobs:
             {
                 message.push        ( "\n<br />\n\n---\n<br />\n" );
                 message.push        ( "### ❌ Skipped Files\n" );
-                message             = message.concat( notices );
 
                 message.push    ( "\n\n\n> [!TIP]\n> The following file(s) have been skipped:\n\n<br>\n\n" );
-                message         = message.concat( notices );
 
                 for ( const file_skipped of files_skipped )
                 {
