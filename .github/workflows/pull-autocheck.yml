@@ -109,26 +109,6 @@ jobs:
 
             /*
                 context.payload.pull_request.base.repo.owner.login
-
-                ref: context.payload.pull_request.head.ref,
-                sha: context.payload.pull_request.head.sha,
-                title: context.payload.pull_request.title,
-                author: context.payload.pull_request.user.login,
-                number: context.payload.pull_request.number,
-                labels: context.payload.pull_request.labels,
-                updated_at: context.payload.pull_request.updated_at,
-                html_url: context.payload.pull_request.html_url,
-                context.payload.pull_request.base.repo.name
-                context.payload.pull_request.state;
-                const author = await context.github.users.getByUsername({ username: context.payload.pull_request.user.login });
-                    const { repo, owner } = context.repo();
-
-                    const greetingReplacer = (msg) => {
-                        return msg.replace(/\{user\}/g, actor)
-                        .replace(/\{repo\}/g, repo)
-                        .replace(/\{guidelineUrl\}/, guidelineUrl || `https://github.com/${owner}/${repo}/README.md`)
-                        .replace(/\{COCUrl\}/g, COCUrl || `https://github.com/${owner}/${repo}/CODE_OF_CONDUCT.md`)
-                    }
             */
 
             let md_table =
@@ -138,7 +118,7 @@ jobs:
               | Title | ` + context.payload.pull_request.title + ` |
               | ID | ` + context.payload.pull_request.html_url + ` |
               | Created | ` + context.payload.pull_request.created_at + ` |
-              | Author | ` + context.payload.pull_request.user.login + ` |
+              | Author | [ ` + context.payload.pull_request.user.login + ` ](https://github.com/` + context.repo.owner + `/) |
               | Repo | [ ` + context.repo.repo + ` ](https://github.com/` + context.repo.owner + `/` + context.repo.repo + `) |
               | Branch: Source | [ ` + context.payload.pull_request.base.ref + `](https://github.com/` + context.repo.owner + `/` + context.repo.repo + `/tree/` + context.payload.pull_request.base.ref + `) |
               | Branch: Target | [ ` + context.payload.pull_request.head.ref + `](https://github.com/` + context.repo.owner + `/` + context.repo.repo + `/tree/` + context.payload.pull_request.head.ref + `) |
