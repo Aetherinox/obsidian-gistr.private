@@ -417,14 +417,14 @@ jobs:
 
             if ( files_skipped.length > 0 )
             {
-                message.push        ( "\n\n---\n\n\n\n" );
+                message.push        ( "\n<br />\n\n---\n<br />\n" );
                 message.push        ( "### ❌ Skipped Files\n" );
 
                 message.push    ( "\n\n\n> [!TIP]\n> The following file(s) have been skipped:\n\n<br>\n\n" );
 
                 for ( const file_skipped of files_skipped )
                 {
-                    message.push    ( "\n- " + file_skipped );
+                    message.push    ( "- " + file_skipped );
                 }
             }
 
