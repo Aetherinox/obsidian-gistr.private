@@ -137,6 +137,7 @@ jobs:
               | --- | --- |
               | Title | ` + context.payload.pull_request.title + ` |
               | ID | ` + context.payload.pull_request.html_url + ` |
+              | Created | ` + context.payload.pull_request.created_at + ` |
               | Author | ` + context.payload.pull_request.user.login + ` |
               | Repo | [ ` + context.repo.repo + ` ](https://github.com/` + context.repo.owner + `/` + context.repo.repo + `) |
               | Branch: Source | [ ` + context.payload.pull_request.base.ref + `](https://github.com/` + context.repo.owner + `/` + context.repo.repo + `/tree/` + context.payload.pull_request.base.ref + `) |
