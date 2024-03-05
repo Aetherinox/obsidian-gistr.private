@@ -401,7 +401,10 @@ jobs:
 
                     if ( warnings.length > 0 )
                     {
-                        message.push    ( "\n\n" )
+                        if ( errors.length > 0 )
+                        {
+                            message.push    ( "\n\n" )
+                        }
                         message.push    ( "\n\n\n> [!WARNING]\n> Warnings are suggestions that do not require fixing, but are recommended before this pull request is reviewed and accepted.<br />The file `" + file + "` contains the following warnings:\n\n<br>\n\n" );
                         message         = message.concat( warnings );
                     }
