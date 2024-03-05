@@ -424,7 +424,7 @@ jobs:
 
                 for ( const file_skipped of files_skipped )
                 {
-                    message.push    ( "\n- " + file_skipped + "\n" );
+                    message.push    ( "\n- " + file_skipped );
                 }
             }
 
