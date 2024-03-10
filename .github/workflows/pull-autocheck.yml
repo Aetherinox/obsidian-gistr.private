@@ -151,7 +151,7 @@ jobs:
             if ( files_Array.length > 0 )
             {
 
-              let date            = new Date( `${ context.payload.pull_request.created_at }` );
+              let date            = new Date( `${ context.payload.pull_request.created_at || "" }` );
               date.toISOString( )
 
               const actor         = '${{ github.actor }}';
