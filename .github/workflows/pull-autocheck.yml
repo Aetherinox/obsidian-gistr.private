@@ -33,6 +33,8 @@ env:
     LABEL_CHECK_STATUS_FAILED:    Validation Failed
     LABEL_CHECK_SCAN_SKIPPED:     Skipped Code Scan
     LABEL_CHECK_PULL_REQ:         Pull Request
+    LABEL_DEPENDENCY:             Dependency
+    LABEL_NPM:                    NPM
 
     ASSIGN_USER:    Aetherinox
     BOT_NAME_1:     AdminServ
@@ -90,6 +92,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
+            const actor         = '${{ github.actor }}';
             const fs            = require( 'fs' );
             const escape_html   = ( unsafe ) => unsafe.replace( /&/g, '&amp;' ).replace( /</g, '&lt;' ).replace( />/g, '&gt;' ).replace( /"/g, '&quot;' ).replace( /'/g, '&#039;' );
             const labels        = [];
