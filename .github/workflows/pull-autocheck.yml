@@ -63,6 +63,13 @@ jobs:
   plugin-validation:
     runs-on: ubuntu-latest
     steps:
+
+      # ---------------------------------------------------------------------------------------
+      #   action needed if using 'pull_request' and 'issue_comment'
+      #   to get the pull request, you would normally use ${{ github.event.number }}
+      #   however this isnt available for 'issue_comment'
+      # ---------------------------------------------------------------------------------------
+
       - uses: actions/github-script@v6
         id: get_issue_number
         with:
@@ -83,6 +90,11 @@ jobs:
           result-encoding: string
       - name: Issue number
         run: echo '${{ steps.get_issue_number.outputs.result }}'
+
+      # ---------------------------------------------------------------------------------------
+      #   action > checkout
+      # ---------------------------------------------------------------------------------------
+        
       - uses: actions/checkout@v4
         if: ( github.event_name == 'pull_request' ) || ( github.event_name == 'issue_comment' && contains( github.event.comment.html_url, '/pull/' ) && contains( github.event.comment.body, '/rescan' ) )
         with:
@@ -133,7 +145,7 @@ jobs:
             let bHasError       = false;
             let bHasWarning     = false;
 
-            let date = new Date( `${ context.payload.pull_request.created_at }` );
+            let date            = new Date( `${ context.payload.pull_request.created_at }` );
             date.toISOString( )
 
             const actor         = '${{ github.actor }}';
