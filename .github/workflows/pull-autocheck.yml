@@ -136,6 +136,9 @@ jobs:
             const files_List    = `${{ steps.changed-files.outputs.all_changed_files }}` || ''
             const files_Array   = files_List.split(',')
 
+            console.log( files_List )
+            console.log( files_Array )
+
             let message         = [ "\n<br />\n" ]
             message.push        ( "## Automatic Self-Check - #" + context.issue.number + "\n" );
             message.push        ( `The details of our automated scan for your pull request are listed below. If our scan detected errors, they must be corrected before this pull request will be advanced to the review stage:\n` );
@@ -506,7 +509,7 @@ jobs:
             }
             else
             {
-                
+
             }
 
             if ( files_skipped.length > 0 )
