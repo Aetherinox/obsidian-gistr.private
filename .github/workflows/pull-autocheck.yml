@@ -64,10 +64,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - uses: jwalton/gh-find-current-pr@master
+        id: findPr
+        with:
+          # Can be "open", "closed", or "all".  Defaults to "open".
+          state: open
+      # This will echo "Your PR is 7", or be skipped if there is no current PR.
+      - run: echo "Your PR is ${PR}"
+        if: success() && steps.findPr.outputs.number
+        env:
+          PR: ${{ steps.findPr.outputs.pr }}
+
+      - uses: actions/checkout@v4
         if: ( github.event_name == 'pull_request' ) || ( github.event_name == 'issue_comment' && contains( github.event.comment.html_url, '/pull/' ) && contains( github.event.comment.body, '/rescan' ) )
         with:
           fetch-depth: 0
-          ref: "refs/pull/${{ github.event.number }}/merge"
+          ref: "refs/pull/${{ steps.findPr.outputs.pr }}/merge"
+
       - name: Use Node.js
         uses: actions/setup-node@v2
 
