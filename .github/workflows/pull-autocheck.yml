@@ -12,6 +12,8 @@ on:
   pull_request:
     branches:
       - main
+  issue_comment:                                     
+    types: [created]
 
 # ---------------------------------------------------------------------------------------
 #   environment variables
@@ -62,6 +64,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        if: ( github.event_name == 'pull_request' ) || ( github.event_name == 'issue_comment' && contains( github.event.comment.html_url, '/pull/' ) && contains( github.event.comment.body, '/rescan' ) )
         with:
           fetch-depth: 0
           ref: "refs/pull/${{ github.event.number }}/merge"
