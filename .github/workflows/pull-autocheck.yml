@@ -131,7 +131,7 @@ jobs:
         with:
           format: 'space-delimited'
 
-        - name: List all files
+      - name: List all files
         run: |
           for file in ${ALL_FILES}; do
             echo "$file in PR"
