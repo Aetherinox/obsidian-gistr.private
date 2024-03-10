@@ -147,9 +147,9 @@ jobs:
 
             if ( files_Array.length > 0 )
             {
-              console.log( ${{ github.event.issue.pull_request.created_at }} )
+              console.log( ${{ github.event.issue.created_at }} )
 
-              let date            = new Date( `${{ github.event.issue.pull_request.created_at }}` );
+              let date            = new Date( `${{ github.event.issue.created_at }}` );
               date.toISOString( )
 
               const actor         = '${{ github.actor }}';
