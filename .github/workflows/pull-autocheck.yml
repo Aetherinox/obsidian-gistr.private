@@ -112,8 +112,8 @@ jobs:
   
       - name: List all added files
         run: |
-          for file in ${MODIFIED_FILES}; do
-            echo "$file was added"
+          for file in ${CHANGED_FILES}; do
+            echo "$file was changed"
           done
         env:
           ADDED_FILES:      ${{ steps.changed-files.outputs.added_files }}
