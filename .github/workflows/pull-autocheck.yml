@@ -36,9 +36,10 @@ env:
     LABEL_DEPENDENCY:             Dependency
     LABEL_NPM:                    NPM
 
-    ASSIGN_USER:    Aetherinox
-    BOT_NAME_1:     AdminServ
-    BOT_NAME_2:     AdminServX
+    ASSIGN_USER:                  Aetherinox
+    BOT_NAME_1:                   AdminServ
+    BOT_NAME_2:                   AdminServX
+    BOT_NAME_DEPENDABOT:          dependabot[bot]
     LABELS_JSON: |
       [
         { "name": "Autocheck Failed",           "color": "d73a4a", "description": "Autocheck failed to run through a complete cycle, requires investigation" },
@@ -524,10 +525,10 @@ jobs:
             }
 
             /*
-                Determine Label
+                Determine Labels
             */
 
-            if ( actor == 'Aetherinox' )
+            if ( actor ==  "${{ env.BOT_NAME_DEPENDABOT }}" )
                 labels.push( "${{ env.LABEL_DEPENDENCY }}" );
 
             if ( context.payload.pull_request.labels.filter( label => label.name === "${{ env.LABEL_CHECK_CHANGES_REQ }}" ).length > 0 )
