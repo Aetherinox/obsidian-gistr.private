@@ -12,8 +12,6 @@ on:
   pull_request:
     branches:
       - main
-  issue_comment:                                     
-    types: [created]
 
 # ---------------------------------------------------------------------------------------
 #   environment variables
@@ -63,9 +61,7 @@ jobs:
   plugin-validation:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        if: ( github.event_name == 'issue_comment' ) && ( contains( github.event.comment.html_url, '/pull/' ) && contains( github.event.comment.body, '/rescan' ) || github.event_name == 'pull_request' )
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: "refs/pull/${{ github.event.number }}/merge"
