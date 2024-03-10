@@ -125,16 +125,19 @@ jobs:
           COUNT_RENAMED:    ${{ steps.changed-files.outputs.renamed_files_count }}
           COUNT_COPIED:     ${{ steps.changed-files.outputs.copied_files_count }}
 
-      - uses: ruslandulina/compare-basehead-commits@v1
+      - name: Get List All Files
         id: pr-all-files
+        uses: ruslandulina/compare-basehead-commits@v1
         with:
           format: 'space-delimited'
-        env:
-          ALL_FILES: ${{ steps.pr-all-files.outputs.all }}
+
+        - name: List all files
         run: |
           for file in ${ALL_FILES}; do
             echo "$file in PR"
           done
+        env:
+          ALL_FILES: ${{ steps.pr-all-files.outputs.all }}
 
       - name: Run Check
         uses: actions/github-script@v7
