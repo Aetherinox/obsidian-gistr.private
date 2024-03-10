@@ -125,20 +125,6 @@ jobs:
           COUNT_RENAMED:    ${{ steps.changed-files.outputs.renamed_files_count }}
           COUNT_COPIED:     ${{ steps.changed-files.outputs.copied_files_count }}
 
-      - name: Get List All Files
-        id: pr-all-files
-        uses: ruslandulina/compare-basehead-commits@v1
-        with:
-          format: 'space-delimited'
-
-      - name: List all files
-        run: |
-          for file in ${ALL_FILES}; do
-            echo "$file in PR"
-          done
-        env:
-          ALL_FILES: ${{ steps.pr-all-files.outputs.all }}
-
       - name: Run Check
         uses: actions/github-script@v7
         with:
@@ -159,360 +145,368 @@ jobs:
             let bHasError       = false;
             let bHasWarning     = false;
 
-            let date            = new Date( `${ context.payload.pull_request.created_at }` );
-            date.toISOString( )
-
-            const actor         = '${{ github.actor }}';
-
-            const dateTimeformat = ( date ) =>
+            if ( files_Array.length > 0 )
             {
-                let month       = date.getMonth( ) + 1;
-                month 				  = month.toString( ).padStart( 2, '0' );
-                let day 			  = date.getDate( ).toString( ).padStart( 2, '0' );
-                let year 			  = date.getFullYear( ).toString( ).padStart( 2, '0' );
 
-                let hours       = date.getHours();
-                let minutes     = date.getMinutes();
-                let x 				  = hours >= 12 ? 'PM' : 'AM';
-                hours 				  = hours % 12;
-                hours 				  = hours ? hours : 12;
-                minutes 			  = minutes.toString( ).padStart( 2, '0' );
+              let date            = new Date( `${ context.payload.pull_request.created_at }` );
+              date.toISOString( )
 
-                let mergeTime   = month + '.' + day + '.' + year + ' ' + hours + ':' + minutes + ' ' + x;
+              const actor         = '${{ github.actor }}';
 
-                return mergeTime;
+              const dateTimeformat = ( date ) =>
+              {
+                  let month       = date.getMonth( ) + 1;
+                  month 				  = month.toString( ).padStart( 2, '0' );
+                  let day 			  = date.getDate( ).toString( ).padStart( 2, '0' );
+                  let year 			  = date.getFullYear( ).toString( ).padStart( 2, '0' );
+
+                  let hours       = date.getHours();
+                  let minutes     = date.getMinutes();
+                  let x 				  = hours >= 12 ? 'PM' : 'AM';
+                  hours 				  = hours % 12;
+                  hours 				  = hours ? hours : 12;
+                  minutes 			  = minutes.toString( ).padStart( 2, '0' );
+
+                  let mergeTime   = month + '.' + day + '.' + year + ' ' + hours + ':' + minutes + ' ' + x;
+
+                  return mergeTime;
+              }
+
+              let date_created    = dateTimeformat( date ) + " UTC";
+              
+              /*
+                  context.payload.pull_request.base.repo.owner.login
+              */
+
+              let md_table =
+              `
+                | Category | Value |
+                | --- | --- |
+                | Title | [ ` + context.payload.pull_request.title + ` ](https://github.com/` + context.repo.owner + `/` + context.repo.repo + `/pull/` + context.payload.pull_request.number + `) |
+                | Created | [ ` + date_created + ` ](https://worldtimebuddy.com) |
+                | ID | ` + context.payload.pull_request.html_url + ` |
+                | Author | [ ` + context.payload.pull_request.user.login + ` ](https://github.com/` + context.repo.owner + `/) |
+                | Repo | [ ` + context.repo.repo + ` ](https://github.com/` + context.repo.owner + `/` + context.repo.repo + `) |
+                | Branch | [ ` + context.payload.pull_request.head.ref + `](https://github.com/` + context.repo.owner + `/` + context.repo.repo + `/tree/` + context.payload.pull_request.head.ref + `) ⇁ [ ` + context.payload.pull_request.base.ref + `](https://github.com/` + context.repo.owner + `/` + context.repo.repo + `/tree/` + context.payload.pull_request.base.ref + `) |
+                | Added Files | ${{ steps.changed-files.outputs.added_files_count }} |
+                | Modified Files | ${{ steps.changed-files.outputs.all_modified_files_count }} |
+                | Renamed Files | ${{ steps.changed-files.outputs.renamed_files_count }} |
+                | Copied Files | ${{ steps.changed-files.outputs.deleted_files_count }} |
+                | Deleted Files | ${{ steps.changed-files.outputs.deleted_files_count }} |
+              `;
+              
+              message.push        ( md_table );
+
+              let error_Generic = "\n" + 
+              "- `MyPlugin`\n" + 
+              "- `MyPluginSettings`\n" + 
+              "- `SampleSettings`\n" +
+              "- `SampleSettingTab`\n" +
+              "- `SampleModal`\n"
+
+              let warn_BadWords = "\n" + 
+              "- `Obsidian`\n" + 
+              "- `Settings`\n"
+
+              /*
+                  Loop files
+              */
+
+              const files_skipped = [];
+
+              /*
+                  List of files to skip check
+                  Entries are CASE sensitive
+                  For folders, append / at the end of the parent directory
+              */
+
+              const files_skipList =
+              [
+                  ".github",
+                  ".gitea",
+                  ".gitignore",
+                  "LICENSE",
+                  ".md",
+                  ".yml",
+                  "plugins.json",
+                  "package.json",
+                  "package-lock.json",
+                  "rollup.config.js",
+                  "index.js",
+                  "Docs/",
+                  "tests/"
+              ];
+
+              for ( const file of files_Array )
+              {
+
+                  const errors      = [];
+                  const addError    = ( error ) =>
+                  {
+                      errors.push   ( `:x: ${error}` );
+                      console.log   ( 'Found Issues: ' + error );
+
+                      bHasError     = true;
+                  };
+
+                  const warnings    = [];
+                  const addWarning  = ( warning ) =>
+                  {
+                      warnings.push ( `:warning: ${warning}` );
+                      console.log   ( 'Found Warnings: ' + warning );
+
+                      bHasWarning   = true;
+                  }
+
+                  /*
+                      Regex Searches
+                  */
+
+                  const file_current                  = file;
+                  const filesData                     = fs.readFileSync( file_current, 'utf8' );
+                  const bContainsStyle                = /([A-Za-z]+\.style\.[A-Za-z]+)/gi.test( filesData );
+                  const bFuncFetch                    = /(fetch)\((.*)\)(\[([^\]]*)\])?/gim.test( filesData );
+                  const bVar                          = /^(?:var|)\s(\w+)\s*=\s*/gm.test( filesData );
+                  const bLookBehind                   = /\(\?<[=!].*?\)/gmi.test( filesData );
+                  const bMarkdownHtmlNode             = /new\s+NodeHtmlMarkdown/gmi.test( filesData );
+                  const bAsTFile                      = /as\s+TFile/g.test( filesData );
+                  const bAsTFolder                    = /as\s+TFolder/g.test( filesData );
+                  const bAsAny                        = /\((.*? as Any\s*)\)/gi.test( filesData );
+                  const bInnerHTML                    = /^\s?.*[a-zA-Z0-9_]+\.innerHTML*\s?.*$/gm.test( filesData );
+                  const bOuterHTML                    = /^\s?.*[a-zA-Z0-9_]+\.outerHTML*\s?.*$/gm.test( filesData );
+                  const bFuncConsoleLog               = /(console.log)\((.*)\)(\[([^\]]*)\])?/gim.test( filesData );
+                  const bFuncSetTimeout               = /(setTimeout)\((.*)\)(\[([^\]]*)\])?/gim.test( filesData );
+                  const bFuncFS_Chk1                  = /(require)\s?\((\s?(?:'|")fs(?:'|"))\s?\)?/gim.test( filesData );
+                  const bFuncFS_Chk2                  = /from\s+(?:'|")fs(?:'|")\s?/gim.test( filesData );
+                  const bFuncFS_ExistsSync            = /(fs.existsSync)\((.*)\)(\[([^\]]*)\])?/gm.test( filesData );
+                  const bFuncFS_MkdirSync             = /(fs.mkdirSync)\((.*)\)(\[([^\]]*)\])?/gm.test( filesData );
+                  const bFoundBadWord                 = /(?:'|").*(Obsidian|Settings|General).*(?:'|")?/gmi.test( filesData );
+                  const bContainsGeneric              = /(?:^|(?<= ))(MyPlugin|MyPluginSettings|SampleSettings|SampleSettingTab|SampleModal|Sample Plugin|my-plugin)(?:(?= )|$)/gim.test( filesData );
+                  const check_depGetUnpinnedLeaf      = "app.workspace.getUnpinnedLeaf"
+
+                  const bFileSkip         = files_skipList.some( s => s.includes( file_current ) || file_current.includes( s ) );
+
+                  if ( bFileSkip == true )
+                  {
+                      files_skipped.push( file_current );
+                      continue;
+                  }
+
+                  /*
+                      Header
+                  */
+
+                  message.push        ( "\n<br />\n\n---\n\n<br />\n" );
+                  message.push        ( "### 📄 " + file_current + "\n" );
+                  message             = message.concat( warnings );
+
+                  /*
+                      Skip File
+
+                      all contents in the array below will be skipped.
+
+                      E.g:    any file which resides in the .github folder will be skipped.
+                              any file which ends in .yml will be skipped.
+                  */
+
+                  /*
+                      ( Deprecated ) app.workspace.getUnpinnedLeaf
+                  */
+
+                  if ( filesData.toLowerCase( ).includes( check_depGetUnpinnedLeaf.toLowerCase( ) ) )
+                  {
+                      addError( "This function is deprecated, use `this.app.workspace.getLeaf( false )` instead" );
+                  }
+
+                  /*
+                      Using inline style
+                  */
+
+                  if ( bContainsStyle == true )
+                  {
+                      addError( "Avoid assigning `inline styles` via JavaScript or in HTML. Move these styles to CSS so that they are adaptable by themes and other plugins." );
+                  }
+
+                  /*
+                      Using fetch
+                  */
+
+                  if ( bFuncFetch == true )
+                  {
+                      addError( "Do not handle http data with `fetch( )`. Use the Obsidian API -> `requestUrl` method instead, which will make sure that network requests work on every platform." );
+                  }
+
+                  /*
+                      Using var
+                  */
+
+                  if ( bVar == true )
+                  {
+                      addError( "Change all instances of `var` to **const** or **let**. var has function-level scope, and leads to bugs." );
+                  }
+
+                  /*
+                      Using lookbehind
+                  */
+
+                  if ( bLookBehind == true )
+                  {
+                      addError( "Lookbehinds are not supported in iOS < 16.4" );
+                  }
+
+                  /*
+                      Using HTML Node
+                  */
+
+                  if ( bMarkdownHtmlNode == true )
+                  {
+                      addError( "Do not use `NodeHtmlMarkdown`. Use Obsidian API -> `htmlToMarkdown` instead." );
+                  }
+
+                  /*
+                      As TFile
+                  */
+
+                  if ( bAsTFile == true )
+                  {
+                      addError( "Do not cast `as TFile`, use `instanceof` instead to check if the item is actually a file / folder" );
+                  }
+
+                  /*
+                      As TFolder
+                  */
+
+                  if ( bAsTFolder == true )
+                  {
+                      addError( "Do not cast `as TFolder`, use `instanceof` instead to check if the item is actually a file / folder" );
+                  }
+
+                  /*
+                      Casting to Any
+                  */
+
+                  if ( bAsAny == true )
+                  {
+                      addError( "Do not cast to `Any`" );
+                  }
+
+                  /*
+                      innerHTML
+                  */
+
+                  if ( bInnerHTML == true )
+                  {
+                      addError( `Using \`innerHTML\` is a security risk. Use the DOM API or the Obsidian helper functions: https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
+                  }
+
+                  /*
+                      outerHTML
+                  */
+
+                  if ( bOuterHTML == true )
+                  {
+                      addError( `Using \`outerHTML\` is a security risk. Use the DOM API or the Obsidian helper functions: https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
+                  }
+
+                  /*
+                      setTimeout
+                  */
+
+                  if ( bFuncSetTimeout == true )
+                  {
+                      addError( "Do not utilize `setTimeout`, utilize Obsidian API -> `sleep`. E.g: `await sleep( X )`" );
+                  }
+
+                  /*
+                      require("fs")
+                  */
+
+                  if ( bFuncFS_Chk1 == true || bFuncFS_Chk2 == true  )
+                  {
+                      addError( "`fs` import only available from Node.js runtime, this will throw errors for users running Obsidian on mobile" );
+                  }
+
+                  /*
+                      require("fs") / fs.existsSync
+                  */
+
+                  if ( bFuncFS_ExistsSync == true  )
+                  {
+                      addError( "`fs` import only available from Node.js runtime, this will throw errors for users running Obsidian on mobile. For `fs.existsSync( )`, utilize Obsidian API -> `this.app.vault.adapter.exists( )`" );
+                  }
+
+                  /*
+                      require("fs") / fs.mkdirSync
+                  */
+
+                  if ( bFuncFS_MkdirSync == true  )
+                  {
+                      addError( "`fs` import only available from Node.js runtime, this will throw errors for users running Obsidian on mobile. For `fs.mkdirSync( )`, utilize Obsidian API -> `this.app.vault.adapter.mkdir( )`" );
+                  }
+
+                  /*
+                      Generic Calls
+                  */
+
+                  if ( bContainsGeneric == true )
+                  {
+                      addError( "Rename sample classes to something that makes sense. You are not allowed to have names such as: " + error_Generic );
+                  }
+
+                  /*
+                      console.log found
+                  */
+
+                  if ( bFuncConsoleLog == true )
+                  {
+                      addWarning( "Avoid unnecessary logging or ensure logging only occurs in development environment." );
+                  }
+
+                  /*
+                      Bad words found
+                  */
+
+                  if ( bFoundBadWord == true && file != "package.json" && file != "manifest.json" )
+                  {
+                      addWarning( "A restricted word was found in your code. Obsidian developers do not allow words in strings such as: " + warn_BadWords );
+                  }
+
+                  if ( errors.length > 0 || warnings.length > 0 )
+                  {
+
+                      /*
+                          Errors
+                      */
+
+                      if ( errors.length > 0 )
+                      {
+                          message.push    ( "\n\n\n> [!CAUTION]\n> Errors must be fixed prior to a pull request being reviewed and accepted.<br />The file `" + file + "` contains the following errors:\n\n<br>\n\n" );
+                          message         = message.concat( errors );
+                      }
+
+                      /*
+                          Warnings
+                      */
+
+                      if ( warnings.length > 0 )
+                      {
+                          if ( errors.length > 0 )
+                          {
+                              message.push    ( "\n<br />\n<br />\n" )
+                          }
+                          message.push    ( "\n\n\n> [!WARNING]\n> Warnings are suggestions that do not require fixing, but are recommended before this pull request is reviewed and accepted.<br />The file `" + file + "` contains the following warnings:\n\n<br>\n\n" );
+                          message         = message.concat( warnings );
+                      }
+                  }
+                  else
+                  {
+                      message.push    ( "\n\n\n> [!NOTE]\n> The file `" + file + "` contains no errors\n\n<br>\n\n" );
+                  }
+              }
             }
-
-            let date_created    = dateTimeformat( date ) + " UTC";
-            
-            /*
-                context.payload.pull_request.base.repo.owner.login
-            */
-
-            let md_table =
-            `
-              | Category | Value |
-              | --- | --- |
-              | Title | [ ` + context.payload.pull_request.title + ` ](https://github.com/` + context.repo.owner + `/` + context.repo.repo + `/pull/` + context.payload.pull_request.number + `) |
-              | Created | [ ` + date_created + ` ](https://worldtimebuddy.com) |
-              | ID | ` + context.payload.pull_request.html_url + ` |
-              | Author | [ ` + context.payload.pull_request.user.login + ` ](https://github.com/` + context.repo.owner + `/) |
-              | Repo | [ ` + context.repo.repo + ` ](https://github.com/` + context.repo.owner + `/` + context.repo.repo + `) |
-              | Branch | [ ` + context.payload.pull_request.head.ref + `](https://github.com/` + context.repo.owner + `/` + context.repo.repo + `/tree/` + context.payload.pull_request.head.ref + `) ⇁ [ ` + context.payload.pull_request.base.ref + `](https://github.com/` + context.repo.owner + `/` + context.repo.repo + `/tree/` + context.payload.pull_request.base.ref + `) |
-              | Added Files | ${{ steps.changed-files.outputs.added_files_count }} |
-              | Modified Files | ${{ steps.changed-files.outputs.all_modified_files_count }} |
-              | Renamed Files | ${{ steps.changed-files.outputs.renamed_files_count }} |
-              | Copied Files | ${{ steps.changed-files.outputs.deleted_files_count }} |
-              | Deleted Files | ${{ steps.changed-files.outputs.deleted_files_count }} |
-            `;
-            
-            message.push        ( md_table );
-
-            let error_Generic = "\n" + 
-            "- `MyPlugin`\n" + 
-            "- `MyPluginSettings`\n" + 
-            "- `SampleSettings`\n" +
-            "- `SampleSettingTab`\n" +
-            "- `SampleModal`\n"
-
-            let warn_BadWords = "\n" + 
-            "- `Obsidian`\n" + 
-            "- `Settings`\n"
-
-            /*
-                Loop files
-            */
-
-            const files_skipped = [];
-
-            /*
-                List of files to skip check
-                Entries are CASE sensitive
-                For folders, append / at the end of the parent directory
-            */
-
-            const files_skipList =
-            [
-                ".github",
-                ".gitea",
-                ".gitignore",
-                "LICENSE",
-                ".md",
-                ".yml",
-                "plugins.json",
-                "package.json",
-                "package-lock.json",
-                "rollup.config.js",
-                "index.js",
-                "Docs/",
-                "tests/"
-            ];
-
-            for ( const file of files_Array )
+            else
             {
-
-                const errors      = [];
-                const addError    = ( error ) =>
-                {
-                    errors.push   ( `:x: ${error}` );
-                    console.log   ( 'Found Issues: ' + error );
-
-                    bHasError     = true;
-                };
-
-                const warnings    = [];
-                const addWarning  = ( warning ) =>
-                {
-                    warnings.push ( `:warning: ${warning}` );
-                    console.log   ( 'Found Warnings: ' + warning );
-
-                    bHasWarning   = true;
-                }
-
-                /*
-                    Regex Searches
-                */
-
-                const file_current                  = file;
-                const filesData                     = fs.readFileSync( file_current, 'utf8' );
-                const bContainsStyle                = /([A-Za-z]+\.style\.[A-Za-z]+)/gi.test( filesData );
-                const bFuncFetch                    = /(fetch)\((.*)\)(\[([^\]]*)\])?/gim.test( filesData );
-                const bVar                          = /^(?:var|)\s(\w+)\s*=\s*/gm.test( filesData );
-                const bLookBehind                   = /\(\?<[=!].*?\)/gmi.test( filesData );
-                const bMarkdownHtmlNode             = /new\s+NodeHtmlMarkdown/gmi.test( filesData );
-                const bAsTFile                      = /as\s+TFile/g.test( filesData );
-                const bAsTFolder                    = /as\s+TFolder/g.test( filesData );
-                const bAsAny                        = /\((.*? as Any\s*)\)/gi.test( filesData );
-                const bInnerHTML                    = /^\s?.*[a-zA-Z0-9_]+\.innerHTML*\s?.*$/gm.test( filesData );
-                const bOuterHTML                    = /^\s?.*[a-zA-Z0-9_]+\.outerHTML*\s?.*$/gm.test( filesData );
-                const bFuncConsoleLog               = /(console.log)\((.*)\)(\[([^\]]*)\])?/gim.test( filesData );
-                const bFuncSetTimeout               = /(setTimeout)\((.*)\)(\[([^\]]*)\])?/gim.test( filesData );
-                const bFuncFS_Chk1                  = /(require)\s?\((\s?(?:'|")fs(?:'|"))\s?\)?/gim.test( filesData );
-                const bFuncFS_Chk2                  = /from\s+(?:'|")fs(?:'|")\s?/gim.test( filesData );
-                const bFuncFS_ExistsSync            = /(fs.existsSync)\((.*)\)(\[([^\]]*)\])?/gm.test( filesData );
-                const bFuncFS_MkdirSync             = /(fs.mkdirSync)\((.*)\)(\[([^\]]*)\])?/gm.test( filesData );
-                const bFoundBadWord                 = /(?:'|").*(Obsidian|Settings|General).*(?:'|")?/gmi.test( filesData );
-                const bContainsGeneric              = /(?:^|(?<= ))(MyPlugin|MyPluginSettings|SampleSettings|SampleSettingTab|SampleModal|Sample Plugin|my-plugin)(?:(?= )|$)/gim.test( filesData );
-                const check_depGetUnpinnedLeaf      = "app.workspace.getUnpinnedLeaf"
-
-                const bFileSkip         = files_skipList.some( s => s.includes( file_current ) || file_current.includes( s ) );
-
-                if ( bFileSkip == true )
-                {
-                    files_skipped.push( file_current );
-                    continue;
-                }
-
-                /*
-                    Header
-                */
-
-                message.push        ( "\n<br />\n\n---\n\n<br />\n" );
-                message.push        ( "### 📄 " + file_current + "\n" );
-                message             = message.concat( warnings );
-
-                /*
-                    Skip File
-
-                    all contents in the array below will be skipped.
-
-                    E.g:    any file which resides in the .github folder will be skipped.
-                            any file which ends in .yml will be skipped.
-                */
-
-                /*
-                    ( Deprecated ) app.workspace.getUnpinnedLeaf
-                */
-
-                if ( filesData.toLowerCase( ).includes( check_depGetUnpinnedLeaf.toLowerCase( ) ) )
-                {
-                    addError( "This function is deprecated, use `this.app.workspace.getLeaf( false )` instead" );
-                }
-
-                /*
-                    Using inline style
-                */
-
-                if ( bContainsStyle == true )
-                {
-                    addError( "Avoid assigning `inline styles` via JavaScript or in HTML. Move these styles to CSS so that they are adaptable by themes and other plugins." );
-                }
-
-                /*
-                    Using fetch
-                */
-
-                if ( bFuncFetch == true )
-                {
-                    addError( "Do not handle http data with `fetch( )`. Use the Obsidian API -> `requestUrl` method instead, which will make sure that network requests work on every platform." );
-                }
-
-                /*
-                    Using var
-                */
-
-                if ( bVar == true )
-                {
-                    addError( "Change all instances of `var` to **const** or **let**. var has function-level scope, and leads to bugs." );
-                }
-
-                /*
-                    Using lookbehind
-                */
-
-                if ( bLookBehind == true )
-                {
-                    addError( "Lookbehinds are not supported in iOS < 16.4" );
-                }
-
-                /*
-                    Using HTML Node
-                */
-
-                if ( bMarkdownHtmlNode == true )
-                {
-                    addError( "Do not use `NodeHtmlMarkdown`. Use Obsidian API -> `htmlToMarkdown` instead." );
-                }
-
-                /*
-                    As TFile
-                */
-
-                if ( bAsTFile == true )
-                {
-                    addError( "Do not cast `as TFile`, use `instanceof` instead to check if the item is actually a file / folder" );
-                }
-
-                /*
-                    As TFolder
-                */
-
-                if ( bAsTFolder == true )
-                {
-                    addError( "Do not cast `as TFolder`, use `instanceof` instead to check if the item is actually a file / folder" );
-                }
-
-                /*
-                    Casting to Any
-                */
-
-                if ( bAsAny == true )
-                {
-                    addError( "Do not cast to `Any`" );
-                }
-
-                /*
-                    innerHTML
-                */
-
-                if ( bInnerHTML == true )
-                {
-                    addError( `Using \`innerHTML\` is a security risk. Use the DOM API or the Obsidian helper functions: https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
-                }
-
-                /*
-                    outerHTML
-                */
-
-                if ( bOuterHTML == true )
-                {
-                    addError( `Using \`outerHTML\` is a security risk. Use the DOM API or the Obsidian helper functions: https://docs.obsidian.md/Plugins/User+interface/HTML+elements` );
-                }
-
-                /*
-                    setTimeout
-                */
-
-                if ( bFuncSetTimeout == true )
-                {
-                    addError( "Do not utilize `setTimeout`, utilize Obsidian API -> `sleep`. E.g: `await sleep( X )`" );
-                }
-
-                /*
-                    require("fs")
-                */
-
-                if ( bFuncFS_Chk1 == true || bFuncFS_Chk2 == true  )
-                {
-                    addError( "`fs` import only available from Node.js runtime, this will throw errors for users running Obsidian on mobile" );
-                }
-
-                /*
-                    require("fs") / fs.existsSync
-                */
-
-                if ( bFuncFS_ExistsSync == true  )
-                {
-                    addError( "`fs` import only available from Node.js runtime, this will throw errors for users running Obsidian on mobile. For `fs.existsSync( )`, utilize Obsidian API -> `this.app.vault.adapter.exists( )`" );
-                }
-
-                /*
-                    require("fs") / fs.mkdirSync
-                */
-
-                if ( bFuncFS_MkdirSync == true  )
-                {
-                    addError( "`fs` import only available from Node.js runtime, this will throw errors for users running Obsidian on mobile. For `fs.mkdirSync( )`, utilize Obsidian API -> `this.app.vault.adapter.mkdir( )`" );
-                }
-
-                /*
-                    Generic Calls
-                */
-
-                if ( bContainsGeneric == true )
-                {
-                    addError( "Rename sample classes to something that makes sense. You are not allowed to have names such as: " + error_Generic );
-                }
-
-                /*
-                    console.log found
-                */
-
-                if ( bFuncConsoleLog == true )
-                {
-                    addWarning( "Avoid unnecessary logging or ensure logging only occurs in development environment." );
-                }
-
-                /*
-                    Bad words found
-                */
-
-                if ( bFoundBadWord == true && file != "package.json" && file != "manifest.json" )
-                {
-                    addWarning( "A restricted word was found in your code. Obsidian developers do not allow words in strings such as: " + warn_BadWords );
-                }
-
-                if ( errors.length > 0 || warnings.length > 0 )
-                {
-
-                    /*
-                        Errors
-                    */
-
-                    if ( errors.length > 0 )
-                    {
-                        message.push    ( "\n\n\n> [!CAUTION]\n> Errors must be fixed prior to a pull request being reviewed and accepted.<br />The file `" + file + "` contains the following errors:\n\n<br>\n\n" );
-                        message         = message.concat( errors );
-                    }
-
-                    /*
-                        Warnings
-                    */
-
-                    if ( warnings.length > 0 )
-                    {
-                        if ( errors.length > 0 )
-                        {
-                            message.push    ( "\n<br />\n<br />\n" )
-                        }
-                        message.push    ( "\n\n\n> [!WARNING]\n> Warnings are suggestions that do not require fixing, but are recommended before this pull request is reviewed and accepted.<br />The file `" + file + "` contains the following warnings:\n\n<br>\n\n" );
-                        message         = message.concat( warnings );
-                    }
-                }
-                else
-                {
-                    message.push    ( "\n\n\n> [!NOTE]\n> The file `" + file + "` contains no errors\n\n<br>\n\n" );
-                }
+                
             }
 
             if ( files_skipped.length > 0 )
