@@ -147,11 +147,11 @@ jobs:
 
             if ( files_Array.length > 0 )
             {
-              console.log( ${{ github.event.issue.created_at }} )
 
-              let date            = new Date( `${{ github.event.issue.created_at }}` );
+              let time            = `${ context.payload.pull_request.created_at }` || `${{ github.event.issue.created_at }}`
+              let date            = new Date( time );
+              
               date.toISOString( )
-
               const actor         = '${{ github.actor }}';
 
               const dateTimeformat = ( date ) =>
