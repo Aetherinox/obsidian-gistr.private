@@ -63,25 +63,32 @@ jobs:
   plugin-validation:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: jwalton/gh-find-current-pr@master
-        id: findPr
+      - uses: actions/github-script@v6
+        id: get_issue_number
         with:
-          # Can be "open", "closed", or "all".  Defaults to "open".
-          state: open
-      # This will echo "Your PR is 7", or be skipped if there is no current PR.
-      - run: echo "Your PR is ${PR}"
-        if: success() && steps.findPr.outputs.number
-        env:
-          PR: ${{ steps.findPr.outputs.pr }}
-
+          script: |
+            if (context.issue.number) {
+              // Return issue number if present
+              return context.issue.number;
+            } else {
+              // Otherwise return issue number from commit
+              return (
+                await github.rest.repos.listPullRequestsAssociatedWithCommit({
+                  commit_sha: context.sha,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                })
+              ).data[0].number;
+            }
+          result-encoding: string
+      - name: Issue number
+        run: echo '${{steps.get_issue_number.outputs.result}}'
       - uses: actions/checkout@v4
         if: ( github.event_name == 'pull_request' ) || ( github.event_name == 'issue_comment' && contains( github.event.comment.html_url, '/pull/' ) && contains( github.event.comment.body, '/rescan' ) )
         with:
           fetch-depth: 0
-          ref: "refs/pull/${{ steps.findPr.outputs.pr }}/merge"
-
+          ref: "refs/pull/${{ github.event.number }}/merge"
+          
       - name: Use Node.js
         uses: actions/setup-node@v2
 
