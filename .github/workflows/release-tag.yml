@@ -143,9 +143,12 @@ jobs:
                   zip -jr ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.VERSION_RC }}.zip dist/*
                   ls
 
-            - name: 'Create env file'
+            - name: "[.ENV] Get"
               id: dotenv
               uses: falti/dotenv-action
+
+            - name: "[.ENV] Read"
+              id: dotenv-output
               run: |
                 echo "UUID: ${{ steps.dotenv.outputs.UUID }}"
 
