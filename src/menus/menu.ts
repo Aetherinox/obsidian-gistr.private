@@ -1,13 +1,17 @@
 import { Menu, Notice } from 'obsidian'
 import { GistrSettings } from 'src/settings/'
 import { GistrAPI, GistrEditor, ContextMenu, Coords } from 'src/api'
-import { lng } from 'src/lang/helpers'
+import { lng } from 'src/lang'
+
+/*
+    Context Menu
+*/
 
 const ContextMenu = ( app: GistrAPI, cfg: GistrSettings, editor: GistrEditor ): void =>
 {
 
     if ( !editor || !editor.hasFocus() )
-        new Notice( lng( "base_context_nofocus" ))
+        throw new Notice( lng( "base_context_nofocus" ))
 
     let coords:         Coords
     const cursor        = editor.getCursor( "from" )

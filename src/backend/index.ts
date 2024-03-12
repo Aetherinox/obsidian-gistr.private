@@ -1,1 +1,1 @@
-export { ItemJSON, BackendCore } from 'src/backend/backend'
+export { ItemJSON, BackendCore } from 'src/backend/Backend'

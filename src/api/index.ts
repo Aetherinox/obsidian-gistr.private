@@ -1,3 +1,4 @@
 export { FrontmatterPrepare } from 'src/api/Frontmatter'
 export { NoxComponent } from 'src/api/NoxComponent'
-export { GistrAPI, GistrEditor, ContextMenu, Coords } from 'src/api/types'
+export { Env, PID } from 'src/api/Env'
+export { GistrAPI, GistrEditor, ContextMenu, Coords } from 'src/api/Types'

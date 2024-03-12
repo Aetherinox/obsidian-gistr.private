@@ -1,12 +1,11 @@
-import { App, Plugin, PluginManifest, PluginSettingTab, Setting, sanitizeHTMLToDom, ExtraButtonComponent, MarkdownRenderer, Notice, requestUrl } from 'obsidian'
+import { App, PluginSettingTab, Setting, sanitizeHTMLToDom, ExtraButtonComponent, MarkdownRenderer, Notice, requestUrl } from 'obsidian'
 import GistrPlugin from "src/main"
 import { SettingsDefaults } from 'src/settings/defaults'
 import { ColorPicker, GetColor } from 'src/utils'
-import { GithubTokenGet, GithubTokenSet } from 'src/backend/tokens/github'
-import { GithubStatusAPI } from 'src/backend/services/github'
-import { NoxComponent } from 'src/api'
-import { lng } from 'src/lang/helpers'
+import { GHStatusAPI, GHTokenSet, GHTokenGet } from 'src/backend/services'
 import ModalGettingStarted from "src/modals/GettingStartedModal"
+import { NoxComponent } from 'src/api'
+import { lng } from 'src/lang'
 import Pickr from "@simonwep/pickr"
 import lt from 'semver/functions/lt'
 import gt from 'semver/functions/gt'
@@ -793,13 +792,13 @@ export class SettingsSection extends PluginSettingTab
                             Find API status language entry in array
                         */
 
-                        const gb_api_status: string = GithubStatusAPI[ github_status ]
+                        const gb_api_status: string = GHStatusAPI[ github_status ]
 
                         /*
                             Text > Github Token Not Specified
                         */
 
-                        if ( !GithubTokenGet( ) )
+                        if ( !GHTokenGet( ) )
                         {
                             const el                    = Tab_GH_R.querySelector( ".setting-item-control" )
                             el.removeClass              ( "gistr-settings-status-connecting" )
@@ -869,13 +868,13 @@ export class SettingsSection extends PluginSettingTab
                             Find API status language entry in array
                         */
 
-                        const gb_api_status:  string = GithubStatusAPI[ github_status ]
+                        const gb_api_status:  string = GHStatusAPI[ github_status ]
 
                         /*
                             Text > Github Token Not Specified
                         */
 
-                            if ( !GithubTokenGet( ) )
+                            if ( !GHTokenGet( ) )
                             {
                                 btn.setIcon     ( "circle-off" )
                                 btn.setTooltip  ( lng( "gist_status_no_api_btn_tip" ) )
@@ -946,7 +945,7 @@ export class SettingsSection extends PluginSettingTab
                 Github > Define
             */
 
-            const gistToken       = GithubTokenGet( )
+            const gistToken = GHTokenGet( )
 
             /*
                 Section -> Support Buttons
@@ -1032,7 +1031,7 @@ export class SettingsSection extends PluginSettingTab
 
                             new Notice ( lng( "cfg_tag_gh_pat_notice_msg_success" ) + "\n\n" + token_Type )
 
-                            GithubTokenSet( input_PAT )
+                            GHTokenSet( input_PAT )
 
                             this.display( )
                         }
@@ -1065,7 +1064,7 @@ export class SettingsSection extends PluginSettingTab
                                 btn_Github.extraSettingsEl.classList.remove     ( "gistr-settings-icon-ok" )
                                 btn_Github.extraSettingsEl.classList.remove     ( "gistr-settings-icon-invalid" )
 
-                                GithubTokenSet( "" )
+                                GHTokenSet( "" )
 
                                 new Notice ( lng( "cfg_tag_gh_pat_notice_msg_cleared" ) )
                             }
