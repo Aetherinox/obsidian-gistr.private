@@ -11,17 +11,27 @@ run-name: "Release Product"
 on:
   workflow_dispatch:
     inputs:
-      PLUGIN_NAME:
-
+  
       # ---------------------------------------------------------------------------------------
       #   Name of the plugin to use when creating the release zip filename
       #     e.g: gistr-v1.0.0.zip
       # ---------------------------------------------------------------------------------------
 
+      PLUGIN_NAME:
         description:  'Name of Plugin'
         required:     true
         default:      'gistr'
         type:         string
+
+      # ---------------------------------------------------------------------------------------
+      #   Build ID
+      # ---------------------------------------------------------------------------------------
+
+      BUILD_ID:
+        description:  "Build ID"
+        required:     true
+        type:         string
+        default:      00000000-abcd-0123-abcd-000000000000
 
       # ---------------------------------------------------------------------------------------
       #   ENABLE:   released version will be marked as pre-release
@@ -77,8 +87,9 @@ jobs:
             - uses: actions/checkout@v4
               with:
                 fetch-depth: 0
+                
             - name: Use Node.js
-              uses: actions/setup-node@v1
+              uses: actions/setup-node@v4
               id: checkout
               with:
                   node-version: "20.x"
@@ -171,6 +182,10 @@ jobs:
                 ignorePreReleases: false
                 commitMode: ${{ inputs.CHANGELOG_MODE_COMMIT }}
                 fetchReleaseInformation: true
+                configurationJson: |
+                  {
+                    "template": "## What's New ${{ inputs.CHANGELOG_MODE_COMMIT }} \n<sup>Version began on: #{{FROM_TAG_DATE}} - #{{TO_TAG_DATE}}</sup>\n<br />\n### File Changes\nThis release contains the folllowing edits:\n<ul><li><a href='#{{RELEASE_DIFF}}'>Changed files</a>  : <b>#{{CHANGED_FILES}}</b> </li><li>Commits : <b>#{{COMMITS}}</b> </li><li>Additions : <b>#{{ADDITIONS}}</b></li><li>Deletions : <b>#{{DELETIONS}}</b></li>\n<br />\n</ul>\n\n### Commits (#{{UNCATEGORIZED_COUNT}})\n#{{UNCATEGORIZED}}\n<br />\n\n### Pull Requests\n#{{CHANGELOG}}\n\n<br />\n\n",
+                  }
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
