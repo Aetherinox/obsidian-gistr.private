@@ -183,7 +183,7 @@ jobs:
                 fetchReleaseInformation: true
                 configurationJson: |
                   {
-                    "template": "## asdasd",
+                    "template": "## asdasd"
                   }
                 configuration: ".github/changelog-configuration.json"
               env:
