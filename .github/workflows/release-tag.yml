@@ -45,17 +45,6 @@ on:
         type:         boolean
 
       # ---------------------------------------------------------------------------------------
-      #   ENABLE:   released version will be marked as pre-release
-      #   DISABLE:  release version will be marked as stable / normal release
-      # ---------------------------------------------------------------------------------------
-
-      PRERELEASE:
-        description:  "Build RC (Pre-release)"
-        required:     true
-        default:      false
-        type:         boolean
-
-      # ---------------------------------------------------------------------------------------
       #   ENABLE:   Will show all types of commits, including uncategorized
       #   DISABLE:  WIll only show actions that have been categorized using the format
       #                type(scope): description
@@ -64,6 +53,17 @@ on:
 
       SHOW_UNCATEGORIZED:
         description:  "Show Uncategorized Commits"
+        required:     true
+        default:      false
+        type:         boolean
+
+      # ---------------------------------------------------------------------------------------
+      #   ENABLE:   released version will be marked as pre-release
+      #   DISABLE:  release version will be marked as stable / normal release
+      # ---------------------------------------------------------------------------------------
+
+      PRERELEASE:
+        description:  "Build RC (Pre-release)"
         required:     true
         default:      false
         type:         boolean
@@ -186,7 +186,7 @@ jobs:
                 echo "COMMIT_LAST=$(git rev-parse HEAD)" >> $GITHUB_ENV
 
             - name: Build Changelog
-              id: changelog
+              id: changelog-categorized
               if: ${{ startsWith( inputs.SHOW_UNCATEGORIZED, false ) }}
               uses: mikepenz/release-changelog-builder-action@v4
               with:
@@ -211,7 +211,7 @@ jobs:
             # ---------------------------------------------------------------------------------------
 
             - name: Build Changelog
-              id: changelog
+              id: changelog-uncategorized
               if: ${{ startsWith( inputs.SHOW_UNCATEGORIZED, true ) }}
               uses: mikepenz/release-changelog-builder-action@v4
               with:
@@ -233,9 +233,15 @@ jobs:
             #   Fetch Changelog
             # ---------------------------------------------------------------------------------------
 
-            - name: "[Changelog]: Get"
+            - name: "[Changelog]: Get (Categorized)"
+              if: ${{ startsWith( inputs.SHOW_UNCATEGORIZED, false ) }}
               run: |
-                echo "${{ steps.changelog.outputs.changelog }}"
+                echo "${{ steps.changelog-categorized.outputs.changelog }}"
+
+            - name: "[Changelog]: Get (Uncategorized)"
+              if: ${{ startsWith( inputs.SHOW_UNCATEGORIZED, true ) }}
+              run: |
+                echo "${{ steps.changelog-uncategorized.outputs.changelog }}"
 
             # ---------------------------------------------------------------------------------------
             #   [ Release ]: Post Release
@@ -266,7 +272,8 @@ jobs:
                   checksum.txt
                 prerelease: false
                 body: |
-                  ${{ steps.changelog.outputs.changelog }}
+                  ${{ steps.changelog-categorized.outputs.changelog }}
+                  ${{ steps.changelog-uncategorized.outputs.changelog }}
                   ---
 
             - name: "[Post]: Release Candidate"
@@ -292,7 +299,8 @@ jobs:
                   > [!WARNING]
                   > This is a **release candidate**, which means it is not a stable release and could contain bugs. You should download it at your own risk.
 
-                  ${{ steps.changelog.outputs.changelog }}
+                  ${{ steps.changelog-categorized.outputs.changelog }}
+                  ${{ steps.changelog-uncategorized.outputs.changelog }}
                   ---
 
             # ---------------------------------------------------------------------------------------
@@ -304,7 +312,8 @@ jobs:
                 echo "Printing Variables"
                 echo 
                 echo "---- CHANGELOG ---------------------------------------------------------------"
-                echo "${{ steps.changelog.outputs.changelog }}"
+                echo "${{ steps.changelog-categorized.outputs.changelog }}"
+                echo "${{ steps.changelog-uncategorized.outputs.changelog }}"
                 echo "---- CHANGELOG ---------------------------------------------------------------"
                 echo ""
                 echo ""
