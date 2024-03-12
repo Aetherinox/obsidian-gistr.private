@@ -18,7 +18,7 @@ on:
       # ---------------------------------------------------------------------------------------
 
       PLUGIN_NAME:
-        description:  'Name of Plugin'
+        description:  "📦 Name of Plugin"
         required:     true
         default:      'gistr'
         type:         string
@@ -28,7 +28,7 @@ on:
       # ---------------------------------------------------------------------------------------
 
       BUILD_ID:
-        description:  "Build ID"
+        description:  "🔖 Build ID"
         required:     true
         type:         string
         default:      00000000-abcd-0123-abcd-000000000000
@@ -120,7 +120,7 @@ jobs:
             #   Build Zip
             # ---------------------------------------------------------------------------------------
 
-            - name: "[Build]: Stable"
+            - name: "🔨 [Build]: Stable"
               id: build-st
               if: ${{ startsWith( inputs.PRERELEASE, false ) }}
               run: |
@@ -132,7 +132,7 @@ jobs:
               env:
                 NODE_AUTH_TOKEN: ${{ secrets.GH_PAT }}
 
-            - name: "[Build]: Release Candidate"
+            - name: "🔨 [Build]: Release Candidate"
               id: build-rc
               if: ${{ startsWith( inputs.PRERELEASE, true ) }}
               run: |
@@ -146,13 +146,13 @@ jobs:
             #   [ Release Candidate ]: Checksum
             # ---------------------------------------------------------------------------------------
 
-            - name: "[Checksum]: Stable"
+            - name: "🆔 [Checksum]: Stable"
               id: checksum-st
               if: ${{ startsWith( inputs.PRERELEASE, false ) }}
               run: |
                 shasum --algorithm 256 ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip > SHA256SUMS.txt
 
-            - name: "[Checksum]: Release Candidate"
+            - name: "🆔 [Checksum]: Release Candidate"
               id: checksum-rc
               if: ${{ startsWith( inputs.PRERELEASE, true ) }}
               run: |
@@ -162,7 +162,7 @@ jobs:
             #   Contributor Images
             # ---------------------------------------------------------------------------------------
 
-            - name: "[Contributors]: Generate"
+            - name: "🥸 [Contributors]: Generate"
               id: contribs-generate
               uses: jaywcjlove/github-action-contributors@main
               with:
@@ -180,7 +180,7 @@ jobs:
             #     ${{ steps.changelog.outputs.changelog }}
             # ---------------------------------------------------------------------------------------
 
-            - name: "Changelog: Pre Setup (No Uncategorized Commits)"
+            - name: "📝 Changelog: Pre Setup (No Uncategorized Commits)"
               run: |
                 echo "TAG_LAST=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
                 echo "COMMIT_LAST=$(git rev-parse HEAD)" >> $GITHUB_ENV
@@ -233,12 +233,12 @@ jobs:
             #   Fetch Changelog
             # ---------------------------------------------------------------------------------------
 
-            - name: "[ Changelog ]: Get (Categorized)"
+            - name: "⤵️ [ Changelog ]: Get (Categorized)"
               if: ${{ startsWith( inputs.SHOW_UNCATEGORIZED, false ) }}
               run: |
                 echo "${{ steps.changelog-categorized.outputs.changelog }}"
 
-            - name: "[ Changelog ]: Get (Uncategorized)"
+            - name: "⤵️ [ Changelog ]: Get (Uncategorized)"
               if: ${{ startsWith( inputs.SHOW_UNCATEGORIZED, true ) }}
               run: |
                 echo "${{ steps.changelog-uncategorized.outputs.changelog }}"
@@ -252,7 +252,7 @@ jobs:
             #       ${{ steps.bundle-st.outputs.id
             # ---------------------------------------------------------------------------------------
 
-            - name: "[Post]: Stable"
+            - name: "🏳️ [Post]: Stable"
               if: ${{ startsWith( inputs.PRERELEASE, false ) }}
               uses: softprops/action-gh-release@v2
               id: bundle-st
@@ -276,7 +276,7 @@ jobs:
                   ${{ steps.changelog-uncategorized.outputs.changelog }}
                   ---
 
-            - name: "[Post]: Release Candidate"
+            - name: "🏳️ [Post]: Release Candidate"
               if: ${{ startsWith( inputs.PRERELEASE, true ) }}
               uses: softprops/action-gh-release@v2
               id: bundle-rc
