@@ -34,23 +34,23 @@ on:
         default:      00000000-abcd-0123-abcd-000000000000
 
       # ---------------------------------------------------------------------------------------
+      #   ENABLE:   the changelog generated in releases tab will only display single commits.
+      #   DISABLE:  the changelog shows pull requests completed based on their labels
+      # ---------------------------------------------------------------------------------------
+
+      CHANGELOG_MODE_COMMIT:
+        description:  "Use Commits Instead of PRs"
+        required:     true
+        default:      false
+        type:         boolean
+
+      # ---------------------------------------------------------------------------------------
       #   ENABLE:   released version will be marked as pre-release
       #   DISABLE:  release version will be marked as stable / normal release
       # ---------------------------------------------------------------------------------------
 
       PRERELEASE:
         description:  "Build RC (Pre-release)"
-        required:     true
-        default:      false
-        type:         boolean
-
-      # ---------------------------------------------------------------------------------------
-      #   ENABLE:   the changelog generated in releases tab will only display single commits.
-      #   DISABLE:  the changelog shows pull requests completed based on their labels
-      # ---------------------------------------------------------------------------------------
-
-      CHANGELOG_MODE_COMMIT:
-        description:  "Commit Instead of Pull Changelog"
         required:     true
         default:      false
         type:         boolean
@@ -177,7 +177,7 @@ jobs:
               uses: mikepenz/release-changelog-builder-action@v4
               with:
                 fromTag: "${{ env.TAG_LAST }}"
-                toTag: ${{ github.ref }}
+                toTag: "${{ github.ref }}"
                 configuration: ".github/changelog-configuration.json"
                 ignorePreReleases: false
                 commitMode: ${{ inputs.CHANGELOG_MODE_COMMIT }}
@@ -185,7 +185,7 @@ jobs:
                 fetchViaCommits: true
                 configurationJson: |
                   {
-                    "template": "## What's New\n<sup>**Version began on**: `#{{FROM_TAG_DATE}}`\n**Last release**: #{{DAYS_SINCE}}\n**Build ID**: `${{ inputs.BUILD_ID }}`\n**Stamp**: `#{{FROM_TAG}}-#{{FROM_TAG_DATE}}\n#{{TO_TAG}}-#{{TO_TAG_DATE}}\n#{{DAYS_SINCE}}`\n</sup>\n\n<br>\n\n---\n\n<br>\n\n### File Changes\nThis release contains the following edits:\n<ul><li><a href='#{{RELEASE_DIFF}}'>Changed files</a>  : <b>#{{CHANGED_FILES}}</b> </li><li>Commits : <b>#{{COMMITS}}</b> </li><li>Additions : <b>#{{ADDITIONS}}</b></li><li>Deletions : <b>#{{DELETIONS}}</b></li>\n<br />\n</ul>\n\n<br>\n\n---\n\n<br>\n\n### Commits (#{{UNCATEGORIZED_COUNT}})\n#{{UNCATEGORIZED}}\n\n<br>\n\n---\n\n<br>\n\n### Pull Requests\n#{{CHANGELOG}}\n\n\n\n"
+                    "template": "## What's New\n<sup>**Version began on**: `#{{FROM_TAG_DATE}}`\n***Build ID**: `${{ inputs.BUILD_ID }}`\n**Stamp**: `#{{FROM_TAG}}-#{{FROM_TAG_DATE}}\n#{{TO_TAG}}-#{{TO_TAG_DATE}}\n#{{DAYS_SINCE}}`\n</sup>\n\n<br>\n\n---\n\n<br>\n\n### File Changes\nThis release contains the following edits:\n<ul><li><a href='#{{RELEASE_DIFF}}'>Changed files</a>  : <b>#{{CHANGED_FILES}}</b> </li><li>Commits : <b>#{{COMMITS}}</b> </li><li>Additions : <b>#{{ADDITIONS}}</b></li><li>Deletions : <b>#{{DELETIONS}}</b></li>\n<br />\n</ul>\n\n<br>\n\n---\n\n<br>\n\n### Commits (#{{UNCATEGORIZED_COUNT}})\n#{{UNCATEGORIZED}}\n\n<br>\n\n---\n\n<br>\n\n### Pull Requests\n#{{CHANGELOG}}\n\n\n\n"
                   }
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
