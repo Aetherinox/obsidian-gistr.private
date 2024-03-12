@@ -31,7 +31,7 @@
         CHANGELOG_MODE_COMMIT:
           description:  "📑 Use Commits Instead of PRs"
           required:     true
-          default:      false
+          default:      true
           type:         boolean
   
         # ---------------------------------------------------------------------------------------
