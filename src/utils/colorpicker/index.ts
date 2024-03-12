@@ -5,8 +5,8 @@
 import { Setting, ExtraButtonComponent } from 'obsidian'
 import GistrPlugin from "src/main"
 import { lng } from 'src/lang/helpers'
+import { ColorTranslator } from 'colortranslator'
 import Pickr from "@simonwep/pickr"
-import { ColorTranslator } from "colortranslator"
 
 /*
     CSS Color Values
@@ -20,7 +20,7 @@ export type Color       = CLR_HEX | CLR_VAR
     Color Picker
 */
 
-export default class ColorPicker extends Pickr
+export class ColorPicker extends Pickr
 {
 	ActionSave:         ( ActionSave: Color ) => void
 	ColorReset:         ( ) => void

@@ -2,8 +2,8 @@
     Import
 */
 
-import { request, App, RequestUrlParam  } from "obsidian"
-import GistrSettings from 'src/settings/settings'
+import { request, RequestUrlParam  } from "obsidian"
+import { GistrSettings } from 'src/settings/settings'
 import { lng, PluginID } from 'src/lang/helpers'
 import { nanoid } from 'nanoid'
 
@@ -43,7 +43,7 @@ export interface ItemJSON
     Gistr Backend
 */
 
-export class GistrBackend
+export class BackendCore
 {
     private readonly settings: GistrSettings
 
@@ -151,7 +151,8 @@ export class GistrBackend
             policy directive error if certain attributes arent used. doesnt affect the plugin, but erors are bad
         */
 
-        ct_iframe.setAttribute  ( 'csp', "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' ${host} ;" )
+        ct_iframe.setAttribute  ( 'csp', "default-src * data: blob: 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; connect-src * 'unsafe-inline'; img-src * data: blob: 'unsafe-inline'; frame-src *; style-src * 'unsafe-inline';" )
+        // ct_iframe.setAttribute  ( 'csp', "default-src * self 'unsafe-inline'; font-src 'self' *fonts.gstatic.com/; style-src-elem 'self' *fonts.googleapis.com *demo.opengist.io/ *thomice.li 'unsafe-inline'; script-src * 'self' 'unsafe-eval' 'unsafe-inline'; object-src * 'self'; img-src * self 'unsafe-inline'; connect-src self * 'unsafe-inline'; frame-src * self 'unsafe-inline';" )
 
         /*
             assign css, body, js

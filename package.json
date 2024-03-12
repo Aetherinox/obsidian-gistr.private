@@ -1,7 +1,7 @@
 {
   "name": "gistr",
-  "version": "1.4.0",
-  "description": "Integrate OpenGist and Github gist snippets in your notes.",
+  "version": "1.4.3",
+  "description": "Use your notes to embed, create, and update gists for Github and Opengist.",
   "main": "main.js",
   "repository": {
     "type": "git",
@@ -26,17 +26,19 @@
     "url": "https://github.com/Aetherinox/obsidian-gistr/issues"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^18.0.0",
-    "@rollup/plugin-node-resolve": "^11.2.1",
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
-    "@rollup/plugin-typescript": "^8.2.1",
-    "@types/node": "^14.14.37",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@types/node": "^20.11.24",
+    "@types/semver": "^7.5.8",
     "obsidian": "^1.0.0",
     "rollup": "^2.32.1",
     "rollup-plugin-define": "^1.0.1",
-    "rollup-plugin-license": "^3.2.0",
+    "rollup-plugin-license": "^3.3.1",
     "tslib": "^2.2.0",
-    "typescript": "^4.2.4"
+    "typescript": "^4.2.4",
+    "uuid": "^9.0.1"
   },
   "dependencies": {
     "@aetherinox/noxkit": "^1.1.0",
@@ -44,6 +46,7 @@
     "@simonwep/pickr": "github:simonwep/pickr",
     "colortranslator": "^4.1.0",
     "front-matter": "^4.0.2",
-    "nanoid": "^4.0"
+    "nanoid": "^5.0",
+    "semver": "^7.6.0"
   }
 }

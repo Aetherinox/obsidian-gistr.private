@@ -1,13 +1,15 @@
 import { App, Plugin, PluginManifest, PluginSettingTab, Setting, sanitizeHTMLToDom, ExtraButtonComponent, MarkdownRenderer, Notice, requestUrl } from 'obsidian'
 import GistrPlugin from "src/main"
-import GistrSettings from 'src/settings/settings'
-import ModalGettingStarted from "src/modals/GettingStartedModal"
-import { lng, PluginID } from 'src/lang/helpers'
+import { SettingsDefaults } from 'src/settings/defaults'
+import { ColorPicker, GetColor } from 'src/utils'
 import { GithubTokenGet, GithubTokenSet } from 'src/backend/tokens/github'
+import { GithubStatusAPI } from 'src/backend/services/github'
+import { NoxComponent } from 'src/api'
+import { lng } from 'src/lang/helpers'
+import ModalGettingStarted from "src/modals/GettingStartedModal"
 import Pickr from "@simonwep/pickr"
-import ColorPicker from 'src/backend/colorpicker'
-import { GetColor } from 'src/backend/colorpicker'
-
+import lt from 'semver/functions/lt'
+import gt from 'semver/functions/gt'
 
 /*
     Color picker options
@@ -92,7 +94,7 @@ export const GetTextwrap: { [ key in TEXTWRAP ]: string } =
     Settings Tab
 */
 
-export class SettingsTab extends PluginSettingTab
+export class SettingsSection extends PluginSettingTab
 {
     readonly plugin:            GistrPlugin
     private Hide_Global:        boolean
@@ -105,14 +107,15 @@ export class SettingsTab extends PluginSettingTab
     private Tab_OpenGist:       HTMLElement
     private Tab_SaveSync:       HTMLElement
     private Tab_Support:        HTMLElement
-    private data:               Record< string, boolean | string | GistrSettings >
-    test: string
-    cPickr:                     Record<string, ColorPicker>
+    private Opacity_Enabled:    string
+    private Opacity_Disabled:   string
+    private Obj_Github_Api:     Setting
+    private cPickr:             Record< string, ColorPicker >
 
-    
     /*
         Class > Constructor
     */
+
     constructor( app: App, plugin: GistrPlugin )
     {
         super( app, plugin )
@@ -123,10 +126,11 @@ export class SettingsTab extends PluginSettingTab
 		this.Hide_Opengist      = true
         this.Hide_SaveSync      = true
 		this.Hide_Support       = false
-        this.test               = ""
+        this.Opacity_Enabled    = "1"
+        this.Opacity_Disabled   = "0.4"
+        this.Obj_Github_Api     = null
         this.cPickr             = { }
     }
-
 
     /*
         Create Object > Color Picker
@@ -180,7 +184,7 @@ export class SettingsTab extends PluginSettingTab
 
                     .setIcon        ( "reset" )
                     .setDisabled    ( false )
-                    .setTooltip     ( lng( "pickr_tip_restore_default" ) )
+                    .setTooltip     ( lng( "pickr_restore_default_btn_tip" ) )
                     .onClick( ( ) =>
                     {
                         const resetColour:  Color = ColorPickrDefaults[ id ]
@@ -219,6 +223,7 @@ export class SettingsTab extends PluginSettingTab
     CreateHeader( elm: HTMLElement )
     {
         elm.empty( )
+        elm.addClass( 'gistr-settings-modal' )
         elm.createEl( "p", { cls: "gistr-settings-section-header", text: lng( "cfg_modal_desc" ) } )
     }
 
@@ -282,44 +287,64 @@ export class SettingsTab extends PluginSettingTab
                 Codeblock > Theme
             */
 
-            new Setting( elm )
+            const cfg_tab_ge_theme_desc = new DocumentFragment( )
+            cfg_tab_ge_theme_desc.append(
+                sanitizeHTMLToDom( `${ lng( "cfg_tab_ge_theme_desc" ) }` ),
+            )
+
+            new NoxComponent( elm )
                 .setName( lng( "cfg_tab_ge_theme_name" ) )
-                .setDesc( lng( "cfg_tab_ge_theme_desc" ) )
-                .addDropdown( dropdown =>
-                {
-                    dropdown
-                        .addOption( THEMES.LIGHT, GetTheme[ THEMES.LIGHT ] )
-                        .addOption( THEMES.DARK, GetTheme[ THEMES.DARK ] )
-                        .setValue( this.plugin.settings.theme )
-                        .onChange( async ( val ) =>
-                        {
-                            this.plugin.settings.theme = val
-                            await this.plugin.saveSettings( )
-                            this.plugin.renderModeReading( )
-                        } )
-                } )
+                .setDesc( cfg_tab_ge_theme_desc )
+                .setClass( "gistr-dropdown" )
+                .addNoxDropdown( dropdown => dropdown
+                    .addOption( THEMES.LIGHT, GetTheme[ THEMES.LIGHT ] )
+                    .addOption( THEMES.DARK, GetTheme[ THEMES.DARK ] )
+                    .setValue( this.plugin.settings.theme )
+                    .onChange( async ( val ) =>
+                    {
+                        this.plugin.settings.theme = val
+                        await this.plugin.saveSettings( )
+                        this.plugin.renderModeReading( )
+                    }),
+                    ( ) =>
+                    ( 
+                        SettingsDefaults.theme as string
+                    ),
+                )
+
+            elm.createEl( 'div', { cls: "gistr-settings-section-separator", text: "" } )
 
             /*
                 Dropdown > Text Wrap
             */
 
-            new Setting( elm )
+            const cfg_tab_ge_wrap_desc = new DocumentFragment( )
+            cfg_tab_ge_wrap_desc.append(
+                sanitizeHTMLToDom( `${ lng( "cfg_tab_ge_wrap_desc" ) }` ),
+            )
+
+            new NoxComponent( elm )
                 .setName( lng( "cfg_tab_ge_wrap_name" ) )
-                .setDesc( lng( "cfg_tab_ge_wrap_desc" ) )
-                .addDropdown( dropdown =>
-                {
-                    dropdown
-                        .addOption( TEXTWRAP.WRAP_OFF, GetTextwrap[ TEXTWRAP.WRAP_OFF ] )
-                        .addOption( TEXTWRAP.WRAP_ON, GetTextwrap[ TEXTWRAP.WRAP_ON ] )
-                        .setValue( this.plugin.settings.textwrap )
-                        .onChange( async val =>
-                        {
-                            this.plugin.settings.textwrap = val
-                            await this.plugin.saveSettings( )
-                            this.plugin.renderModeReading( )
-                        } )
-                } )
-                
+                .setDesc( cfg_tab_ge_wrap_desc )
+                .setClass( "gistr-dropdown" )
+                .addNoxDropdown( dropdown => dropdown
+                    .addOption( TEXTWRAP.WRAP_OFF, GetTextwrap[ TEXTWRAP.WRAP_OFF ] )
+                    .addOption( TEXTWRAP.WRAP_ON, GetTextwrap[ TEXTWRAP.WRAP_ON ] )
+                    .setValue( this.plugin.settings.textwrap )
+                    .onChange( async ( val ) =>
+                    {
+                        this.plugin.settings.textwrap = val
+                        await this.plugin.saveSettings( )
+                        this.plugin.renderModeReading( )
+                    }),
+                    ( ) =>
+                    ( 
+                        SettingsDefaults.textwrap as string
+                    ),
+                )
+
+                elm.createEl( 'div', { cls: "gistr-settings-section-separator", text: "" } )
+
             /*
                 Command Keyword
 
@@ -327,48 +352,93 @@ export class SettingsTab extends PluginSettingTab
                 within the box.
             */
 
-            new Setting( elm )
-                .setName( lng( "cfg_tab_ge_keyword_name" ) )
-                .setDesc( lng( "cfg_tab_ge_keyword_desc" ) )
-                .addText( text =>
-                {
-                    text.setValue( this.plugin.settings.keyword.toString( ) )
+                const cfg_tab_ge_keyword_desc = new DocumentFragment( )
+                cfg_tab_ge_keyword_desc.append(
+                    sanitizeHTMLToDom( `${ lng( "cfg_tab_ge_keyword_desc" ) }` ),
+                )
+    
+                new NoxComponent( elm )
+                    .setName( lng( "cfg_tab_ge_keyword_name" ) )
+                    .setDesc( cfg_tab_ge_keyword_desc )
+                    .addNoxTextbox( text => text
+                        .setValue( this.plugin.settings.keyword )
+                        .onChange( async ( val ) =>
+                        {
+                            this.plugin.settings.keyword = val
+                            await this.plugin.saveSettings( )
+                            this.plugin.renderModeReading( )
+                        }),
+                        ( ) =>
+                        ( 
+                            SettingsDefaults.keyword.toString( ) as string
+                        ),
+                    )
+
+                elm.createEl( 'div', { cls: "gistr-settings-section-separator", text: "" } )
+
+            /*
+                Plugin update notifications
+            */
+
+            const cfg_tab_ge_noti_update_desc = new DocumentFragment( )
+            cfg_tab_ge_noti_update_desc.append(
+                sanitizeHTMLToDom( `${ lng( "cfg_tab_ge_noti_update_desc" ) }` ),
+            )
+
+            new NoxComponent( elm )
+                .setName( lng( "cfg_tab_ge_noti_update_name" ) )
+                .setDesc( cfg_tab_ge_noti_update_desc )
+                .addNoxToggle( toggle => toggle
+                    .setValue( this.plugin.settings.ge_enable_updatenoti )
                     .onChange( async ( val ) =>
                     {
-                        this.plugin.settings.keyword = val
+                        this.plugin.settings.ge_enable_updatenoti = val
                         await this.plugin.saveSettings( )
-                        this.plugin.renderModeReading( )
-                    } )
-                } )
+                    }),
+                    ( ) =>
+                    ( 
+                        SettingsDefaults.ge_enable_updatenoti as boolean
+                    ),
+                )
+
+            elm.createEl( 'div', { cls: "gistr-settings-section-separator", text: "" } )
 
             /*
                 Notification Time (in seconds)
             */
 
-            const cfg_tab_ge_notitime_desc = new DocumentFragment( )
-            cfg_tab_ge_notitime_desc.append(
-                sanitizeHTMLToDom(`${ lng( "cfg_tab_ge_notitime_desc" ) }`),
+            const cfg_tab_ge_noti_dur_desc = new DocumentFragment( )
+            cfg_tab_ge_noti_dur_desc.append(
+                sanitizeHTMLToDom(`${ lng( "cfg_tab_ge_noti_dur_desc" ) }`),
             )
 
             let val_st_notitime: HTMLDivElement
-            new Setting( elm )
-                .setName( lng( "cfg_tab_ge_notitime_name" ) )
-                .setDesc( cfg_tab_ge_notitime_desc )
-                .addSlider( slider => slider
-                    .setLimits( 0, 15, 1 )
+            new NoxComponent( elm )
+                .setName( lng( "cfg_tab_ge_noti_dur_name" ) )
+                .setDesc( cfg_tab_ge_noti_dur_desc )
+                .setClass( "gistr-slider" )
+                .addNoxSlider( slider => slider
+                    .setLimits( 0, 120, 1 )
+                    .setDynamicTooltip( )
                     .setValue( this.plugin.settings.notitime )
                     .onChange( async ( val ) =>
                     {
-                        val_st_notitime.innerText           = " " + val.toString( ) + "s"
-                        this.plugin.settings.notitime      = val
+                        val_st_notitime.innerText       = " " + val.toString( ) + "s"
 
+                        this.plugin.settings.notitime = val
                         await this.plugin.saveSettings( )
-                    } )
+                    }),
+                    ( ) =>
+                    ( 
+                        SettingsDefaults.notitime as number
+                    ),
                 ).settingEl.createDiv( '', ( el ) =>
                 {
                     val_st_notitime         = el
                     el.innerText            = " " + this.plugin.settings.notitime.toString( ) + "s"
                 } ).classList.add( 'gistr-settings-elm-slider-preview' )
+
+            elm.createEl( 'div', { cls: "gistr-settings-section-separator", text: "" } )
 
             /*
                 Tab Footer Spacer
@@ -525,84 +595,130 @@ export class SettingsTab extends PluginSettingTab
                 Codeblock Opacity
             */
 
-            new Setting( elm )
+            const cfg_tab_og_opacity_desc = new DocumentFragment( )
+            cfg_tab_og_opacity_desc.append(
+                sanitizeHTMLToDom(`${ lng( "cfg_tab_og_opacity_desc" ) }`),
+            )
+
+            let val_og_opacity: HTMLDivElement
+            new NoxComponent( elm )
                 .setName( lng( "cfg_tab_og_opacity_name" ) )
-                .setDesc( lng( "cfg_tab_og_opacity_desc" ) )
-                .addSlider( ( slider ) =>
-                {
-                    slider
-                    .setLimits( 0.20, 1, 0.05 )
+                .setDesc( cfg_tab_og_opacity_desc )
+                .setClass( "gistr-slider" )
+                .addNoxSlider( slider => slider
                     .setDynamicTooltip( )
+                    .setLimits( 0.20, 1, 0.05 )
                     .setValue( this.plugin.settings.og_opacity )
                     .onChange( async ( val ) =>
                     {
+                        const opacity_calc          = val * 100
+                        val_og_opacity.innerText    = " " + opacity_calc.toString( ) + "%"
+
                         this.plugin.settings.og_opacity = val
                         await this.plugin.saveSettings( )
                         this.plugin.renderModeReading( )
-                    } )
-                } )
+                    }),
+                    ( ) =>
+                    ( 
+                        SettingsDefaults.og_opacity as number
+                    ),
+                ).settingEl.createDiv( '', ( el ) =>
+                {
+                    val_og_opacity          = el
+                    const opacity_calc      = this.plugin.settings.og_opacity * 100
+                    el.innerText            = " " + opacity_calc.toString( ) + "%"
+                } ).classList.add( 'gistr-settings-elm-slider-preview' )
 
             /*
                 Codeblock > Padding > Top
             */
 
-            let val_st_padding: HTMLDivElement
-            new Setting( elm )
-                .setName( lng( "cfg_tab_og_padding_top_name" ) )
-                .setDesc( lng( "cfg_tab_og_padding_top_desc" ) )
-                .addSlider( slider => slider
+            const cfg_tab_og_pad_top_desc = new DocumentFragment( )
+            cfg_tab_og_pad_top_desc.append(
+                sanitizeHTMLToDom(`${ lng( "cfg_tab_og_pad_top_desc" ) }`),
+            )
+
+            let val_og_padding_top: HTMLDivElement
+            new NoxComponent( elm )
+                .setName( lng( "cfg_tab_og_pad_top_name" ) )
+                .setDesc( cfg_tab_og_pad_top_desc )
+                .setClass( "gistr-slider" )
+                .addNoxSlider( slider => slider
+                    .setDynamicTooltip( )
                     .setLimits( 0, 30, 1 )
                     .setValue( this.plugin.settings.blk_pad_t )
                     .onChange( async ( val ) =>
                     {
-                        val_st_padding.innerText            = " " + val.toString( )
-                        this.plugin.settings.blk_pad_t      = val
+                        const padding_calc              = val
+                        val_og_padding_top.innerText    = " " + padding_calc.toString( ) + "px"
 
+                        this.plugin.settings.blk_pad_t = val
                         await this.plugin.saveSettings( )
                         this.plugin.renderModeReading( )
-                    } )
+                    }),
+                    ( ) =>
+                    ( 
+                        SettingsDefaults.blk_pad_t as number
+                    ),
                 ).settingEl.createDiv( '', ( el ) =>
                 {
-                    val_st_padding          = el
-                    el.innerText            = " " + this.plugin.settings.blk_pad_t.toString( )
+                    val_og_padding_top      = el
+                    const padding_calc      = this.plugin.settings.blk_pad_t
+                    el.innerText            = " " + padding_calc.toString( ) + "px"
                 } ).classList.add( 'gistr-settings-elm-slider-preview' )
 
             /*
                 Codeblock > Padding > Bottom
             */
 
-            let val_sb_padding: HTMLDivElement
-            new Setting( elm )
-                .setName( lng( "cfg_tab_og_padding_bottom_name" ) )
-                .setDesc( lng( "cfg_tab_og_padding_bottom_desc" ) )
-                .addSlider( slider => slider
+            const cfg_tab_og_pad_btm_desc = new DocumentFragment( )
+            cfg_tab_og_pad_btm_desc.append(
+                sanitizeHTMLToDom(`${ lng( "cfg_tab_og_pad_btm_desc" ) }`),
+            )
+
+            let val_og_padding_btm: HTMLDivElement
+            new NoxComponent( elm )
+                .setName( lng( "cfg_tab_og_pad_btm_name" ) )
+                .setDesc( cfg_tab_og_pad_btm_desc )
+                .setClass( "gistr-slider" )
+                .addNoxSlider( slider => slider
+                    .setDynamicTooltip( )
                     .setLimits( 0, 30, 1 )
                     .setValue( this.plugin.settings.blk_pad_b )
                     .onChange( async ( val ) =>
                     {
-                        val_sb_padding.innerText            = " " + val.toString( )
-                        this.plugin.settings.blk_pad_b      = val
+                        const padding_calc              = val
+                        val_og_padding_btm.innerText    = " " + padding_calc.toString( ) + "px"
 
+                        this.plugin.settings.blk_pad_b = val
                         await this.plugin.saveSettings( )
                         this.plugin.renderModeReading( )
-                    } )
+                    }),
+                    ( ) =>
+                    ( 
+                        SettingsDefaults.blk_pad_b as number
+                    ),
                 ).settingEl.createDiv( '', ( el ) =>
                 {
-                    val_sb_padding          = el
-                    el.innerText            = " " + this.plugin.settings.blk_pad_b.toString( )
+                    val_og_padding_btm      = el
+                    const padding_calc      = this.plugin.settings.blk_pad_b
+                    el.innerText            = " " + padding_calc.toString( ) + "px"
                 } ).classList.add( 'gistr-settings-elm-slider-preview' )
 
             /*
                 Codeblock > CSS Override
             */
 
-            new Setting( elm )
+            const cfg_tab_og_css_desc = new DocumentFragment( )
+            cfg_tab_og_css_desc.append(
+                sanitizeHTMLToDom( `${ lng( "cfg_tab_og_css_desc" ) }` ),
+            )
+
+            new NoxComponent( elm )
                 .setName( lng( "cfg_tab_og_css_name" ) )
-                .setDesc( lng( "cfg_tab_og_css_desc" ) )
+                .setDesc( cfg_tab_og_css_desc )
                 .setClass( "gistr-settings-elm-textarea" )
-                .addTextArea
-                (
-                    text => { text
+                .addNoxTextarea( text => text
                     .setPlaceholder( lng( "cfg_tab_og_css_pholder" ) )
                     .setValue( this.plugin.settings.css_og )
                     .onChange( async ( val ) =>
@@ -610,10 +726,12 @@ export class SettingsTab extends PluginSettingTab
                         this.plugin.settings.css_og = val
                         await this.plugin.saveSettings( )
                         this.plugin.renderModeReading( )
-                    });
-                    //text.inputEl.rows = 9;
-                    //text.inputEl.cols = 22;
-                })
+                    }),
+                    ( ) =>
+                    ( 
+                        SettingsDefaults.css_og.toString( ) as string
+                    ),
+                )
 
             /*
                 Tab Footer Spacer
@@ -651,30 +769,76 @@ export class SettingsTab extends PluginSettingTab
                 .addText( async ( text ) =>
                 {
                     text
-                        .setPlaceholder( lng( "gist_status_connecting" ) )
-                        .setValue( lng( "gist_status_connecting" ) )
-                        .setDisabled( true )
+                        .setPlaceholder ( lng( "gist_status_connecting" ) )
+                        .setValue       ( lng( "gist_status_connecting" ) )
+                        .setDisabled    ( true )
 
-                        const controlEl = Tab_GH_R.querySelector( ".setting-item-control" )
-                        controlEl.addClass( "gistr-settings-status-connecting" )
+                        const el        = Tab_GH_R.querySelector( ".setting-item-control" )
+                        el.addClass     ( "gistr-settings-status-connecting" )
+
+                    /*
+                        Fetch Github API status
+                            - operational
+                            - degraded_performance
+                            - partial_outage
+                            - major_outage
+                    */
 
                     let github_status = await gh_status
 
                     setTimeout( function( )
                     {
-                        if ( github_status === lng( "gist_status_operational" ) )
+
+                        /*
+                            Find API status language entry in array
+                        */
+
+                        const gb_api_status: string = GithubStatusAPI[ github_status ]
+
+                        /*
+                            Text > Github Token Not Specified
+                        */
+
+                        if ( !GithubTokenGet( ) )
                         {
-                            const controlEl = Tab_GH_R.querySelector( ".setting-item-control" )
-                            controlEl.removeClass( "gistr-settings-github-status-connecting" )
-                            controlEl.addClass( "gistr-settings-github-status-operational" )
-                            text.setValue( lng( "gist_status_connected" ) )
+                            const el                    = Tab_GH_R.querySelector( ".setting-item-control" )
+                            el.removeClass              ( "gistr-settings-status-connecting" )
+                            el.addClass                 ( "gistr-settings-status-error" )
+                            text.inputEl.setAttribute   ( "size", lng( "gist_status_no_api" ).length.toString( ) )
+                            text.setValue               ( lng( "gist_status_no_api" ) )
+
+                            return
+                        }
+
+                        /*
+                            Text > Github API > Operational
+                        */
+
+                        if ( github_status === lng( "gist_status_operational_raw" ) )
+                        {
+                            const el                    = Tab_GH_R.querySelector( ".setting-item-control" )
+                            el.removeClass              ( "gistr-settings-status-connecting" )
+                            el.addClass                 ( "gistr-settings-status-success" )
+                            text.inputEl.setAttribute   ( "size", lng( "gist_status_connected" ).length.toString( ) )
+                            text.setValue               ( lng( "gist_status_connected" ) )
+                        }
+                        else if ( github_status === lng( "gist_status_issues" ) )
+                        {
+                            text.inputEl.setAttribute   ( "size", lng( "gist_status_noconnection" ).length.toString( ) )
+                            text.setValue               (  lng( "gist_status_noconnection" ) )
                         }
                         else
                         {
-                            const controlEl = Tab_GH_R.querySelector(".setting-item-control" )
-                            controlEl.removeClass( "gistr-settings-github-status-connecting" )
-                            controlEl.addClass( "gistr-settings-github-status-issues" )
-                            text.setValue( github_status )
+
+                            /*
+                                Button > Github API > Connection Issue
+                            */
+
+                            const el                    = Tab_GH_R.querySelector( ".setting-item-control" )
+                            el.removeClass              ( "gistr-settings-status-connecting" )
+                            el.addClass                 ( "gistr-settings-status-warning" )
+                            text.inputEl.setAttribute   ( "size", gb_api_status.length.toString( ) )
+                            text.setValue               ( gb_api_status )
                         }
                     }, json_delay )
                 } )
@@ -682,28 +846,68 @@ export class SettingsTab extends PluginSettingTab
                 {
                     btn
                     .setIcon        ( 'circle-off' )
-                    .setTooltip     ( lng( "gist_status_btn_connecting" ) )
+                    .setTooltip     ( lng( "gist_status_connecting_btn_tip" ) )
 
                     btn.extraSettingsEl.classList.add( "gistr-settings-icon-cur" )
                     btn.extraSettingsEl.classList.add( "gistr-anim-spin" )
                     btn.extraSettingsEl.classList.add( "gistr-settings-status-connecting" )
 
+                    /*
+                        Fetch Github API status
+                            - operational
+                            - degraded_performance
+                            - partial_outage
+                            - major_outage
+                    */
+
                     let github_status = await gh_status
 
                     setTimeout( function( )
                     {
-                        if ( github_status === lng( "gist_status_operational" ) )
+
+                        /*
+                            Find API status language entry in array
+                        */
+
+                        const gb_api_status:  string = GithubStatusAPI[ github_status ]
+
+                        /*
+                            Text > Github Token Not Specified
+                        */
+
+                            if ( !GithubTokenGet( ) )
+                            {
+                                btn.setIcon     ( "circle-off" )
+                                btn.setTooltip  ( lng( "gist_status_no_api_btn_tip" ) )
+    
+                                btn.extraSettingsEl.classList.remove     ( "gistr-settings-status-connecting" )
+                                btn.extraSettingsEl.classList.add        ( "gistr-settings-icon-error" )
+                                btn.extraSettingsEl.classList.remove     ( "gistr-settings-icon-ok" )
+    
+                                return
+                            }
+
+                        /*
+                            Button > Github API > Operational
+                        */
+
+                        if ( github_status === lng( "gist_status_operational_raw" ) )
                         {
-                            btn.setIcon( "github" )
-                            btn.setTooltip ( lng( "gist_status_btn_success" ) )
+                            btn.setIcon     ( "github" )
+                            btn.setTooltip  ( lng( "gist_status_success_btn_tip" ) )
 
                             btn.extraSettingsEl.classList.remove     ( "gistr-settings-status-connecting" )
                             btn.extraSettingsEl.classList.add        ( "gistr-settings-icon-ok" )
                         }
                         else
                         {
-                            btn.setIcon( "circle-off" )
-                            btn.setTooltip ( lng( "gist_status_btn_issues" ) )
+
+                            /*
+                                Button > Github API > Connection Issue
+                            */
+
+                            btn.setIcon     ( "circle-off" )
+                            btn.setTooltip  ( lng( "gist_status_issues_btn_tip" ) )
 
                             btn.extraSettingsEl.classList.remove     ( "gistr-settings-status-connecting" )
                             btn.extraSettingsEl.classList.add        ( "gistr-settings-icon-error" )
@@ -793,13 +997,14 @@ export class SettingsTab extends PluginSettingTab
             let val_Token:      HTMLInputElement | null = null
             let btn_Github:     ExtraButtonComponent
 
-            new Setting( elm )
+            this.Obj_Github_Api = new Setting( elm )
                 .setName( lng( "cfg_tab_gh_pat_name" ) )
                 .setDesc( DOM_Token_Desc )
                 .addText( ( val ) =>
                 {
                     val_Token           = val.inputEl
                     val.inputEl.type    = 'password'
+
                     val.setPlaceholder( lng( "cfg_tab_gh_pat_pholder" ) )
                     .setValue( gistToken ?? '' )
                     .onChange( async ( val ) =>
@@ -808,10 +1013,14 @@ export class SettingsTab extends PluginSettingTab
                         const b_PAT_Token       = /^github_pat_[a-zA-Z0-9]{22}_[a-zA-Z0-9]{59}$/g.test( input_PAT )
                         const b_PAT_Classic     = /^ghp_[A-Za-z0-9_]{36,251}$/g.test( input_PAT )
 
+                        /*
+                            Personal Access Token Valid
+                        */
+
                         if ( b_PAT_Token || b_PAT_Classic )
                         {
                             btn_Github.setIcon      ( 'check' )
-                            btn_Github.setTooltip   ( lng( "cfg_tab_gh_pat_btn_tip_ok" ) )
+                            btn_Github.setTooltip   ( lng( "cfg_tab_gh_pat_ok_btn_tip" ) )
 
                             btn_Github.extraSettingsEl.classList.add        ( "gistr-settings-icon-ok" )
                             btn_Github.extraSettingsEl.classList.remove     ( "gistr-settings-icon-github" )
@@ -821,29 +1030,44 @@ export class SettingsTab extends PluginSettingTab
                             if ( b_PAT_Classic )
                                 token_Type = lng( "cfg_tab_gh_pat_notice_type_classic" )
 
-                            new Notice ( lng( "cfg_tag_gh_pat_notice_msg" ) + "\n\n" + token_Type )
+                            new Notice ( lng( "cfg_tag_gh_pat_notice_msg_success" ) + "\n\n" + token_Type )
 
                             GithubTokenSet( input_PAT )
+
+                            this.display( )
                         }
                         else
                         {
 
+                            /*
+                                Personal Access Token > invalid
+                            */
+
                             if ( input_PAT.length > 0 )
                             {
-                                btn_Github.setTooltip       ( lng( "cfg_tab_gh_pat_btn_tip_invalid" ) )
+                                btn_Github.setTooltip       ( lng( "cfg_tab_gh_pat_invalid_btn_tip" ) )
 
                                 btn_Github.extraSettingsEl.classList.add        ( "gistr-settings-icon-invalid" )
                                 btn_Github.extraSettingsEl.classList.remove     ( "gistr-settings-icon-github" )
                                 btn_Github.extraSettingsEl.classList.remove     ( "gistr-settings-icon-ok" )
                             }
+
+                            /*
+                                Personal Access Token > Empty
+                            */
+
                             else
                             {
                                 btn_Github.setIcon          ( 'github' )
-                                btn_Github.setTooltip       ( lng( "cfg_tab_gh_pat_btn_tip_bad" ) )
+                                btn_Github.setTooltip       ( lng( "cfg_tab_gh_pat_bad_btn_tip" ) )
 
                                 btn_Github.extraSettingsEl.classList.add        ( "gistr-settings-icon-github" )
                                 btn_Github.extraSettingsEl.classList.remove     ( "gistr-settings-icon-ok" )
                                 btn_Github.extraSettingsEl.classList.remove     ( "gistr-settings-icon-invalid" )
+
+                                GithubTokenSet( "" )
+
+                                new Notice ( lng( "cfg_tag_gh_pat_notice_msg_cleared" ) )
                             }
                         }
                     } )
@@ -855,7 +1079,7 @@ export class SettingsTab extends PluginSettingTab
                     {
                         btn
                             .setIcon        ( bTokenVis ? 'eye' : 'eye-off' )
-                            .setTooltip     ( bTokenVis ? lng( "cfg_tab_gh_pat_state_show" ) : lng( "cfg_tab_gh_pat_state_hide" ) )
+                            .setTooltip     ( bTokenVis ? lng( "cfg_tab_gh_pat_btn_tip_state_show" ) : lng( "cfg_tab_gh_pat_btn_tip_state_hide" ) )
 
                             btn.extraSettingsEl.classList.add( "gistr-settings-icon-cur" )
                     }
@@ -886,7 +1110,7 @@ export class SettingsTab extends PluginSettingTab
                     {
                         btn
                             .setIcon        ( 'github' )
-                            .setTooltip     ( lng( "cfg_tab_gh_pat_btn_tip_bad" ) )
+                            .setTooltip     ( lng( "cfg_tab_gh_pat_bad_btn_tip" ) )
 
                             btn.extraSettingsEl.classList.add( "gistr-settings-icon-cur" )
                             btn.extraSettingsEl.classList.add( "gistr-settings-icon-github" )
@@ -897,7 +1121,7 @@ export class SettingsTab extends PluginSettingTab
                             if ( b_PAT_Token == true || b_PAT_Classic == true )
                             {
                                 btn_Github.setIcon      ( 'check' )
-                                btn_Github.setTooltip   ( lng( "cfg_tab_gh_pat_btn_tip_ok" ) )
+                                btn_Github.setTooltip   ( lng( "cfg_tab_gh_pat_ok_btn_tip" ) )
 
                                 btn_Github.extraSettingsEl.classList.add        ( "gistr-settings-icon-ok" )
                                 btn_Github.extraSettingsEl.classList.remove     ( "gistr-settings-icon-github" )
@@ -905,7 +1129,7 @@ export class SettingsTab extends PluginSettingTab
                             else
                             {
                                 btn_Github.setIcon      ( 'github' )
-                                btn_Github.setTooltip   ( lng( "cfg_tab_gh_pat_btn_tip_bad" ) )
+                                btn_Github.setTooltip   ( lng( "cfg_tab_gh_pat_bad_btn_tip" ) )
                                 
                                 btn_Github.extraSettingsEl.classList.add        ( "gistr-settings-icon-github" )
                                 btn_Github.extraSettingsEl.classList.remove     ( "gistr-settings-icon-ok" )
@@ -915,7 +1139,7 @@ export class SettingsTab extends PluginSettingTab
                     btn_GetTokenStatus( true )
                     btn.onClick( ( ) =>
                     {
-                        window.open( lng( "cfg_tab_gh_pat_btn_url" ) )
+                        window.open( lng( "cfg_tab_gh_pat_url_btn" ) )
                     } )
                 } )
 
@@ -1033,32 +1257,54 @@ export class SettingsTab extends PluginSettingTab
                 Codeblock Opacity
             */
 
-                new Setting( elm )
+            const cfg_tab_gh_opacity_desc = new DocumentFragment( )
+            cfg_tab_gh_opacity_desc.append(
+                sanitizeHTMLToDom(`${ lng( "cfg_tab_gh_opacity_desc" ) }`),
+            )
+
+            let val_gh_opacity: HTMLDivElement
+            new NoxComponent( elm )
                 .setName( lng( "cfg_tab_gh_opacity_name" ) )
-                .setDesc( lng( "cfg_tab_gh_opacity_desc" ) )
-                .addSlider( ( slider ) =>
-                {
-                    slider
-                    .setLimits( 0.20, 1, 0.05 )
+                .setDesc( cfg_tab_gh_opacity_desc )
+                .setClass( "gistr-slider" )
+                .addNoxSlider( slider => slider
                     .setDynamicTooltip( )
+                    .setLimits( 0.20, 1, 0.05 )
                     .setValue( this.plugin.settings.gh_opacity )
                     .onChange( async ( val ) =>
                     {
+                        const opacity_calc          = val * 100
+                        val_gh_opacity.innerText    = " " + opacity_calc.toString( ) + "%"
+
                         this.plugin.settings.gh_opacity = val
                         await this.plugin.saveSettings( )
                         this.plugin.renderModeReading( )
-                    } )
-                } )
+                    }),
+                    ( ) =>
+                    ( 
+                        SettingsDefaults.gh_opacity as number
+                    ),
+                ).settingEl.createDiv( '', ( el ) =>
+                {
+                    val_gh_opacity          = el
+                    const opacity_calc      = this.plugin.settings.gh_opacity * 100
+                    el.innerText            = " " + opacity_calc.toString( ) + "%"
+                } ).classList.add( 'gistr-settings-elm-slider-preview' )
 
             /*
                 Codeblock > CSS Override
             */
 
-            new Setting( elm )
+            const cfg_tab_gh_css_desc = new DocumentFragment( )
+            cfg_tab_gh_css_desc.append(
+                sanitizeHTMLToDom( `${ lng( "cfg_tab_gh_css_desc" ) }` ),
+            )
+
+            let gh_css = new NoxComponent( elm )
                 .setName( lng( "cfg_tab_gh_css_name" ) )
-                .setDesc( lng( "cfg_tab_gh_css_desc" ) )
+                .setDesc( cfg_tab_gh_css_desc )
                 .setClass( "gistr-settings-elm-textarea" )
-                .addTextArea( text => text
+                .addNoxTextarea( text => text
                     .setPlaceholder( lng( "cfg_tab_gh_css_pholder" ) )
                     .setValue( this.plugin.settings.css_gh )
                     .onChange( async ( val ) =>
@@ -1066,9 +1312,13 @@ export class SettingsTab extends PluginSettingTab
                         this.plugin.settings.css_gh = val
                         await this.plugin.saveSettings( )
                         this.plugin.renderModeReading( )
-                    }
-                ) )
-
+                    }),
+                    ( ) =>
+                    ( 
+                        SettingsDefaults.css_gh.toString( ) as string
+                    ),
+                )
+                
             /*
                 Tab Footer Spacer
             */
@@ -1102,6 +1352,14 @@ export class SettingsTab extends PluginSettingTab
         Tab_SaveSync_ShowSettings( elm: HTMLElement )
         {
 
+            let setting_allow_gist_updates: NoxComponent
+            let setting_autosave_enable:    NoxComponent
+            let setting_autosave_strict:    NoxComponent
+            let setting_autosave_noti:      NoxComponent
+            let setting_autosave_dur:       NoxComponent
+
+            let bAutosaveEnabled            = this.plugin.settings.sy_enable_autosave
+
             /*
                 Github > Header Intro
             */
@@ -1109,30 +1367,32 @@ export class SettingsTab extends PluginSettingTab
             elm.createEl( 'small', { cls: "gistr-settings-section-description", text: lng( "cfg_tab_sy_header" ) } )
 
             /*
-                Update or Create mode
+                Enable Allow Gist Updates
 
                 Notes must be manually saved
             */
 
-            const cfg_tab_sy_tog_updatecreate_desc = new DocumentFragment( )
-            cfg_tab_sy_tog_updatecreate_desc.append(
-                sanitizeHTMLToDom(`${ lng( "cfg_tab_sy_tog_updatecreate_desc" ) }`),
+            const cfg_tab_sy_tog_allow_gist_updates_desc = new DocumentFragment( )
+            cfg_tab_sy_tog_allow_gist_updates_desc.append(
+                sanitizeHTMLToDom(`${ lng( "cfg_tab_sy_tog_allow_gist_updates_desc" ) }`),
             )
 
-	        new Setting( elm )
-                .setName( lng( "cfg_tab_sy_tog_updatecreate_name" ) )
-                .setDesc( cfg_tab_sy_tog_updatecreate_desc )
-                .addToggle( toggle =>
-                {
-                    toggle.setTooltip( lng( "cfg_tab_sy_tog_updatecreate_tip" ) )
-                        .setValue( this.plugin.settings.sy_enable_autoupdate )
-                        .onChange(async ( val ) =>
-                        {
-                            this.plugin.settings.sy_enable_autoupdate = val
-                            await this.plugin.saveSettings( )
-                        });
-                });
-
+            setting_allow_gist_updates = new NoxComponent( elm )
+                .setName( lng( "cfg_tab_sy_tog_allow_gist_updates_name" ) )
+                .setDesc( cfg_tab_sy_tog_allow_gist_updates_desc )
+                .addNoxToggle( toggle => toggle
+                    .setValue( this.plugin.settings.sy_enable_autoupdate )
+                    .onChange( async ( val ) =>
+                    {
+                        this.plugin.settings.sy_enable_autoupdate = val
+                        await this.plugin.saveSettings( )
+                    }),
+                    ( ) =>
+                    ( 
+                        SettingsDefaults.sy_enable_autoupdate as boolean
+                    ),
+                )
+                
             elm.createEl( 'div', { cls: "gistr-settings-section-separator", text: "" } )
 
             /*
@@ -1144,19 +1404,30 @@ export class SettingsTab extends PluginSettingTab
                 sanitizeHTMLToDom(`${ lng( "cfg_tab_sy_tog_autosave_enable_desc" ) }`),
             )
 
-	        new Setting( elm )
+            setting_autosave_enable = new NoxComponent( elm )
                 .setName( lng( "cfg_tab_sy_tog_autosave_enable_name" ) )
                 .setDesc( cfg_tab_sy_tog_autosave_enable_desc )
-                .addToggle( toggle =>
-                {
-                    toggle.setTooltip( lng( "cfg_tab_sy_tog_autosave_noti_tip" ) )
-                        .setValue( this.plugin.settings.sy_enable_autosave )
-                        .onChange(async ( val ) =>
-                        {
-                            this.plugin.settings.sy_enable_autosave = val
-                            await this.plugin.saveSettings( )
-                        } )
-                } )
+                .addNoxToggle( toggle => toggle
+                    .setValue( this.plugin.settings.sy_enable_autosave )
+                    .onChange( async ( val ) =>
+                    {
+                        this.plugin.settings.sy_enable_autosave = val
+                        await this.plugin.saveSettings( )
+
+                        setting_autosave_strict.setDisabled( !val )
+                        setting_autosave_strict.settingEl.style.opacity = ( val == false ? this.Opacity_Disabled : this.Opacity_Enabled )
+
+                        setting_autosave_noti.setDisabled( !val )
+                        setting_autosave_noti.settingEl.style.opacity = ( val == false ? this.Opacity_Disabled : this.Opacity_Enabled )
+
+                        setting_autosave_dur.setDisabled( !val )
+                        setting_autosave_dur.settingEl.style.opacity = ( val == false ? this.Opacity_Disabled : this.Opacity_Enabled )
+                    } ),
+                    ( ) =>
+                    ( 
+                        SettingsDefaults.sy_enable_autosave as boolean
+                    ),
+                )
 
             elm.createEl( 'div', { cls: "gistr-settings-section-separator", text: "" } )
 
@@ -1169,20 +1440,25 @@ export class SettingsTab extends PluginSettingTab
                 sanitizeHTMLToDom(`${ lng( "cfg_tab_sy_tog_autosave_strict_desc", this.plugin.settings.sy_save_duration.toString( ) ) }`),
             )
 
-	        new Setting( elm )
+            setting_autosave_strict = new NoxComponent( elm )
                 .setName( lng( "cfg_tab_sy_tog_autosave_strict_name" ) )
                 .setDesc( cfg_tab_sy_tog_autosave_strict_desc )
-                .addToggle( toggle =>
-                {
-                    toggle.setTooltip( lng( "cfg_tab_sy_tog_autosave_strict_tip" ) )
-                        .setValue( this.plugin.settings.sy_enable_autosave_strict )
-                        .onChange(async ( val ) =>
-                        {
-                            this.plugin.settings.sy_enable_autosave_strict = val
-                            await this.plugin.saveSettings( )
-                        } )
-                } )
+                .addNoxToggle( toggle => toggle
+                    .setValue( this.plugin.settings.sy_enable_autosave_strict )
+                    .onChange( async ( val ) =>
+                    {
+                        this.plugin.settings.sy_enable_autosave_strict = val
+                        await this.plugin.saveSettings( )
+                    }),
+                    ( ) =>
+                    ( 
+                        SettingsDefaults.sy_enable_autosave_strict as boolean
+                    ),
+                )
 
+                setting_autosave_strict.setDisabled( !bAutosaveEnabled )
+                setting_autosave_strict.settingEl.style.opacity = ( bAutosaveEnabled == false ? this.Opacity_Disabled : this.Opacity_Enabled )
+                
             elm.createEl( 'div', { cls: "gistr-settings-section-separator", text: "" } )
                 
             /*
@@ -1194,24 +1470,29 @@ export class SettingsTab extends PluginSettingTab
                 sanitizeHTMLToDom(`${ lng( "cfg_tab_sy_tog_autosave_noti_desc" ) }`),
             )
 
-	        new Setting( elm )
+            setting_autosave_noti = new NoxComponent( elm )
                 .setName( lng( "cfg_tab_sy_tog_autosave_noti_name" ) )
                 .setDesc( cfg_tab_sy_tog_autosave_noti_desc )
-                .addToggle( toggle =>
-                {
-                    toggle.setTooltip( lng( "cfg_tab_sy_tog_autosave_noti_tip" ) )
-                        .setValue( this.plugin.settings.sy_enable_autosave_notice )
-                        .onChange(async ( val ) =>
-                        {
-                            this.plugin.settings.sy_enable_autosave_notice = val
-                            await this.plugin.saveSettings( )
-                        });
-                });
+                .addNoxToggle( toggle => toggle
+                    .setValue( this.plugin.settings.sy_enable_autosave_notice )
+                    .onChange( async ( val ) =>
+                    {
+                        this.plugin.settings.sy_enable_autosave_notice = val
+                        await this.plugin.saveSettings( )
+                    }),
+                    ( ) =>
+                    ( 
+                        SettingsDefaults.sy_enable_autosave_notice as boolean
+                    ),
+                )
+
+                setting_autosave_noti.setDisabled( !bAutosaveEnabled )
+                setting_autosave_noti.settingEl.style.opacity = ( bAutosaveEnabled == false ? this.Opacity_Disabled : this.Opacity_Enabled )
 
             elm.createEl( 'div', { cls: "gistr-settings-section-separator", text: "" } )
 
             /*
-                Autosave duration
+                Autosave > Duration
             */
 
             const cfg_tab_sy_num_save_dur_desc = new DocumentFragment( )
@@ -1220,31 +1501,43 @@ export class SettingsTab extends PluginSettingTab
             )
 
             let val_save_dur: HTMLDivElement
-            const elm_Dur = new Setting( elm )
+            setting_autosave_dur = new NoxComponent( elm )
                 .setName( lng( "cfg_tab_sy_num_save_dur_name" ) )
                 .setDesc( cfg_tab_sy_num_save_dur_desc )
                 .setClass( "gistr-slider" )
-                .addSlider( slider => slider
-                    .setLimits( 0, 300, 1 )
+                .addNoxSlider( slider => slider
+                    .setLimits( 0, 120, 1 )
                     .setDynamicTooltip( )
                     .setValue( this.plugin.settings.sy_save_duration )
                     .onChange( async ( val ) =>
                     {
-                        val_save_dur.innerText      = " " + val.toString( ) + "s"
+                        val_save_dur.innerText       = " " + val.toString( ) + "s"
+
                         this.plugin.settings.sy_save_duration = val
                         await this.plugin.saveSettings( )
-                    } )
-                    ).settingEl.createDiv( '', ( el ) =>
-                    {
-                        val_save_dur          = el
-                        el.innerText            = " " + this.plugin.settings.sy_save_duration.toString( ) + "s"
-                    } ).classList.add( 'gistr-settings-elm-slider-preview' )
 
-                   // if ( elm_Dur )
-                   // {
-                        //elm_Dur.setDisabled( true )
-                        //elm_Dur.settingEl.style.opacity = "0.5"
-                    //}
+                        const lng_desc_autosave_strict      = new DocumentFragment( )
+                        lng_desc_autosave_strict.append     ( sanitizeHTMLToDom( `${ lng( "cfg_tab_sy_tog_autosave_strict_desc", this.plugin.settings.sy_save_duration.toString( ) ) }` ) )
+                        setting_autosave_strict.setDesc     ( lng_desc_autosave_strict )
+
+                        const lng_desc_autosave_duration    = new DocumentFragment( )
+                        lng_desc_autosave_duration.append   ( sanitizeHTMLToDom( `${ lng( "cfg_tab_sy_num_save_dur_desc", this.plugin.settings.sy_save_duration.toString( ) ) }` ) )
+                        setting_autosave_dur.setDesc        ( lng_desc_autosave_duration )
+                    }),
+                    ( ) =>
+                    ( 
+                        SettingsDefaults.sy_save_duration as number
+                    ),
+                )
+                
+                setting_autosave_dur.settingEl.createDiv( '', ( el ) =>
+                {
+                    val_save_dur        = el
+                    el.innerText        = " " + this.plugin.settings.sy_save_duration.toString( ) + "s"
+                } ).classList.add( 'gistr-settings-elm-slider-preview' )
+                    
+                setting_autosave_dur.setDisabled( !bAutosaveEnabled )
+                setting_autosave_dur.settingEl.style.opacity = ( bAutosaveEnabled == false ? this.Opacity_Disabled : this.Opacity_Enabled )
 
             elm.createEl( 'div', { cls: "gistr-settings-section-separator", text: "" } )
 
@@ -1257,19 +1550,21 @@ export class SettingsTab extends PluginSettingTab
                 sanitizeHTMLToDom(`${ lng( "cfg_tab_sy_tog_inc_fm_desc" ) }`),
             )
 
-	        new Setting( elm )
+            new NoxComponent( elm )
                 .setName( lng( "cfg_tab_sy_tog_inc_fm_name" ) )
                 .setDesc( cfg_tab_sy_tog_inc_fm_desc )
-                .addToggle( toggle =>
-                {
-                    toggle.setTooltip( lng( "cfg_tab_sy_tog_inc_fm_tip" ) )
-                        .setValue( this.plugin.settings.sy_add_frontmatter )
-                        .onChange( async ( val ) =>
-                        {
-                            this.plugin.settings.sy_add_frontmatter = val
-                            await this.plugin.saveSettings( )
-                        });
-                });
+                .addNoxToggle( toggle => toggle
+                    .setValue( this.plugin.settings.sy_add_frontmatter )
+                    .onChange( async ( val ) =>
+                    {
+                        this.plugin.settings.sy_add_frontmatter = val
+                        await this.plugin.saveSettings( )
+                    }),
+                    ( ) =>
+                    ( 
+                        SettingsDefaults.sy_add_frontmatter as boolean
+                    ),
+                )
 
             elm.createEl( 'div', { cls: "gistr-settings-section-separator", text: "" } )
 
@@ -1324,11 +1619,223 @@ export class SettingsTab extends PluginSettingTab
         Tab_Support_ShowSettings( elm: HTMLElement )
         {
 
+            let json_delay = 0.5 * 1000
+            const get_ver_stable = requestUrl( lng( "ver_url", "main" ) ).then( ( res ) =>
+            {
+                if ( res.status === 200 )
+                    return res.json.version || lng( "cfg_tab_su_ver_connection_issues" )
+                else
+                    return lng( "cfg_tab_su_ver_connection_issues" )
+            } )
+
+            const get_ver_beta = requestUrl( lng( "ver_url", "beta" ) ).then( ( res ) =>
+            {
+                if ( res.status === 200 )
+                    return res.json.version || lng( "cfg_tab_su_ver_connection_issues" )
+                else
+                    return lng( "cfg_tab_su_ver_connection_issues" )
+            } )
+
             /*
                 Section -> Support Buttons
             */
 
             elm.createEl( 'small', { cls: "gistr-settings-section-description", text: lng( "cfg_tab_su_desc" ) } )
+
+            /*
+                Current Version
+            */
+
+            const Tab_SU_Ver_Stable     = elm.createEl( "div",                  { text: "", cls: `gistr-settings-ver-sublevel` } )
+            const Tab_SU_Ver_Stable_L   = Tab_SU_Ver_Stable.createEl( "div",    { text: lng( "cfg_tab_su_ver_cur_name" ), cls: `setting-item-name gistr-settings-ver-int-l` } )
+            const Tab_SU_Ver_Stable_R   = Tab_SU_Ver_Stable.createEl( "div",    { text: " ", cls: `gistr-settings-ver-int-r` } )
+            const Tab_SU_Ver_Stable_C   = Tab_SU_Ver_Stable.createEl( "div",    { text: "", cls: `gistr-settings-ver-int-c` } )
+            const Tab_SU_Ver_Desc       = Tab_SU_Ver_Stable.createEl( "div",    { text: lng( "cfg_tab_su_ver_cur_desc" ), cls: `setting-item-description` } )
+
+            new Setting( Tab_SU_Ver_Stable_R )
+                .addText( async ( text ) =>
+                {
+                    text
+                    .setPlaceholder( lng( "cfg_tab_su_ver_status_checking" ) )
+                    .setValue( lng( "cfg_tab_su_ver_status_checking" ) )
+                    .setDisabled( true )
+                    .inputEl.setAttribute( "size", lng( "cfg_tab_su_ver_status_checking" ).length.toString( ) )
+
+                    const el = Tab_SU_Ver_Stable_R.querySelector( ".setting-item-control" )
+                    el.addClass( "gistr-settings-status-connecting" )
+
+                    let ver_running     = this.plugin.manifest.version
+                    let ver_stable      = await get_ver_stable
+                    let ver_beta        = await get_ver_beta
+
+                    setTimeout( function( )
+                    {
+
+                        /*
+                            Text > Could not communicate with server and get stable / beta version
+                        */
+
+                        if ( ver_stable == lng( "cfg_tab_su_ver_connection_issues" ) || ver_beta == lng( "cfg_tab_su_ver_connection_issues" ) )
+                        {
+                            const el                = Tab_SU_Ver_Stable_R.querySelector( ".setting-item-control" )
+                            el.removeClass          ( "gistr-settings-status-connecting" )
+                            el.addClass             ( "gistr-settings-status-error" )
+                            text.setValue           ( lng( "cfg_tab_su_ver_connection_issues" ) )
+                        }
+                        else
+                        {
+                            /*
+                                Text > Beta version available
+                            */
+
+                            if ( gt( ver_beta, ver_stable ) && lt( ver_running, ver_beta ) )
+                            {
+                                const el            = Tab_SU_Ver_Stable_R.querySelector( ".setting-item-control" )
+                                text.setValue       ( ver_running + " -> " + ver_beta + "-beta" )
+                            }
+
+                            /*
+                                Text > Stable version available
+                            */
+
+                            else if ( lt( ver_beta, ver_stable ) && lt( ver_running, ver_stable ) )
+                            {
+                                const el            = Tab_SU_Ver_Stable_R.querySelector( ".setting-item-control" )
+                                text.setValue       ( ver_running + " -> " + ver_stable + "-stable" )
+                            }
+
+                            /*
+                                Text > No Updates
+                            */
+
+                            else
+                            {
+                                const el            = Tab_SU_Ver_Stable_R.querySelector( ".setting-item-control" )
+                                el.removeClass      ( "gistr-settings-status-connecting" )
+                                el.addClass         ( "gistr-settings-status-success" )
+                                text.setValue       ( ver_running )
+                            }
+                        }
+
+                        
+                    }, json_delay )
+                } )
+                .addExtraButton( async ( btn ) =>
+                {
+                    btn
+                    .setIcon        ( 'circle-off' )
+                    .setTooltip     ( lng( "cfg_tab_su_ver_status_checking_btn_tip" ) )
+
+                    btn.extraSettingsEl.classList.add( "gistr-settings-icon-cur" )
+                    btn.extraSettingsEl.classList.add( "gistr-anim-spin" )
+                    btn.extraSettingsEl.classList.add( "gistr-settings-status-connecting" )
+
+                    let ver_running     = this.plugin.manifest.version
+                    let ver_stable      = await get_ver_stable
+                    let ver_beta        = await get_ver_beta
+
+                    setTimeout( function( )
+                    {
+
+                        /*
+                            Button > Could not communicate with server and get stable / beta version
+                        */
+
+                        if ( ver_stable == lng( "cfg_tab_su_ver_connection_issues" ) || ver_beta == lng( "cfg_tab_su_ver_connection_issues" ) )
+                        {
+                            btn.setIcon         ( "circle-off" )
+                            btn.setTooltip      ( lng( "cfg_tab_su_ver_status_error_btn_tip" ) )
+
+                            btn.extraSettingsEl.classList.remove     ( "gistr-settings-status-connecting" )
+                            btn.extraSettingsEl.classList.add        ( "gistr-settings-icon-error" )
+                            btn.extraSettingsEl.classList.remove     ( "gistr-settings-icon-ok" )
+                        }
+                        else
+                        {
+
+                            /*
+                                Button > Beta version available
+                            */
+
+                            if ( gt( ver_beta, ver_stable ) && lt( ver_running, ver_beta ) )
+                            {
+                                btn.setTooltip                      ( lng( "cfg_tab_su_ver_status_new_beta_btn_tip" ) )
+                                btn.setIcon                         ( "alert" )
+                                btn.extraSettingsEl.classList.add   ( "gistr-settings-icon-update" )
+                            }
+
+                            /*
+                                Button > Stable version available
+                            */
+
+                            else if ( lt( ver_beta, ver_stable ) && lt( ver_running, ver_stable ) )
+                            {
+                                btn.setTooltip                      ( lng( "cfg_tab_su_ver_status_new_stable_btn_tip" ) )
+                                btn.setIcon                         ( "alert" )
+                                btn.extraSettingsEl.classList.add   ( "gistr-settings-icon-update" )
+                            }
+
+                            /*
+                                Button > No Updates
+                            */
+
+                            else
+                            {
+                                btn.setIcon                             ( "check" )
+                                btn.setTooltip                          ( lng( "cfg_tab_su_ver_status_updated_btn_tip" ) )
+                                btn.extraSettingsEl.classList.remove    ( "gistr-settings-status-connecting" )
+                                btn.extraSettingsEl.classList.add       ( "gistr-settings-icon-ok" )
+                            }
+                        }
+
+                        btn.onClick( ( ) =>
+                        {
+                            window.open( lng( "cfg_tab_su_ver_releases" ) )
+                        } )
+
+                    }, json_delay )
+                } )
+
+            elm.createEl( 'div', { cls: "gistr-settings-section-separator-15", text: "" } )
+
+            /*
+                Current Version
+            */
+
+            const env_build_id          = process.env.BUILD_ID
+
+            const Tab_SU_Build_id       = elm.createEl( "div",                  { text: "", cls: `gistr-settings-ver-sublevel` } )
+            const Tab_SU_Build_id_L     = Tab_SU_Build_id.createEl( "div",      { text: lng( "cfg_tab_su_build_id_cur_name" ), cls: `setting-item-name gistr-settings-ver-int-l` } )
+            const Tab_SU_Build_id_R     = Tab_SU_Build_id.createEl( "div",      { text: " ", cls: `gistr-settings-ver-int-r` } )
+            const Tab_SU_Build_id_C     = Tab_SU_Build_id.createEl( "div",      { text: "", cls: `gistr-settings-ver-int-c` } )
+            const Tab_SU_Build_id_esc   = Tab_SU_Build_id.createEl( "div",      { text: lng( "cfg_tab_su_build_id_cur_desc" ), cls: `setting-item-description` } )
+
+            new Setting( Tab_SU_Build_id_R )
+                .addText( async ( text ) =>
+                {
+                    text
+                    .setPlaceholder( env_build_id )
+                    .setValue( env_build_id )
+                    .setDisabled( true )
+                    .inputEl.setAttribute( "size", lng( "cfg_tab_su_ver_status_checking" ).length.toString( ) )
+
+                    const el        = Tab_SU_Build_id_R.querySelector( ".setting-item-control" )
+                    el.addClass     ( "gistr-settings-support-build-id" )
+                } )
+                .addExtraButton( async ( btn ) =>
+                {
+                    btn
+                    .setIcon        ( 'copy' )
+                    .setTooltip     ( lng( "cfg_tab_su_build_id_btn_tip" ) )
+
+                    btn.onClick( ( ) =>
+                    {
+                        navigator.clipboard.writeText( env_build_id )
+                        new Notice( lng( "cfg_tab_su_build_id_notice", env_build_id ) )
+                    } )
+                } )
+
+            elm.createEl( 'div', { cls: "gistr-settings-section-separator-15", text: "" } )
 
             /*
                 Button > Getting Started > Open Interface

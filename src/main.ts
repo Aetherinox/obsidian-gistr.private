@@ -1,16 +1,20 @@
 /*
     Import
+
+    @note       : semver has issues with rollup. do not import semver's entire package.
+                  import the methods you need individually, otherwise you'll receive circular dependencies error.
 */
 
 import { Plugin, WorkspaceLeaf, Debouncer, debounce, TFile, Menu, MarkdownView, PluginManifest, Notice, requestUrl } from 'obsidian'
-import { GistrBackend } from 'src/backend/backend'
-import { SettingsTab } from "src/settings/tab_settings";
-import GistrSettings, { GetSettings } from 'src/settings/settings'
-import ModalGettingStarted from "./modals/GettingStartedModal"
+import { GistrSettings, SettingsGet, SettingsDefaults, SettingsSection } from 'src/settings/'
+import { BackendCore } from 'src/backend'
+import { FrontmatterPrepare, GistrAPI, GistrEditor } from 'src/api'
+import { Github_GetGist, Github_CopyGist, Github_UpdateExistingGist } from 'src/backend/services/github'
 import { lng, PluginID } from 'src/lang/helpers'
-import { Github_GetGist, Github_CopyGist, HandleFrontmatter, Github_UpdateExistingGist } from 'src/backend/services/github'
-import { GistrAPI, GistrEditor } from "src/api/types"
-import ShowContextMenu from "src/menus/context"
+import ModalGettingStarted from "src/modals/GettingStartedModal"
+import ShowContextMenu from 'src/menus/context'
+import lt from 'semver/functions/lt'
+import gt from 'semver/functions/gt'
 
 /*
     Basic Declrations
@@ -18,49 +22,6 @@ import ShowContextMenu from "src/menus/context"
 
 const PluginName            = PluginID( )
 const AppBase               = 'app://obsidian.md'
-
-/*
-    Default Settings
-*/
-
-const SETTINGS_DEFAULTs: GistrSettings =
-{
-    keyword:                    "gistr",
-    firststart:                 true,
-    css_og:                     null,
-    css_gh:                     null,
-    theme:                      "Light",
-    blk_pad_t:                  16,
-    blk_pad_b:                  18,
-    textwrap:                   "Enabled",
-    notitime:                   10,
-
-    sy_clr_lst_icon:            "#757575E6",
-
-    og_clr_bg_light:            "#CBCBCB",
-    og_clr_bg_dark:             "#121315",
-    og_clr_sb_light:            "#BA4956",
-    og_clr_sb_dark:             "#4960ba",
-    og_clr_tx_light:            "#2A2626",
-    og_clr_tx_dark:             "#CAD3F5",
-    og_opacity:                 1,
-
-    gh_clr_bg_light:            "#E5E5E5",
-    gh_clr_bg_dark:             "#121315",
-    gh_clr_sb_light:            "#BA4956",
-    gh_clr_sb_dark:             "#BA496A",
-    gh_clr_tx_light:            "#2A2626",
-    gh_clr_tx_dark:             "#CAD3F5",
-    gh_opacity:                 1,
-
-    sy_enable_autoupdate:       true,
-    sy_enable_autosave:         false,
-    sy_enable_autosave_strict:  false,
-    sy_enable_autosave_notice:  false,
-    sy_add_frontmatter:         false,
-    sy_save_duration:           15,
-    context_sorting:            [],
-}
 
 /*
     Extend Plugin
@@ -128,8 +89,7 @@ export default class GistrPlugin extends Plugin
         console.debug( lng( "base_debug_loading", process.env.NAME, process.env.PLUGIN_VERSION, process.env.AUTHOR ) )
 
         await this.loadSettings     ( )
-        this.versionCheck           ( )
-        this.addSettingTab          ( new SettingsTab( this.app, this ) )
+        this.addSettingTab          ( new SettingsSection( this.app, this ) )
 
 		this.app.workspace.onLayoutReady( async ( ) =>
         {
@@ -195,11 +155,19 @@ export default class GistrPlugin extends Plugin
             Register Events
         */
 
-        const gistBackend                       = new GistrBackend( this.settings )
+        const gistBackend                       = new BackendCore( this.settings )
         this.registerDomEvent                   ( window, "message", gistBackend.messageEventHandler )
         this.registerMarkdownCodeBlockProcessor ( this.settings.keyword, gistBackend.processor )
         this.registerEvent                      ( this.app.workspace.on( "editor-menu", this.GetContextMenu ) )
 
+        /*
+            Version checking
+        */
+
+        if ( this.settings.ge_enable_updatenoti )
+        {
+            this.versionCheck( )
+        }
     }
 
     /*
@@ -231,7 +199,7 @@ export default class GistrPlugin extends Plugin
             */
 
             const note_full         = await file.vault.adapter.read( file.path )
-            const note_raw          = HandleFrontmatter( note_full )
+            const note_raw          = FrontmatterPrepare( note_full )
 
             /*
                 Strip Frontmatter from note contents and leave just the note body
@@ -261,7 +229,7 @@ export default class GistrPlugin extends Plugin
                 await Github_UpdateExistingGist( { plugin: this, app: this.app, note_full, file } ), this.settings.sy_save_duration * 1000, this.settings.sy_enable_autosave_strict )
             }
 
-            const { sy_enable_autosave } = await GetSettings( this )
+            const { sy_enable_autosave } = await SettingsGet( this )
             if ( sy_enable_autosave )
             {
 
@@ -299,7 +267,7 @@ export default class GistrPlugin extends Plugin
 
     async loadSettings( )
     {
-        this.settings = Object.assign( { }, SETTINGS_DEFAULTs, await this.loadData( ) )
+        this.settings = Object.assign( { }, SettingsDefaults, await this.loadData( ) )
     }
 
     /*
@@ -319,7 +287,7 @@ export default class GistrPlugin extends Plugin
 
 	async versionCheck( )
     {
-		const ver_running   = process.env.PLUGIN_VERSION
+		const ver_running   = this.manifest.version
 		const ver_stable    = await requestUrl( lng( "ver_url", "main" ) ).then( async ( res ) =>
         {
 			if ( res.status === 200 )
@@ -342,10 +310,19 @@ export default class GistrPlugin extends Plugin
             Output notice to user on possible updates
         */
 
-		if ( ver_running?.indexOf( "beta" ) !== -1 && ver_running !== ver_beta )
-	        new Notice( lng( "ver_update_beta" ), 0 )
-        else if ( ver_running !== ver_stable )
-			new Notice( lng( "ver_update_stable" ), 0 )
+        console.debug( lng( "base_debug_updater_1", process.env.NAME ) )
+        console.debug( lng( "base_debug_updater_2", "Current : ..... ", ver_running ) )
+        console.debug( lng( "base_debug_updater_2", "Stable  : ..... ", ver_stable ) )
+        console.debug( lng( "base_debug_updater_2", "Beta    : ..... ", ver_beta ) )
+
+        if ( gt( ver_beta, ver_stable ) && lt( ver_running, ver_beta ) )
+        {
+            new Notice( lng( "ver_update_beta" ), 0 )
+        }
+        else if ( lt( ver_beta, ver_stable ) && lt( ver_running, ver_stable ) )
+        {
+            new Notice( lng( "ver_update_stable" ), 0 )
+        }
 	}
 
 }

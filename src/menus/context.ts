@@ -1,6 +1,6 @@
-import { App, Menu } from "obsidian"
+import { Menu } from "obsidian"
 import GistrPlugin from "src/main"
-import GistrSettings from 'src/settings/settings'
+import { GistrSettings } from 'src/settings/'
 import { Github_GetGist } from 'src/backend/services/github'
 import { GistrAPI, GistrEditor } from "src/api/types"
 import { lng } from 'src/lang/helpers'

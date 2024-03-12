@@ -1,7 +1,8 @@
 import { App, Notice, SuggestModal, MarkdownView, TFile } from 'obsidian'
 import GistrPlugin from 'src/main'
-import GistrSettings, { GetSettings } from 'src/settings/settings'
+import { GistrSettings, SettingsGet } from 'src/settings/settings'
 import { GithubTokenGet } from 'src/backend/tokens/github'
+import { FrontmatterPrepare } from 'src/api'
 import Noxkit from '@aetherinox/noxkit'
 import frontmatter from 'front-matter'
 import { Octokit } from '@octokit/rest'
@@ -17,6 +18,18 @@ enum Status
 {
     success     = 'succeeded',
     fail        = 'failed',
+}
+
+/*
+    default api status types
+*/
+
+export const GithubStatusAPI: Record< string, string > =
+{
+    'operational':              lng( "gist_status_connected" ),
+	"degraded_performance":     lng( "gist_status_degraded_performance" ),
+	"partial_outage":           lng( "gist_status_partial_outage" ),
+	"major_outage":             lng( "gist_status_major_outage" ),
 }
 
 /*
@@ -41,12 +54,6 @@ interface GistData
 
 interface ArgsGet   { app: App, plugin: GistrPlugin, is_public: boolean }
 interface ArgsCopy  { app: App, plugin: GistrPlugin }
-
-/*
-    Clean Frontmatter
-*/
-
-export const HandleFrontmatter    = ( body: string ): string => frontmatter( body ).body
 
 /*
     Interface > Gist Result
@@ -369,7 +376,7 @@ export const Github_GetGist = ( args: ArgsGet ) => async ( ) =>
         sy_enable_autoupdate,
         sy_add_frontmatter,
         notitime
-    } = await GetSettings( plugin )
+    } = await SettingsGet( plugin )
 
     /*
         User token not specified in settings
@@ -400,7 +407,7 @@ export const Github_GetGist = ( args: ArgsGet ) => async ( ) =>
     const editor                = getView.editor
     const noteOrig              = editor.getValue( )
     const ExistingGist          = FindExistingGist( noteOrig ).filter( ( gistArray ) => gistArray.is_public === is_public )
-    const gistContent           = sy_add_frontmatter ? noteOrig : HandleFrontmatter( noteOrig )
+    const gistContent           = sy_add_frontmatter ? noteOrig : FrontmatterPrepare( noteOrig )
 
     if ( ExistingGist.length && sy_enable_autoupdate )
     {
@@ -514,7 +521,7 @@ export const Github_GetGist = ( args: ArgsGet ) => async ( ) =>
 export const Github_CopyGist = ( args: ArgsCopy ) => async ( ) =>
 {
     const { app, plugin }           = args
-    const { sy_enable_autoupdate, notitime } = await GetSettings( plugin )
+    const { sy_enable_autoupdate, notitime } = await SettingsGet( plugin )
 
     if ( !sy_enable_autoupdate )
         return new Notice( lng( "gist_upload_req_allowupload" ), notitime * 1000 )
@@ -582,7 +589,7 @@ export const Github_CopyGist = ( args: ArgsCopy ) => async ( ) =>
 export const Github_UpdateExistingGist = async ( args: ParamsAutosave ) =>
 {
     const { plugin, file, note_full: note_full } = args
-    const { sy_add_frontmatter, sy_enable_autosave_notice, notitime } = await GetSettings( plugin )
+    const { sy_add_frontmatter, sy_enable_autosave_notice, notitime } = await SettingsGet( plugin )
 
     /*
         User token not specified in settings
@@ -598,7 +605,7 @@ export const Github_UpdateExistingGist = async ( args: ParamsAutosave ) =>
     */
 
     const note_existing         = FindExistingGist( note_full )
-    const content               = sy_add_frontmatter ? note_full : HandleFrontmatter( note_full )
+    const content               = sy_add_frontmatter ? note_full : FrontmatterPrepare( note_full )
   
     /*
         Validate

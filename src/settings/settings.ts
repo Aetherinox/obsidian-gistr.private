@@ -4,7 +4,7 @@ import GistrPlugin from "src/main"
     Settings
 */
 
-export default interface GistrSettings
+export interface GistrSettings
 {
     firststart:                 boolean
     keyword:                    string | "gistr"
@@ -12,10 +12,11 @@ export default interface GistrSettings
     css_gh:                     string | null
     theme:                      string | null
     blk_pad_t:                  number | 16
-    blk_pad_b:                  number | 18
+    blk_pad_b:                  number | 19
     textwrap:                   string | "Enabled"
     notitime:                   number | 10
     sy_clr_lst_icon:            string | "757575E6"
+    ge_enable_updatenoti:       boolean | true
 
     og_clr_bg_light:            string | "CBCBCB"
     og_clr_bg_dark:             string | "121315"
@@ -47,7 +48,7 @@ export default interface GistrSettings
     Settings > Get
 */
 
-export const GetSettings = async ( plugin: GistrPlugin ): Promise < GistrSettings > =>
+export const SettingsGet = async ( plugin: GistrPlugin ): Promise < GistrSettings > =>
 {
     await plugin.loadSettings( )
     return plugin.settings
