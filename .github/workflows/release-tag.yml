@@ -145,7 +145,7 @@ jobs:
 
             - name: "[.ENV] Get"
               id: dotenv
-              uses: falti/dotenv-action
+              uses: falti/dotenv-action@v1
 
             - name: "[.ENV] Read"
               id: dotenv-output
