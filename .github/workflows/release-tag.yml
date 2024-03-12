@@ -159,6 +159,7 @@ jobs:
                 #shasum --algorithm 256 ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip > SHA256SUMS.txt
                 sha256sum=$(command -v sha256sum || echo "shasum --algorithm 256")
                 $sha256sum ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip | tee -a ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.sha256
+                echo "SHA256SUM=${sha256sum}" >> $GITHUB_ENV
                 echo ${{ env.sha256sum }}
 
 
@@ -169,6 +170,7 @@ jobs:
                 #shasum --algorithm 256 ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.VERSION_RC }}.zip > SHA256SUMS.txt
                 sha256sum=$(command -v sha256sum || echo "shasum --algorithm 256")
                 $sha256sum ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.VERSION_RC }}.zip | tee -a ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.sha256
+                echo "SHA256SUM=${sha256sum}" >> $GITHUB_ENV
                 echo ${{ env.sha256sum }}
 
             # ---------------------------------------------------------------------------------------
@@ -212,7 +214,7 @@ jobs:
                 fetchViaCommits: true
                 configurationJson: |
                   {
-                    "template": "## Gistr Release Info <sup>(${{ steps.dotenv.outputs.UUID }})</sup>\n- <sub>**Version began on**: <sub>.........</sub>`#{{FROM_TAG_DATE}}`</sub>\n- <sub>**SHA256**: <sub>........................</sub>`${{ env.sha256sum }}`</sub>\n- <sub>**GUID**: <sub>.......................................</sub>`${{ steps.dotenv.outputs.GUID }}`</sub>\n- <sub>**UUID**: <sub>.......................................</sub>`${{ steps.dotenv.outputs.UUID }}</sub>`\n- <sub>**Stamp**: <sub>....................................</sub>`#{{FROM_TAG}}-#{{FROM_TAG_DATE}} 🔺 #{{TO_TAG}}-#{{TO_TAG_DATE}}`</sub>\n- <sub>**Last Release**: <sub>......................</sub>`#{{DAYS_SINCE}} days ago`</sub>\n\n<br>\n\n---\n\n<br>\n\n### What's New\nThis release contains the following changes:\n\n<br>\n\n---\n\n<br>\n\n### Statistics\nHow the files have changed:\n<ul><li><a href='#{{RELEASE_DIFF}}'>Changed files</a>  : <b>#{{CHANGED_FILES}}</b> </li><li>Commits : <b>#{{COMMITS}}</b> </li><li>Additions : <b>#{{ADDITIONS}}</b></li><li>Deletions : <b>#{{DELETIONS}}</b></li>\n<br />\n</ul>\n\n<br>\n\n---\n\n<br>\n\n### Pull Requests\n#{{CHANGELOG}}\n\n<br>\n\n---\n\n<br>\n\n"
+                    "template": "## Gistr Release Info <sup>(${{ steps.dotenv.outputs.UUID }})</sup>\n- <sub>**Version began on**: <sub>.........</sub>`#{{FROM_TAG_DATE}}`</sub>\n- <sub>**SHA256**: <sub>........................</sub>`${{ env.SHA256SUM }}`</sub>\n- <sub>**GUID**: <sub>.......................................</sub>`${{ steps.dotenv.outputs.GUID }}`</sub>\n- <sub>**UUID**: <sub>.......................................</sub>`${{ steps.dotenv.outputs.UUID }}</sub>`\n- <sub>**Stamp**: <sub>....................................</sub>`#{{FROM_TAG}}-#{{FROM_TAG_DATE}} 🔺 #{{TO_TAG}}-#{{TO_TAG_DATE}}`</sub>\n- <sub>**Last Release**: <sub>......................</sub>`#{{DAYS_SINCE}} days ago`</sub>\n\n<br>\n\n---\n\n<br>\n\n### What's New\nThis release contains the following changes:\n\n<br>\n\n---\n\n<br>\n\n### Statistics\nHow the files have changed:\n<ul><li><a href='#{{RELEASE_DIFF}}'>Changed files</a>  : <b>#{{CHANGED_FILES}}</b> </li><li>Commits : <b>#{{COMMITS}}</b> </li><li>Additions : <b>#{{ADDITIONS}}</b></li><li>Deletions : <b>#{{DELETIONS}}</b></li>\n<br />\n</ul>\n\n<br>\n\n---\n\n<br>\n\n### Pull Requests\n#{{CHANGELOG}}\n\n<br>\n\n---\n\n<br>\n\n"
                   }
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
