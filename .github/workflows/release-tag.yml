@@ -178,7 +178,6 @@ jobs:
               with:
                 fromTag: "${{ env.TAG_LAST }}"
                 toTag: ${{ github.ref }}
-                configuration: ".github/changelog-configuration.json"
                 ignorePreReleases: false
                 commitMode: ${{ inputs.CHANGELOG_MODE_COMMIT }}
                 fetchReleaseInformation: true
@@ -186,6 +185,7 @@ jobs:
                   {
                     "template": "## asdasd",
                   }
+                configuration: ".github/changelog-configuration.json"
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
