@@ -63,7 +63,7 @@ on:
       # ---------------------------------------------------------------------------------------
 
       PRERELEASE:
-        description:  "Build RC (Pre-release)"
+        description:  "🧪 Build RC (Pre-release)"
         required:     true
         default:      false
         type:         boolean
@@ -75,7 +75,7 @@ on:
       # ---------------------------------------------------------------------------------------
 
       VERSION_RC:
-        description:  "RC (Pre-release) Ver (plugin-rc.v1)"
+        description:  "🧪 RC (Pre-release) Ver (plugin-rc.v1)"
         required:     false
         type:         string
         default:      1
