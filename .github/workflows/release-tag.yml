@@ -184,7 +184,7 @@ jobs:
                 fetchReleaseInformation: true
                 configurationJson: |
                   {
-                    "template": "## What's New ${{ inputs.CHANGELOG_MODE_COMMIT }} \n<sup>Version began on: #{{FROM_TAG_DATE}} - #{{TO_TAG_DATE}}</sup>\n<br />\n### File Changes\nThis release contains the folllowing edits:\n<ul><li><a href='#{{RELEASE_DIFF}}'>Changed files</a>  : <b>#{{CHANGED_FILES}}</b> </li><li>Commits : <b>#{{COMMITS}}</b> </li><li>Additions : <b>#{{ADDITIONS}}</b></li><li>Deletions : <b>#{{DELETIONS}}</b></li>\n<br />\n</ul>\n\n### Commits (#{{UNCATEGORIZED_COUNT}})\n#{{UNCATEGORIZED}}\n<br />\n\n### Pull Requests\n#{{CHANGELOG}}\n\n<br />\n\n",
+                    "template": "## asdasd",
                   }
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
