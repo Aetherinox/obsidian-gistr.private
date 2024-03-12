@@ -180,12 +180,12 @@ jobs:
             #     ${{ steps.changelog.outputs.changelog }}
             # ---------------------------------------------------------------------------------------
 
-            - name: "Build Changelog: Pre Setup (No Uncategorized Commits)"
+            - name: "Changelog: Pre Setup (No Uncategorized Commits)"
               run: |
                 echo "TAG_LAST=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
                 echo "COMMIT_LAST=$(git rev-parse HEAD)" >> $GITHUB_ENV
 
-            - name: Build Changelog
+            - name: "📦 [ Changelog ]: Build (Categorized)"
               id: changelog-categorized
               if: ${{ startsWith( inputs.SHOW_UNCATEGORIZED, false ) }}
               uses: mikepenz/release-changelog-builder-action@v4
@@ -210,7 +210,7 @@ jobs:
             #                type: description
             # ---------------------------------------------------------------------------------------
 
-            - name: Build Changelog
+            - name: "📦 [ Changelog ]: Build (Uncategorized)"
               id: changelog-uncategorized
               if: ${{ startsWith( inputs.SHOW_UNCATEGORIZED, true ) }}
               uses: mikepenz/release-changelog-builder-action@v4
@@ -233,12 +233,12 @@ jobs:
             #   Fetch Changelog
             # ---------------------------------------------------------------------------------------
 
-            - name: "[Changelog]: Get (Categorized)"
+            - name: "[ Changelog ]: Get (Categorized)"
               if: ${{ startsWith( inputs.SHOW_UNCATEGORIZED, false ) }}
               run: |
                 echo "${{ steps.changelog-categorized.outputs.changelog }}"
 
-            - name: "[Changelog]: Get (Uncategorized)"
+            - name: "[ Changelog ]: Get (Uncategorized)"
               if: ${{ startsWith( inputs.SHOW_UNCATEGORIZED, true ) }}
               run: |
                 echo "${{ steps.changelog-uncategorized.outputs.changelog }}"
