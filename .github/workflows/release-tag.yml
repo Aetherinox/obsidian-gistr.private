@@ -92,7 +92,8 @@ env:
 # ---------------------------------------------------------------------------------------
 
 jobs:
-    build:
+    push-release:
+        name: "Push Release"
         runs-on: ubuntu-latest
         permissions:
           contents: write
