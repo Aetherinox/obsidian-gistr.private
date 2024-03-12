@@ -39,7 +39,7 @@ on:
       # ---------------------------------------------------------------------------------------
 
       CHANGELOG_MODE_COMMIT:
-        description:  "Use Commits Instead of PRs"
+        description:  "📑 Use Commits Instead of PRs"
         required:     true
         default:      false
         type:         boolean
@@ -52,7 +52,7 @@ on:
       # ---------------------------------------------------------------------------------------
 
       SHOW_UNCATEGORIZED:
-        description:  "Show Uncategorized Commits"
+        description:  "🗂️ Show Uncategorized Commits"
         required:     true
         default:      false
         type:         boolean
