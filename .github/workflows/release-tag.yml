@@ -182,6 +182,7 @@ jobs:
                 ignorePreReleases: false
                 commitMode: ${{ inputs.CHANGELOG_MODE_COMMIT }}
                 fetchReleaseInformation: true
+                fetchViaCommits: true
                 configurationJson: |
                   {
                     "template": "## What's New\n<sup>**Version began on**: `#{{FROM_TAG_DATE}}`\n**Last release**: #{{DAYS_SINCE}}\n**Build ID**: `${{ inputs.BUILD_ID }}`\n**Stamp**: `#{{FROM_TAG}}-#{{FROM_TAG_DATE}}\n#{{TO_TAG}}-#{{TO_TAG_DATE}}\n#{{DAYS_SINCE}}`\n</sup>\n\n<br>\n\n---\n\n<br>\n\n### File Changes\nThis release contains the following edits:\n<ul><li><a href='#{{RELEASE_DIFF}}'>Changed files</a>  : <b>#{{CHANGED_FILES}}</b> </li><li>Commits : <b>#{{COMMITS}}</b> </li><li>Additions : <b>#{{ADDITIONS}}</b></li><li>Deletions : <b>#{{DELETIONS}}</b></li>\n<br />\n</ul>\n\n<br>\n\n---\n\n<br>\n\n### Commits (#{{UNCATEGORIZED_COUNT}})\n#{{UNCATEGORIZED}}\n\n<br>\n\n---\n\n<br>\n\n### Pull Requests\n#{{CHANGELOG}}\n\n\n\n"
