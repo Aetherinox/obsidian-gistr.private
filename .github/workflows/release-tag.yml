@@ -156,10 +156,10 @@ jobs:
               id: checksum-st
               if: ${{ startsWith( inputs.PRERELEASE, false ) }}
               run: |
-                #shasum --algorithm 256 ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip > SHA256SUMS.txt
-                sha256sum=$(command -v sha256sum || echo "shasum --algorithm 256")
-                $sha256sum ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip | tee -a ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.sha256
-                echo "SHA256SUM=${sha256sum}" >> $GITHUB_ENV
+                # tee -a ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.sha256
+                # #shasum --algorithm 256 ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip > SHA256SUMS.txt
+                sha256="$(shasum --algorithm 256 ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip | awk '{ print $1 }')"
+                echo "SHA256SUM=${sha256}" >> $GITHUB_ENV
                 echo ${{ env.sha256sum }}
 
 
