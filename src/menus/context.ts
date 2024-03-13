@@ -1,7 +1,7 @@
 import { Menu } from "obsidian"
 import GistrPlugin from "src/main"
 import { GistrSettings } from 'src/settings/'
-import { GHGistGet } from 'src/backend/services'
+import { GHGistGet } from 'src/backend/services/Github'
 import { GistrAPI, GistrEditor } from "src/api/Types"
 import { lng } from 'src/lang'
 

@@ -2,7 +2,8 @@ import { App, PluginSettingTab, Setting, sanitizeHTMLToDom, ExtraButtonComponent
 import GistrPlugin from "src/main"
 import { SettingsDefaults } from 'src/settings/defaults'
 import { ColorPicker, GetColor } from 'src/utils'
-import { GHStatusAPI, GHTokenSet, GHTokenGet } from 'src/backend/services'
+import { GHTokenSet, GHTokenGet, GHGistGet, GHGistCopy, GHGistUpdate, GHStatusAPI } from 'src/backend/services/Github'
+import { OGTokenSet, OGTokenGet } from 'src/backend/services/Opengist'
 import ModalGettingStarted from "src/modals/GettingStartedModal"
 import { NoxComponent } from 'src/api'
 import { lng } from 'src/lang'
