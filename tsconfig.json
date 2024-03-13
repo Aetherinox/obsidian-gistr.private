@@ -9,11 +9,14 @@
     "noImplicitAny": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
+    "isolatedModules": false,
     "importHelpers": true,
     "outDir": "./dist/",
+    "allowSyntheticDefaultImports": true,
     "lib": [
-      "dom",
-      "es5",
+      "DOM",
+      "ES5",
+      "ES6",
       "scripthost",
       "es2015"
     ]
