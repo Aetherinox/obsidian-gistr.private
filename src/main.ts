@@ -7,7 +7,7 @@
 
 import { App, Plugin, WorkspaceLeaf, Debouncer, debounce, TFile, Menu, MarkdownView, PluginManifest, Notice, requestUrl } from 'obsidian'
 import { GistrSettings, SettingsGet, SettingsDefaults, SettingsSection } from 'src/settings/'
-import { BackendCore } from './backend/Backend'
+import { BackendCore } from 'src/backend/Backend'
 import { GHGistGet, GHGistCopy, GHGistUpdate } from 'src/backend/services/Github'
 import { Env, PID, FrontmatterPrepare, GistrAPI, GistrEditor } from 'src/api'
 import { lng } from 'src/lang'
