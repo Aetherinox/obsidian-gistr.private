@@ -152,16 +152,12 @@ jobs:
             #   [ Release Candidate ]: Checksum
             # ---------------------------------------------------------------------------------------
 
-            - name: Create tag
-              uses: actions/github-script@v5
+            - uses: rickstaa/action-create-tag@v1
+              id: "tag_create"
               with:
-                script: |
-                  github.rest.git.createRef({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    ref: 'refs/tags/${{ env.PACKAGE_VERSION }}',
-                    sha: context.sha
-                  })
+                tag: ${{ env.PACKAGE_VERSION }}
+                tag_exists_error: false
+                message: "Latest release"
 
             - name: "🆔 [ Checksum ]: Stable"
               id: checksum-st
