@@ -187,6 +187,26 @@ jobs:
                 output: CONTRIBUTORS.svg
                 avatarSize: 42
 
+            - name: "[ Version ]: Get Latest Release"
+              id: latestrelease
+              uses: cardinalby/git-get-release-action@v1
+              with:
+                latest: true
+                prerelease: true
+                draft: false
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: "[ Version ]: Print"
+              run: |
+                echo "Latest: ${{ steps.latestrelease.outputs.tag_name }}"
+
+            - name: Get next versions
+              id: semverbump
+              uses: WyriHaximus/github-action-next-semvers@v1.2.1
+              with:
+                version: ${{ steps.latestrelease.outputs.tag_name }}
+
             # ---------------------------------------------------------------------------------------
             #   Generate Changelog
             #
@@ -208,8 +228,8 @@ jobs:
               if: ${{ startsWith( inputs.SHOW_UNCATEGORIZED, false ) }}
               uses: mikepenz/release-changelog-builder-action@v4
               with:
-                fromTag: "${{ env.TAG_LAST }}"
-                #toTag: "${{ github.ref }}"
+                fromTag: ${{ steps.latestrelease.outputs.tag_name }}
+                toTag: main
                 configuration: ".github/changelog-configuration.json"
                 ignorePreReleases: false
                 commitMode: ${{ inputs.CHANGELOG_MODE_COMMIT }}
