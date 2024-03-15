@@ -108,10 +108,10 @@ jobs:
               run: echo "PACKAGE_VERSION=$(cat package.json | jq -r '.version')" >> $GITHUB_ENV
 
             # ---------------------------------------------------------------------------------------
-            #   Build Zip
+            #   Build Project & Create Zip
             # ---------------------------------------------------------------------------------------
 
-            - name: "🔨 [ Build ]: Stable"
+            - name: "🔨 [ Build ]: Stable ( ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip )"
               id: build-st
               if: ${{ startsWith( inputs.PRERELEASE, false ) }}
               run: |
@@ -123,7 +123,7 @@ jobs:
               env:
                 NODE_AUTH_TOKEN: ${{ secrets.GH_PAT }}
 
-            - name: "🔨 [ Build ]: Release Candidate"
+            - name: "🔨 [ Build ]: Release Candidate ( ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.VERSION_RC }}.zip )"
               id: build-rc
               if: ${{ startsWith( inputs.PRERELEASE, true ) }}
               run: |
@@ -349,7 +349,7 @@ jobs:
                 draft: false
                 generate_release_notes: false
                 files: |
-                  ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip
+                  ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.VERSION_RC }}.zip
                   main.js
                   manifest.json
                   styles.css
