@@ -5,6 +5,7 @@
                   import the methods you need individually, otherwise you'll receive circular dependencies error.
 
                   test 1
+                  test 2
 */
 
 import { App, Plugin, WorkspaceLeaf, Debouncer, debounce, TFile, Menu, MarkdownView, PluginManifest, Notice, requestUrl, addIcon } from 'obsidian'
