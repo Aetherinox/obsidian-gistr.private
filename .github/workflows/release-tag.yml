@@ -118,8 +118,6 @@ jobs:
                   echo Building STABLE Package .zip PACKAGE_VERSION
                   npm ci
                   npm run build
-                  zip -jr ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip main.js styles.css manifest.json checksum.txt
-                  ls
               env:
                 NODE_AUTH_TOKEN: ${{ secrets.GH_PAT }}
 
@@ -130,8 +128,8 @@ jobs:
                   echo Building PRE-RELEASE Package .zip PACKAGE_VERSION
                   npm ci
                   npm run build
-                  zip -jr ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.VERSION_RC }}.zip main.js styles.css manifest.json checksum.txt
-                  ls
+              env:
+                NODE_AUTH_TOKEN: ${{ secrets.GH_PAT }}
 
             # ---------------------------------------------------------------------------------------
             #   Get guid and uuid from env variable
@@ -203,6 +201,30 @@ jobs:
                 filter-author: (renovate\[bot\]|renovate-bot|dependabot\[bot\])
                 output: CONTRIBUTORS.svg
                 avatarSize: 42
+
+            # ---------------------------------------------------------------------------------------
+            #   [ ZIP ] :  Stable
+            # ---------------------------------------------------------------------------------------
+
+            - name: "🔨 [ Zip ]: Stable"
+              id: zip-st
+              if: ${{ startsWith( inputs.PRERELEASE, false ) }}
+              run: |
+                  echo Zipping STABLE Package .zip PACKAGE_VERSION
+                  zip -jr ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip main.js styles.css manifest.json SHA256SUMS.txt
+                  ls
+              env:
+                NODE_AUTH_TOKEN: ${{ secrets.GH_PAT }}
+
+            - name: "🔨 [ Zip ]: Release Candidate"
+              id: zip-rc
+              if: ${{ startsWith( inputs.PRERELEASE, true ) }}
+              run: |
+                  echo Zipping PRE-RELEASE Package .zip PACKAGE_VERSION
+                  zip -jr ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.VERSION_RC }}.zip main.js styles.css manifest.json SHA256SUMS.txt
+                  ls
+              env:
+                NODE_AUTH_TOKEN: ${{ secrets.GH_PAT }}
 
             # ---------------------------------------------------------------------------------------
             #   Generate Changelog
