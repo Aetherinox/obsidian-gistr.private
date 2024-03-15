@@ -15,10 +15,10 @@ jobs:
           python-version: 3.x
       - name: "Build Documentation"
         run: |
-          export MK_NAME=Gistr
-          export MK_PWD_LEVEL1=Gistr
-          export MK_PWD_LEVEL2=Gistr
-          
+          export MK_NAME=${{ secrets.MK_NAME }}
+          export MK_PWD_LEVEL1=${{ secrets.MK_PWD_LEVEL1 }}
+          export MK_PWD_LEVEL2=${{ secrets.MK_PWD_LEVEL2 }}
+
           pip install mkdocs-material mkdocs-redirects mike mkdocs-encryptcontent-plugin mkdocs-git-committers-plugin-2 mkdocs-glightbox pymdown-extensions
           cd docs
           mkdocs gh-deploy --force

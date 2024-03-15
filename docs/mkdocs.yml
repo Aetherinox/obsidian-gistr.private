@@ -20,6 +20,8 @@ markdown_extensions:
   - pymdownx.mark
   - pymdownx.tilde
   - pymdownx.blocks.html
+  - pymdownx.arithmatex:
+      generic: true
 theme:
   highlightjs: true
   hljs_languages:
