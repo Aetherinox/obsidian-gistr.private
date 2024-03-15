@@ -187,19 +187,20 @@ jobs:
                 output: CONTRIBUTORS.svg
                 avatarSize: 42
 
-            - name: "[ Version ]: Get Latest Release"
-              id: latestrelease
-              uses: cardinalby/git-get-release-action@v1
-              with:
-                latest: true
-                prerelease: true
-                draft: false
-              env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: Get current tag name
+              id: current_tag
+              run: echo "TAGNAME=$(git describe --abbrev=0)" >> $GITHUB_OUTPUT
+            - name: Get previous tag name
+              id: previous_tag
+              run: echo "TAGNAME=$(git describe --abbrev=0 ${{ steps.current_tag.outputs.TAGNAME}}^)" >> $GITHUB_OUTPUT
+            - name: Get date
+              id: date
+              run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
 
             - name: "[ Version ]: Print"
               run: |
-                echo "Latest: ${{ steps.latestrelease.outputs.tag_name }}"
+                echo "Prev: ${{ steps.previous_tag.outputs.TAGNAME }}"
+                echo "Current: ${{ steps.current_tag.outputs.TAGNAME }}"
 
             - name: Get next versions
               id: semverbump
