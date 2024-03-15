@@ -118,7 +118,7 @@ jobs:
                   echo Building STABLE Package .zip PACKAGE_VERSION
                   npm ci
                   npm run build
-                  zip -jr ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip dist/*
+                  zip -jr ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip /*
                   ls
               env:
                 NODE_AUTH_TOKEN: ${{ secrets.GH_PAT }}
@@ -130,7 +130,7 @@ jobs:
                   echo Building PRE-RELEASE Package .zip PACKAGE_VERSION
                   npm ci
                   npm run build
-                  zip -jr ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.VERSION_RC }}.zip dist/*
+                  zip -jr ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.VERSION_RC }}.zip /*
                   ls
 
             # ---------------------------------------------------------------------------------------
@@ -300,9 +300,9 @@ jobs:
                 generate_release_notes: false
                 files: |
                   ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip
-                  dist/main.js
-                  dist/manifest.json
-                  dist/styles.css
+                  main.js
+                  manifest.json
+                  styles.css
                   checksum.txt
                 prerelease: false
                 body: |
@@ -324,9 +324,9 @@ jobs:
                 generate_release_notes: false
                 files: |
                   ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip
-                  dist/main.js
-                  dist/manifest.json
-                  dist/styles.css
+                  main.js
+                  manifest.json
+                  styles.css
                   checksum.txt
                 prerelease: false
                 body: |
