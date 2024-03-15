@@ -201,13 +201,14 @@ jobs:
               run: |
                 echo "TAG_LAST=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
                 echo "COMMIT_LAST=$(git rev-parse HEAD)" >> $GITHUB_ENV
+                echo "TAG_LAST: ${{ env.TAG_LAST }}"
 
             - name: "📦 [ Changelog ]: Build (Categorized)"
               id: changelog-categorized
               if: ${{ startsWith( inputs.SHOW_UNCATEGORIZED, false ) }}
               uses: mikepenz/release-changelog-builder-action@v4
               with:
-                #fromTag: "${{ env.TAG_LAST }}"
+                fromTag: "${{ env.TAG_LAST }}"
                 #toTag: "${{ github.ref }}"
                 configuration: ".github/changelog-configuration.json"
                 ignorePreReleases: false
