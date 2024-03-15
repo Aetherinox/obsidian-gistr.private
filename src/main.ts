@@ -6,6 +6,7 @@
 
                   test 1
                   test 2
+                  test 3
 */
 
 import { App, Plugin, WorkspaceLeaf, Debouncer, debounce, TFile, Menu, MarkdownView, PluginManifest, Notice, requestUrl, addIcon } from 'obsidian'
