@@ -192,7 +192,7 @@ jobs:
               run: echo "TAGNAME=$(git describe --abbrev=0)" >> $GITHUB_OUTPUT
             - name: Get previous tag name
               id: previous_tag
-              run: echo "TAGNAME=$(git describe --abbrev=0 ${{ steps.current_tag.outputs.TAGNAME}}^)" >> $GITHUB_OUTPUT
+              run: echo "TAGNAME=$(git describe --tags --abbrev=0 ${{ steps.current_tag.outputs.TAGNAME}}^)" >> $GITHUB_OUTPUT
             - name: Get date
               id: date
               run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
@@ -201,12 +201,6 @@ jobs:
               run: |
                 echo "Prev: ${{ steps.previous_tag.outputs.TAGNAME }}"
                 echo "Current: ${{ steps.current_tag.outputs.TAGNAME }}"
-
-            - name: Get next versions
-              id: semverbump
-              uses: WyriHaximus/github-action-next-semvers@v1.2.1
-              with:
-                version: ${{ steps.latestrelease.outputs.tag_name }}
 
             # ---------------------------------------------------------------------------------------
             #   Generate Changelog
