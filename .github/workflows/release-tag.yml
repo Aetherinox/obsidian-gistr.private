@@ -118,6 +118,8 @@ jobs:
                   echo Building STABLE Package .zip PACKAGE_VERSION
                   npm ci
                   npm run build
+                  zip -jr ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip main.js styles.css manifest.json
+                  ls
               env:
                 NODE_AUTH_TOKEN: ${{ secrets.GH_PAT }}
 
@@ -128,6 +130,8 @@ jobs:
                   echo Building PRE-RELEASE Package .zip PACKAGE_VERSION
                   npm ci
                   npm run build
+                  zip -jr ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.VERSION_RC }}.zip main.js styles.css manifest.json
+                  ls
               env:
                 NODE_AUTH_TOKEN: ${{ secrets.GH_PAT }}
 
@@ -206,22 +210,22 @@ jobs:
             #   [ ZIP ] :  Stable
             # ---------------------------------------------------------------------------------------
 
-            - name: "🔨 [ Zip ]: Stable"
+            - name: "📦 [ Zip ]: Add Checksum - Stable"
               id: zip-st
               if: ${{ startsWith( inputs.PRERELEASE, false ) }}
               run: |
                   echo Zipping STABLE Package .zip PACKAGE_VERSION
-                  zip -jr ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip main.js styles.css manifest.json SHA256SUMS.txt
+                  zip -jr ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}.zip SHA256SUMS.txt
                   ls
               env:
                 NODE_AUTH_TOKEN: ${{ secrets.GH_PAT }}
 
-            - name: "🔨 [ Zip ]: Release Candidate"
+            - name: "📦 [ Zip ]: Add Checksum - Release Candidate"
               id: zip-rc
               if: ${{ startsWith( inputs.PRERELEASE, true ) }}
               run: |
                   echo Zipping PRE-RELEASE Package .zip PACKAGE_VERSION
-                  zip -jr ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.VERSION_RC }}.zip main.js styles.css manifest.json SHA256SUMS.txt
+                  zip -jr ${{ inputs.PLUGIN_NAME }}-${{ env.PACKAGE_VERSION }}-rc.${{ inputs.VERSION_RC }}.zip SHA256SUMS.txt
                   ls
               env:
                 NODE_AUTH_TOKEN: ${{ secrets.GH_PAT }}
@@ -241,7 +245,7 @@ jobs:
                 echo "TAG_LAST=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
                 echo "COMMIT_LAST=$(git rev-parse HEAD)" >> $GITHUB_ENV
 
-            - name: "📦 [ Changelog ]: Build (Categorized)"
+            - name: "📝 [ Changelog ]: Build (Categorized)"
               id: changelog-categorized
               if: ${{ startsWith( inputs.SHOW_UNCATEGORIZED, false ) }}
               uses: mikepenz/release-changelog-builder-action@v4
@@ -266,7 +270,7 @@ jobs:
             #                type: description
             # ---------------------------------------------------------------------------------------
 
-            - name: "📦 [ Changelog ]: Build (Uncategorized)"
+            - name: "📝 [ Changelog ]: Build (Uncategorized)"
               id: changelog-uncategorized
               if: ${{ startsWith( inputs.SHOW_UNCATEGORIZED, true ) }}
               uses: mikepenz/release-changelog-builder-action@v4
@@ -289,12 +293,12 @@ jobs:
             #   Fetch Changelog
             # ---------------------------------------------------------------------------------------
 
-            - name: "⤵️ [ Changelog ]: Get (Categorized)"
+            - name: "📝 [ Changelog ]: Get (Categorized)"
               if: ${{ startsWith( inputs.SHOW_UNCATEGORIZED, false ) }}
               run: |
                 echo "${{ steps.changelog-categorized.outputs.changelog }}"
 
-            - name: "⤵️ [ Changelog ]: Get (Uncategorized)"
+            - name: "📝 [ Changelog ]: Get (Uncategorized)"
               if: ${{ startsWith( inputs.SHOW_UNCATEGORIZED, true ) }}
               run: |
                 echo "${{ steps.changelog-uncategorized.outputs.changelog }}"
