@@ -12,6 +12,7 @@
     "isolatedModules": false,
     "importHelpers": true,
     "outDir": "./dist/",
+    "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
     "lib": [
       "DOM",

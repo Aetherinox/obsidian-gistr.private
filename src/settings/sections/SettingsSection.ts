@@ -2,8 +2,7 @@ import { App, PluginSettingTab, Setting, sanitizeHTMLToDom, ExtraButtonComponent
 import GistrPlugin from "src/main"
 import { SettingsDefaults } from 'src/settings/defaults'
 import { ColorPicker, GetColor } from 'src/utils'
-import { GHTokenSet, GHTokenGet, GHGistGet, GHGistCopy, GHGistUpdate, GHStatusAPI } from 'src/backend/services/Github'
-import { OGTokenSet, OGTokenGet } from 'src/backend/services/Opengist'
+import { GHStatusAPI, GHTokenSet, GHTokenGet } from 'src/backend/services'
 import ModalGettingStarted from "src/modals/GettingStartedModal"
 import { NoxComponent } from 'src/api'
 import { lng } from 'src/lang'
@@ -1352,19 +1351,55 @@ export class SettingsSection extends PluginSettingTab
         Tab_SaveSync_ShowSettings( elm: HTMLElement )
         {
 
-            let setting_allow_gist_updates: NoxComponent
-            let setting_autosave_enable:    NoxComponent
-            let setting_autosave_strict:    NoxComponent
-            let setting_autosave_noti:      NoxComponent
-            let setting_autosave_dur:       NoxComponent
+            let setting_enable_ribbon_icons:    NoxComponent
+            let setting_allow_gist_updates:     NoxComponent
+            let setting_autosave_enable:        NoxComponent
+            let setting_autosave_strict:        NoxComponent
+            let setting_autosave_noti:          NoxComponent
+            let setting_autosave_dur:           NoxComponent
+            let setting_save_list_showall:      NoxComponent
 
-            let bAutosaveEnabled            = this.plugin.settings.sy_enable_autosave
+            let bAutosaveEnabled                = this.plugin.settings.sy_enable_autosave
 
             /*
                 Github > Header Intro
             */
 
             elm.createEl( 'small', { cls: "gistr-settings-section-description", text: lng( "cfg_tab_sy_header" ) } )
+
+            /*
+                Enable ribbon icon
+
+                Adds "Save Public / Secret" gist to left side ribbon menu next to File Previewer
+            */
+
+            const cfg_tab_sy_tog_enable_ribbon_desc = new DocumentFragment( )
+            cfg_tab_sy_tog_enable_ribbon_desc.append(
+                sanitizeHTMLToDom(`${ lng( "cfg_tab_sy_tog_enable_ribbon_desc" ) }`),
+            )
+
+            setting_enable_ribbon_icons = new NoxComponent( elm )
+                .setName( lng( "cfg_tab_sy_tog_enable_ribbon_name" ) )
+                .setDesc( cfg_tab_sy_tog_enable_ribbon_desc )
+                .addNoxToggle( toggle => toggle
+                    .setValue( this.plugin.settings.sy_enable_ribbon_icons )
+                    .onChange( async ( val ) =>
+                    {
+                        this.plugin.settings.sy_enable_ribbon_icons = val
+                        await this.plugin.saveSettings( )
+
+                        if ( val )
+                            await this.plugin.registerRibbon( )
+                        else
+                            await this.plugin.unregisterRibbon( )
+                    }),
+                    ( ) =>
+                    ( 
+                        SettingsDefaults.sy_enable_ribbon_icons as boolean
+                    ),
+                )
+                
+            elm.createEl( 'div', { cls: "gistr-settings-section-separator", text: "" } )
 
             /*
                 Enable Allow Gist Updates
@@ -1460,7 +1495,7 @@ export class SettingsSection extends PluginSettingTab
                 setting_autosave_strict.settingEl.style.opacity = ( bAutosaveEnabled == false ? this.Opacity_Disabled : this.Opacity_Enabled )
                 
             elm.createEl( 'div', { cls: "gistr-settings-section-separator", text: "" } )
-                
+
             /*
                 Autosave > Notifications
             */
@@ -1569,7 +1604,62 @@ export class SettingsSection extends PluginSettingTab
             elm.createEl( 'div', { cls: "gistr-settings-section-separator", text: "" } )
 
             /*
-                Background color (Dark)
+                Save > List > Show All
+            */
+
+            const cfg_tab_sy_list_save_showall_desc = new DocumentFragment( )
+            cfg_tab_sy_list_save_showall_desc.append(
+                sanitizeHTMLToDom(`${ lng( "cfg_tab_sy_list_save_showall_desc" ) }`),
+            )
+
+            setting_save_list_showall = new NoxComponent( elm )
+                .setName( lng( "cfg_tab_sy_list_save_showall_name" ) )
+                .setDesc( cfg_tab_sy_list_save_showall_desc )
+                .addNoxToggle( toggle => toggle
+                    .setValue( this.plugin.settings.sy_save_list_showall )
+                    .onChange( async ( val ) =>
+                    {
+                        this.plugin.settings.sy_save_list_showall = val
+                        await this.plugin.saveSettings( )
+                    }),
+                    ( ) =>
+                    ( 
+                        SettingsDefaults.sy_save_list_showall as boolean
+                    ),
+                )
+
+            elm.createEl( 'div', { cls: "gistr-settings-section-separator", text: "" } )
+
+            /*
+                Gist save list > Datetime format
+            */
+
+                const cfg_tab_sy_list_datetime_desc = new DocumentFragment( )
+                cfg_tab_sy_list_datetime_desc.append(
+                    sanitizeHTMLToDom( `${ lng( "cfg_tab_sy_list_datetime_desc" ) }` ),
+                )
+    
+                new NoxComponent( elm )
+                    .setName( lng( "cfg_tab_sy_list_datetime_name" ) )
+                    .setDesc( cfg_tab_sy_list_datetime_desc )
+                    .addNoxTextbox( text => text
+                        .setValue( this.plugin.settings.sy_save_list_datetime )
+                        .onChange( async ( val ) =>
+                        {
+                            this.plugin.settings.sy_save_list_datetime = val
+                            await this.plugin.saveSettings( )
+                            this.plugin.renderModeReading( )
+                        }),
+                        ( ) =>
+                        ( 
+                            SettingsDefaults.sy_save_list_datetime.toString( ) as string
+                        ),
+                    )
+
+                elm.createEl( 'div', { cls: "gistr-settings-section-separator", text: "" } )
+
+            /*
+                Gist List Icon Color
             */
 
             const cfg_tab_sy_list_icon_desc = new DocumentFragment( )

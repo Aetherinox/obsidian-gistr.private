@@ -5,11 +5,11 @@
                   import the methods you need individually, otherwise you'll receive circular dependencies error.
 */
 
-import { App, Plugin, WorkspaceLeaf, Debouncer, debounce, TFile, Menu, MarkdownView, PluginManifest, Notice, requestUrl } from 'obsidian'
+import { App, Plugin, WorkspaceLeaf, Debouncer, debounce, TFile, Menu, MarkdownView, PluginManifest, Notice, requestUrl, addIcon } from 'obsidian'
 import { GistrSettings, SettingsGet, SettingsDefaults, SettingsSection } from 'src/settings/'
-import { BackendCore } from 'src/backend/Backend'
-import { GHGistGet, GHGistCopy, GHGistUpdate } from 'src/backend/services/Github'
-import { Env, PID, FrontmatterPrepare, GistrAPI, GistrEditor } from 'src/api'
+import { BackendCore } from 'src/backend'
+import { GHGistGet, GHGistCopy, GHGistUpdate } from 'src/backend/services'
+import { Env, FrontmatterPrepare, GistrAPI, GistrEditor, IconGithubPublic, IconGithubSecret, AssetGithubIcon } from 'src/api'
 import { lng } from 'src/lang'
 import ModalGettingStarted from "src/modals/GettingStartedModal"
 import ShowContextMenu from 'src/menus/context'
@@ -28,13 +28,13 @@ const AppBase               = 'app://obsidian.md'
 
 export default class GistrPlugin extends Plugin
 {
-    readonly plugin:        GistrPlugin
-    readonly api:           GistrAPI
-    readonly editor:        GistrEditor
-    // private think_last   = +new Date( ) 
-    // private think_now    = +new Date( ) 
-    private bLayoutReady    = false
-    settings:               GistrSettings
+    readonly plugin:            GistrPlugin
+    readonly api:               GistrAPI
+    readonly editor:            GistrEditor
+    private ribbonIcon_pub:     HTMLElement
+    private ribbonIcon_sec:     HTMLElement
+    private bLayoutReady        = false
+    settings:                   GistrSettings
 
     constructor( app: App, manifest: PluginManifest )
     {
@@ -150,6 +150,12 @@ export default class GistrPlugin extends Plugin
         )
 
         /*
+            Left side file previewer icon
+        */
+
+        this.registerRibbon( )
+
+        /*
             Gist > Monitor Changes
         */
 
@@ -197,17 +203,6 @@ export default class GistrPlugin extends Plugin
         this.app.vault.on( 'modify', async( file: TFile ) =>
         {
             /*
-            this.think_now          = +new Date( )
-            if ( this.think_now - this.think_last < ( this.settings.sy_save_duration * 1000 ) )
-            {
-                if ( process.env.ENV === "dev" )
-                    console.log( "gistMonitorChanges.modify on cooldown" )
-
-                return
-            }
-            */
-
-            /*
                 Get note contents with frontmatter
             */
 
@@ -250,29 +245,41 @@ export default class GistrPlugin extends Plugin
 
                 if ( process.env.ENV === "dev" )
                     console.log( "gistMonitorChanges.modify: Autosave Denouncer" )         
-
-                /*
-                if ( now - last > ( this.settings.sy_save_duration * 1000 ) )
-                {
-                    last = now
-                    await denounce_register[ file.path ]( note_full, file )
-
-                    if ( process.env.ENV === "dev" )
-                        console.log( "gistMonitorChanges.modify: Autosave Denouncer" )         
-                }
-                */
             }
         } )
     }
     
     /*
-        Right-click context menu
+        Ribbon > Register
     */
-    
-    GetContextMenu = ( menu: Menu, editor: GistrEditor ): void =>
+
+    async registerRibbon( )
     {
-        ShowContextMenu( this, this.settings, this.api, menu, editor )
+        if ( this.settings.sy_enable_ribbon_icons == true )
+        {
+            addIcon( 'gistr-github-public', IconGithubPublic )
+            this.ribbonIcon_pub = this.addRibbonIcon( "gistr-github-public", lng( "cfg_context_gist_public" ), ( ) =>
+            {
+                GHGistGet( { plugin: this, app: this.app, is_public: true } )( )
+            } )
+
+            addIcon( 'gistr-github-secret', IconGithubSecret )
+            this.ribbonIcon_sec = this.addRibbonIcon( "gistr-github-secret", lng( "cfg_context_gist_secret" ), ( ) =>
+            {
+                GHGistGet( { plugin: this, app: this.app, is_public: false } )( )
+            } )
+        }
     }
+
+    /*
+        Ribbon > Unregister
+    */
+
+	async unregisterRibbon( )
+    {
+		this.ribbonIcon_pub.remove( )
+        this.ribbonIcon_sec.remove( )
+	}
 
     /*
         Settings > Load
@@ -290,6 +297,34 @@ export default class GistrPlugin extends Plugin
     async saveSettings( )
     {
         await this.saveData( this.settings )
+    }
+
+    /*
+        Reload Plugin
+    */
+
+	async reloadPlugin( pluginName: string ): Promise< void >
+    {
+		// @ts-ignore
+		const { plugins } = this.app;
+		try
+        {
+			await plugins.disablePlugin( pluginName )
+			await plugins.enablePlugin( pluginName )
+		}
+        catch ( e )
+        {
+			console.error( e )
+		}
+	}
+
+    /*
+        Right-click context menu
+    */
+    
+    GetContextMenu = ( menu: Menu, editor: GistrEditor ): void =>
+    {
+        ShowContextMenu( this, this.settings, this.api, menu, editor )
     }
 
     /*
@@ -331,10 +366,26 @@ export default class GistrPlugin extends Plugin
         if ( gt( ver_beta, ver_stable ) && lt( ver_running, ver_beta ) )
         {
             new Notice( lng( "ver_update_beta" ), 0 )
+
+            new Notification( lng( "ver_update_beta_dn_title", this.manifest.name ),
+            {
+                body:   lng( "ver_update_beta_dn_msg", ver_running, ver_beta ),
+                image:  AssetGithubIcon,
+                icon:   AssetGithubIcon,
+                badge:  AssetGithubIcon,
+            } )
         }
         else if ( lt( ver_beta, ver_stable ) && lt( ver_running, ver_stable ) )
         {
             new Notice( lng( "ver_update_stable" ), 0 )
+
+            new Notification( lng( "ver_update_stable_dn_title", this.manifest.name ),
+            {
+                body:   lng( "ver_update_stable_dn_msg", ver_running, ver_stable ),
+                image:  AssetGithubIcon,
+                icon:   AssetGithubIcon,
+                badge:  AssetGithubIcon,
+            } )
         }
 	}
 

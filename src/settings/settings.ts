@@ -34,11 +34,14 @@ export interface GistrSettings
     gh_clr_tx_dark:             string | "CAD3F5"
     gh_opacity:                 number | 1
 
+    sy_enable_ribbon_icons:     boolean | true
     sy_enable_autoupdate:       boolean | true
     sy_enable_autosave:         boolean | false
     sy_enable_autosave_strict:  boolean | false
     sy_enable_autosave_notice:  boolean | false
     sy_add_frontmatter:         boolean | false
+    sy_save_list_showall:       boolean | false
+    sy_save_list_datetime:      string | "MM.DD.YYYY h:m:s a"
     sy_save_duration:           number | 10
 
     context_sorting:    [],
