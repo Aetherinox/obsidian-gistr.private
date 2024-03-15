@@ -1,68 +1,147 @@
-site_name: Dataview
-repo_url: https://github.com/blacksmithgu/obsidian-dataview
+site_name: !!python/object/apply:os.getenv [MK_NAME, "Gistr"]
+repo_url: https://github.com/Aetherinox/obsidian-gistr
 edit_uri: edit/master/docs/docs/
 markdown_extensions:
   - abbr
   - admonition
-  - pymdownx.highlight
-  - pymdownx.superfences
-  - pymdownx.tabbed
+  - attr_list
+  - def_list
+  - footnotes
+  - tables
+  - pymdownx.betterem
   - pymdownx.tasklist
+  - pymdownx.highlight
+  - pymdownx.highlight:
+      anchor_linenums: true
+      pygments_lang_class: true
+  - pymdownx.superfences 
+  - pymdownx.tabbed
+  - pymdownx.caret
+  - pymdownx.mark
+  - pymdownx.tilde
+  - pymdownx.blocks.html
 theme:
+  highlightjs: true
+  hljs_languages:
+    - yaml
+    - rust
+    - markdown
+  icon:
+    tag:
+      html: fontawesome/brands/html5
+      js: fontawesome/brands/js
+      css:  fontawesome/brands/css3
+    repo: fontawesome/brands/git-alt 
   name: material
-  palette:
-    primary: deep purple
+  custom_dir: overrides
+  palette: 
+    # Palette toggle for light mode
+    - scheme: default
+      primary: custom
+      accent: indigo
+      toggle:
+        icon: material/brightness-7 
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - scheme: gistr
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
   logo: assets/obsidian.png
   favicon: assets/obsidian.png
-  custom_dir: overrides
+  features:
+    - content.code.annotate 
+    - content.code.select
+    - content.code.copy
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.tracking
+    - navigation.path
+    - navigation.top
+    - announce.dismiss
+extra_css:
+  - stylesheets/extra.css
 nav:
   - Overview: 'index.md'
-  - Metadata:
-    - Adding Metadata: 'annotation/add-metadata.md'
-    - Data Types: 'annotation/types-of-metadata.md'
-    - Metadata on Pages: 'annotation/metadata-pages.md'
-    - Metadata on Tasks and Lists: 'annotation/metadata-tasks.md'
-  - DQL, JS and Inlines: 'queries/dql-js-inline.md'
-  - Query Language Reference:
-    - Structure of a Query: 'queries/structure.md'
-    - Query Types: 'queries/query-types.md'
-    - Data Commands: 'queries/data-commands.md'
-    - Differences to SQL: 'queries/differences-to-sql.md'
-    - Sources: 'reference/sources.md'
-    - Expressions: 'reference/expressions.md'
-    - Literals: 'reference/literals.md'
-    - Functions: 'reference/functions.md'
-  - JavaScript Reference:
-    - Overview: 'api/intro.md'
-    - Data Arrays: 'api/data-array.md'
-    - Codeblock Reference: 'api/code-reference.md'
-    - Codeblock Examples: 'api/code-examples.md'
-  - FAQ and Resources:
-    - Frequently Asked Questions: 'resources/faq.md'
-    - Examples: 'resources/examples.md'
-    - Developing Against Dataview: 'resources/develop-against-dataview.md'
-    - Resources and Support: 'resources/resources-and-support.md'
-  - Friends of Dataview: 'friends.md'
+  - Members:
+    - Member Access: 'members/access.md'
+  - Settings:
+    - Summary: 'settings/summary.md'
+    - Github: 'settings/github.md'
+    - Opengist: 'settings/opengist.md'
+    - Save & Sync: 'settings/save_and_sync.md'
+    - Support: 'settings/support.md'
   - Changelog: 'changelog.md'
+  - Tags: 'tags.md'
 plugins:
-  - search
+  - search: {}
+  - encryptcontent:
+      title_prefix: '[🔒]'
+      summary: 'Access Restricted'
+      placeholder: 'Authentication Code'
+      placeholder_user: User
+      password_button: True
+      password_button_text: 'Authenticate'
+     # input_class: 'w3-input' # CSS class used for input username and password
+     # button_class: 'w3-button w3-theme-l1 w3-hover-theme' # CSS class for password_button
+      decryption_failure_message: 'Authentication code not correct.'
+      encryption_info_message: "This information is restricted to certain users with access."
+      password_inventory:
+        classified:
+          - !!python/object/apply:os.getenv [MK_PWD_LEVEL1, "NULL"]
+        confidential:
+          - !!python/object/apply:os.getenv [MK_PWD_LEVEL2, "NULL"]
+  - tags:
+      tags_file: tags.md 
+  - git-committers:
+      repository: Aetherinox/obsidian-gistr
+      branch: main
+      token: !!python/object/apply:os.getenv [GH_TOKEN, "NULL"]
+  - glightbox:
+      touchNavigation: true
+      loop: false
+      effect: zoom
+      slide_effect: slide
+      width: 100%
+      height: auto
+      zoomable: true
+      draggable: false
+      skip_classes:
+        - custom-skip-class-name
+      auto_caption: false
+      caption_position: bottom
+      background: black
+      shadow: false
+  - mike:
+      # These fields are all optional; the defaults are as below...
+      alias_type: symlink
+      redirect_template: null
+      deploy_prefix: ''
+      canonical_version: null
+      version_selector: true
+      css_dir: css
+      javascript_dir: js
   - redirects:
       redirect_maps:
-        docs/where-data-comes-from.md: annotation/add-metadata.md
-        docs/creating-queries.md: queries/dql-js-inline.md
-        docs/query/queries.md: queries/structure.md
-        docs/query/expressions.md: reference/expressions.md
-        docs/query/sources.md: reference/sources.md
-        docs/query/functions.md: reference/functions.md
-        docs/query/examples.md: resources/examples.md
-        docs/api/intro.md: api/intro.md
-        docs/api/data-array.md: api/data-array.md
-        docs/api/code-reference.md: api/code-reference.md
-        docs/api/code-examples.md: api/code-examples.md
-        data-queries.md: queries/dql-js-inline.md
-        query/queries.md: queries/structure.md
-        data-annotation.md: annotation/add-metadata.md
-        resources-and-support.md: resources/resources-and-support.md
-        plugin/develop-against-dataview.md: resources/develop-against-dataview.md
-        reference/faq.md: resources/faq.md
-        reference/examples.md: resources/examples.md
+        docs/settings/summary.md: settings/summary.md
+extra:
+  tags:
+    HTML5: html
+    JavaScript: js
+    CSS: css
+  generator: false
+  version:
+    provider: mike
+  consent:
+    title: Cookie Consent
+    description: >- 
+      We use cookies to recognize your repeated visits and preferences, as well
+      as to measure the effectiveness of our documentation and whether users
+      find what they're searching for. With your consent, you're helping us to
+      make our documentation better.
+copyright: >
+  Copyright &copy; 2024 - Aetherinox –
+  <a href="#__consent">Change cookie settings</a>

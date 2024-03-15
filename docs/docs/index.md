@@ -1,153 +1,128 @@
 # Overview
 
-Dataview is a live index and query engine over your personal knowledge base. You can [**add metadata**](annotation/add-metadata.md) to your notes and **query** them with the [**Dataview Query Language**](queries/structure.md) to list, filter, sort or group your data. Dataview keeps your queries always up to date and makes data aggregation a breeze.
+Gistr is a plugin for [Obsidian.md](https://obsidian.md/) which allows you to do a variety of things with services such as Github and Opengist.
 
-You could
+<br />
 
-- Track your sleep by recording it in daily notes, and automatically create weekly tables of your sleep schedule.
-- Automatically collect links to books in your notes, and render them all sorted by rating.
-- Automatically collect pages associated with today's date and show them in your daily note.
-- Find pages with no tags for follow-up, or show pretty views of specifically-tagged pages.
-- Create dynamic views which show upcoming birthdays or events recorded in your notes
+Such tasks include:
 
-and many more things.
+- Embed public and private gists from Github or Opengist directly into your notes.
+- Display pull request summaries from Github
+- Create & update gists from your notes and push them to Github.
+- Make gists seamlessly integrate into your notes with customizable themes including both light and dark modes.
 
-!!! hint "Dataview gives you a fast way to search, display and operate on indexed data in your vault!"
+<br />
 
-Dataview is highly generic and high performance, scaling up to hundreds of thousands of annotated notes without issue. 
+!!! hint "Embedding public gists from Github or Opengist do not require an account or API token, however, private gist integration will require an API token to be generated."
 
-If the built in [query language](query/queries/) is insufficient for your purpose, you can run arbitrary
-JavaScript against the [dataview API](api/intro/) and build whatever utility you might need yourself, right in your notes.
+<br />
 
-!!! info "Dataview is about displaying, not editing"
-    Dataview is meant for displaying and calculating data. It is not meant to edit your notes/metadata and will always leave them untouched (... except if you're checking a [Task](queries/query-types.md#task-queries) through Dataview.)
 
-## How to Use Dataview
+## Using Gistr
 
-Dataview consists of two big building blocks: **Data Indexing** and **Data Querying**. 
+Gistr includes several primary functions; with new aspects being integrated all the time.
 
-!!! info "More details on the linked documentation pages"
-    The following sections should give you a general overview about what you can do with dataview and how. Be sure to visit the linked pages to find out more about the individual parts.
+!!! info "Additional info available on the linked documentation pages"
+    This section gives a brief overview, however, visit the linked pages to get a more detailed explaination of how to use Gistr.
 
-### Data Indexing
+<br />
 
-Dataview operates on metadata in your Markdown files. It cannot read everything in your vault, but only specific data. Some of your content, like tags and bullet points (including tasks), are [available automatically](annotation/add-metadata.md#implicit-fields) in Dataview. You can add other data through **fields**, either on top of your file [per YAML Frontmatter](annotation/add-metadata.md#frontmatter) or in the middle of your content with [Inline Fields](annotation/add-metadata.md#inline-fields) via the `[key:: value]` syntax. Dataview _indexes_ these data to make it available for you to query. 
+### Embedding Gists
 
-!!! hint "Dataview indexes [certain information](annotation/add-metadata.md#implicit-fields) like tags and list items and the data you add via fields. Only indexed data is available in a Dataview query!"
+One of the primary features of Gistr is the ability to integrate gist snippets from services such as Github and the open-source gist program [Opengist](https://github.com/thomiceli/opengist), directly into your notes.
 
-For example, a file might look like this:
+<br />
 
-```markdown
+The syntax is as follows:
+
+````markdown
+```gistr
+https://gist.github.com/username/gist_id
+```
+````
+
+<br />
+
+For Opengist, you will use the URL to your installed copy of Opengist:
+
+````markdown
+```gistr
+https://yourdomain.com/username/gist_id
+```
+````
+
+<br />
+
+You may also specify a more simple version of the URL:
+
+````markdown
+```gistr
+gist.github.com/username/gist_id
+yourdomain.com/username/gist_id
+```
+````
+
+<br />
+
+### Creating & Updating Gists
+
+Gistr allows you to irectly convert your Obsidian notes into gists by accessing the built-in Gistr menu. Once you have finished creating a note and wish to convert it over to a gist, you have a few different ways of accessing the menu options to convert:
+
+
+- Right-click inside your note somewhere and select **Save Gist**
+
+<br />
+
+<p align="center"><img style="width: 25%;text-align: center;border: 1px solid #353535;" src="https://github.com/Aetherinox/obsidian-gistr/assets/118329232/c52c670d-378b-4c52-9de5-f722165a9084"></p>
+
+<br />
+
+- If you have `Enable Ribbon Icons` enabled in your **Gistr Plugin Settings**, you should see two icons on the left side of your Obsidian interface. To view what these icons look like, view the section Update Existing Gists, OR;
+
+<br />
+
+<p align="center"><img style="width: 80%;text-align: center;border: 1px solid #353535;" src="https://github.com/Aetherinox/obsidian-gistr/assets/118329232/4bc4fad9-ea91-4754-8e3b-8d68b4bea74e"></p>
+
+<br />
+
+<p align="center"><img style="width: 20%;text-align: center;border: 1px solid #353535;" src="https://github.com/Aetherinox/obsidian-gistr/assets/118329232/6497bb38-fbdf-48a3-bae4-8ba27383af86"></p>
+
+<br />
+
+- Open your Obsidian command pallete (usually `CTRL + P`). Start typing the word `gist` and you should see two options appear:
+    - Save Gist [Github Public]
+    - Save Gist [Github Private]
+
+<br />
+
+<p align="center"><img style="width: 70%;text-align: center;border: 1px solid #353535;" src="https://github.com/Aetherinox/obsidian-gistr/assets/118329232/e9f1eb3a-7214-4017-b7a1-ff55280ac7cb"></p>
+
+<br />
+
+After your Obsidian note is converted to a gist, you'll notice new frontmatter has been added to the top of your note, similar to the following:
+
+!!! info "Important"
+    Do not delete the frontmatter added to the top of your note. Removing this will make the Gistr plugin unable to find any existing saves of your note, and it will then upload a fresh copy.
+
+
+<br />
+
+```yml
 ---
-author: "Edgar Allan Poe"
-published: 1845
-tags: poems
+gists:
+  - file: Gistr Changelog (V1.4.0).md
+    is_public: true
+    id: 6a18c11b614e1dbcc1ac1efcbe6b6b50
+    url: 'https://gist.github.com/Aetherinox/6a18c11b614e1dbcc1ac1efcbe6b6b50'
+    user: Aetherinox
+    revisions: 1
+    created_at: '2024-03-11T23:58:19Z'
+    updated_at: '2024-03-11T00:00:13Z'
 ---
-
-# The Raven
-
-Once upon a midnight dreary, while I pondered, weak and weary,
-Over many a quaint and curious volume of forgotten lore—
 ```
 
-Or like this:
+<br />
 
-```markdown
-#poems
+## Additional Help
 
-# The Raven
-
-From [author:: Edgar Allan Poe], written in (published:: 1845)
-
-Once upon a midnight dreary, while I pondered, weak and weary,
-Over many a quaint and curious volume of forgotten lore—
-```
-
-In terms of indexed metadata (or what you can query), they are identical, and only differ in their annotation style. How you want to [annotate your  metadata](annotation/add-metadata.md) is up to you and your personal preference. With this file, you'd have the **metadata field** `author` available and everything Dataview provides you [automatically as implicit fields](annotation/metadata-pages.md), like the tag or note title. 
-
-!!! attention "Data needs to be indexed"
-    In the above example, you _do not_ have the poem itself available in Dataview: It is a paragraph, not a metadata field and not something Dataview indexes automatically. It is not part of Dataviews index, so you won't be able to query it.
-
-### Data Querying
-
-You can access **indexed data** with the help of **Queries**.
-
-There are **three different ways** you can write a Query: With help of the [Dataview Query Language](queries/dql-js-inline/#dataview-query-language-dql), as an [inline statement](queries/dql-js-inline#inline-dql) or in the most flexible but most complex way: as a [Javascript Query](queries/dql-js-inline#dataview-js). 
-
-The **Dataview Query Language** (**DQL**) gives you a broad and powerful toolbelt to query, display and operate on your data. An [**inline query**](queries/dql-js-inline#inline-dql) gives you the possibility to display exactly one indexed value anywhere in your note. You can also do calculations this way. With **DQL** at your hands, you'll be probably fine without any Javascript through your data journey.
-
-A DQL Query consists of several parts:
-
-- Exactly one [**Query Type**](queries/query-types.md) that determines what your Query Output looks like
-- None or one [**FROM statement**](queries/data-commands#from) to pick a specific tag or folder (or another [source](reference/sources.md)) to look at
-- None to multiple [**other Data Commands**](queries/data-commands.md) that help you filter, group and sort your wanted output
-
-For example, a Query can look like this:
-
-~~~markdown
-```dataview
-LIST
-```
-~~~
-
-which list all files in your vault. 
-
-!!! info "Everything but the Query Type is optional"
-    The only thing you need for a valid DQL Query is the Query Type (and on [CALENDAR](queries/query-types#calendar-queries)s, a date field.)
-
- A more restricted Query might look like this:
-
-~~~markdown
-```dataview
-LIST
-FROM #poems
-WHERE author = "Edgar Allan Poe"
-```
-~~~
-
-which lists all files in your vault that have the tag `#poems` and a [field](annotation/add-metadata.md) named `author` with the value `Edgar Allan Poe`. This query would find our example page from above. 
-
-`LIST` is only one out of four [Query Types](queries/query-types.md) you can use. For example, with a `TABLE`, we could add some more information to our output: 
-
-
-~~~markdown
-```dataview
-TABLE author, published, file.inlinks AS "Mentions"
-FROM #poems
-```
-~~~
-
-This'll give you back a result like:
-
-| File (3) |	author |	published	| Mentions |
-| -------- | ------- | ---------- | -------- |
-| The Bells |	Edgar Allan Poe |	1849 |  |	
-| The New Colossus |	Emma Lazarus | 1883	| - [[Favorite Poems]] |	
-| The Raven |	Edgar Allan Poe |	1845 | - [[Favorite Poems]] |	
-
-That's not where the capabilities of dataview end, though. You can also **operate on your data** with help of [**functions**](reference/functions.md). Mind that these operations are only made inside your query - your **data in your files stays untouched**.
-
-~~~markdown
-```dataview
-TABLE author, date(now).year - published AS "Age in Yrs", length(file.inlinks) AS "Counts of Mentions"
-FROM #poems
-```
-~~~
-
-gives you back
-
-| File (3) |	author |	Age in Yrs	| Count of Mentions |
-| -------- | ------- | ---------- | -------- |
-| The Bells	|  Edgar Allan Poe |	173 | 0 |
-| The New Colossus	| Emma Lazarus |	139 |	1 |
-| The Raven |	Edgar Allan Poe |	177 | 1 |	
-
-!!! info "Find more examples [here](resources/examples.md)."
-
-As you can see, dataview doesn't only allow you to aggregate your data swiftly and always up to date, it also can help you with operations to give you new insights on your dataset. Browse through the documentation to find out more on how to interact with your data.
-
- Have fun exploring your vault in new ways! 
-
-## Resources and Help
-
-This documentation is not the only place that can help you out on your data journey. Take a look at [Resources and Support](./resources/resources-and-support.md) for a list of helpful pages and videos.
+This section was intended to give you a brief rundown on how to utilize Gistr. For a more detailed explaination of each feature, use the menu to the left and navigate to the desired chapter.
