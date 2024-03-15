@@ -152,6 +152,17 @@ jobs:
             #   [ Release Candidate ]: Checksum
             # ---------------------------------------------------------------------------------------
 
+            - name: Create tag
+              uses: actions/github-script@v5
+              with:
+                script: |
+                  github.rest.git.createRef({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    ref: 'refs/tags/${{ env.PACKAGE_VERSION }}',
+                    sha: context.sha
+                  })
+
             - name: "🆔 [ Checksum ]: Stable"
               id: checksum-st
               if: ${{ startsWith( inputs.PRERELEASE, false ) }}
@@ -187,21 +198,6 @@ jobs:
                 output: CONTRIBUTORS.svg
                 avatarSize: 42
 
-            - name: Get current tag name
-              id: current_tag
-              run: echo "TAGNAME=$(git describe --abbrev=0)" >> $GITHUB_OUTPUT
-            - name: Get previous tag name
-              id: previous_tag
-              run: echo "TAGNAME=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
-            - name: Get date
-              id: date
-              run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
-
-            - name: "[ Version ]: Print"
-              run: |
-                echo "Prev: ${{ steps.previous_tag.outputs.TAGNAME }}"
-                echo "Current: ${{ steps.current_tag.outputs.TAGNAME }}"
-
             # ---------------------------------------------------------------------------------------
             #   Generate Changelog
             #
@@ -216,15 +212,14 @@ jobs:
               run: |
                 echo "TAG_LAST=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
                 echo "COMMIT_LAST=$(git rev-parse HEAD)" >> $GITHUB_ENV
-                echo "TAG_LAST: ${{ env.TAG_LAST }}"
 
             - name: "📦 [ Changelog ]: Build (Categorized)"
               id: changelog-categorized
               if: ${{ startsWith( inputs.SHOW_UNCATEGORIZED, false ) }}
               uses: mikepenz/release-changelog-builder-action@v4
               with:
-                fromTag: ${{ steps.latestrelease.outputs.tag_name }}
-                toTag: main
+                #fromTag: "${{ env.TAG_LAST }}"
+                #toTag: "${{ github.ref }}"
                 configuration: ".github/changelog-configuration.json"
                 ignorePreReleases: false
                 commitMode: ${{ inputs.CHANGELOG_MODE_COMMIT }}
