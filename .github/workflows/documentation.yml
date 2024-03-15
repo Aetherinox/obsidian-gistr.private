@@ -21,4 +21,4 @@ jobs:
 
           pip install mkdocs-material mkdocs-redirects mike mkdocs-encryptcontent-plugin mkdocs-git-committers-plugin-2 mkdocs-glightbox pymdown-extensions
           cd docs
-          mkdocs gh-deploy --force
+          mkdocs gh-deploy --force --clean
