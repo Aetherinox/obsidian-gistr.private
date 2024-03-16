@@ -1,4 +1,5 @@
 ---
+#icon: material/circle-small
 tags:
   - settings
 ---

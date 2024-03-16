@@ -1,4 +1,9 @@
-# Settings
+---
+#icon: material/circle-small
+tags:
+  - settings
+---
+# Settings - Opengist
 
 The settings for this plugin can be accessed like other plugins.
 

@@ -1,4 +1,9 @@
-# Settings
+---
+#icon: material/circle-small
+tags:
+  - settings
+---
+# Save & Sync
 
 The settings for this plugin can be accessed like other plugins.
 
