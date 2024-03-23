@@ -335,7 +335,7 @@ jobs:
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
-                token: ${{ secrets.GITHUB_TOKEN }}
+                token: ${{ secrets.ADMINSERV_TOKEN_CL }}
                 name: v${{ env.PACKAGE_VERSION }}
                 tag_name: ${{ env.PACKAGE_VERSION }}
                 target_commitish: ${{ github.event.inputs.branch }}
