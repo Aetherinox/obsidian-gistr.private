@@ -333,7 +333,7 @@ jobs:
               uses: softprops/action-gh-release@v2
               id: bundle-st
               env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                GITHUB_TOKEN: ${{ secrets.ADMINSERV_TOKEN_CL }}
               with:
                 token: ${{ secrets.ADMINSERV_TOKEN_CL }}
                 name: v${{ env.PACKAGE_VERSION }}
