@@ -332,8 +332,6 @@ jobs:
               if: ${{ startsWith( inputs.PRERELEASE, false ) }}
               uses: softprops/action-gh-release@v2
               id: bundle-st
-              env:
-                GITHUB_TOKEN: ${{ secrets.ADMINSERV_TOKEN }}
               with:
                 token: ${{ secrets.ADMINSERV_TOKEN }}
                 name: v${{ env.PACKAGE_VERSION }}
