@@ -1,7 +1,7 @@
 {
   "name": "gistr",
   "version": "1.4.7",
-  "description": "Use your notes to embed, create, and update gists for Github and Opengist.",
+  "description": "Integrate Opengist and Github gists into your notes, allowing you to create, update, and share between your notes and gist services",
   "main": "main.js",
   "repository": {
     "type": "git",
@@ -32,7 +32,7 @@
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
-    "@types/node": "^20.11.28",
+    "@types/node": "^20.11.30",
     "@types/semver": "^7.5.8",
     "obsidian": "^1.0.0",
     "rollup": "^3.29.3",

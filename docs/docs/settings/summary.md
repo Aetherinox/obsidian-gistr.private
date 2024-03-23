@@ -5,7 +5,6 @@ tags:
 ---
 
 # Settings
-
 The settings for this plugin can be accessed like other plugins.
 
 - Open Obsidian Settings ⚙️ interface

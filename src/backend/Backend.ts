@@ -61,6 +61,7 @@ export class BackendCore
 
     private async GistHandle( el: HTMLElement, data: string )
     {
+        const pattern_new   = /(?:url:? +(?<url>(https?:\/\/\S*\b)))?(?:\nbackground:? +(?<background>[^`\n]*))?(?:\ntheme:? +(?<theme>[\w-]+))?(\&(?<id>\w+))?/
         const pattern       = /(?<protocol>https?:\/\/)?(?<host>[^/]+\/)?((?<username>[\w-]+)\/)?(?<uuid>\w+)(\#(?<filename>\w+))?(\&(?<theme>\w+))?/
         const find          = data.match( pattern ).groups
         const host          = find.host
@@ -68,8 +69,6 @@ export class BackendCore
         const uuid          = find.uuid
         const file          = find.filename
         const theme         = find.theme
-
-        const asd        = PID( )
 
         /*
             Since opengist can really be any website, check for matching github links
@@ -88,14 +87,14 @@ export class BackendCore
             compile url to gist
         */
 
-        let gistSrcURL = ( file !== undefined ? `https://${host}${username}/${uuid}.json?file=${file}` : `https://${host}${username}/${uuid}.json` )
-        let og_ThemeOV = ( theme !== undefined  ) ? theme : ""
+        let gistSrcURL  = ( file !== undefined ? `https://${host}${username}/${uuid}.json?file=${file}` : `https://${host}${username}/${uuid}.json` )
+        let og_ThemeOV  = ( theme !== undefined  ) ? theme : ""
 
         const reqUrlParams: RequestUrlParam = { url: gistSrcURL, method: "GET", headers: { "Accept": "application/json" } }
         try
         {
-            const req           = await request( reqUrlParams )
-            const json          = JSON.parse( req ) as ItemJSON
+            const req   = await request( reqUrlParams )
+            const json  = JSON.parse( req ) as ItemJSON
 
             return this.GistGenerate( el, host, uuid, json, bMatchGithub, og_ThemeOV )
         }
@@ -157,7 +156,6 @@ export class BackendCore
         */
 
         ct_iframe.setAttribute  ( 'csp', "default-src * data: blob: 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; connect-src * 'unsafe-inline'; img-src * data: blob: 'unsafe-inline'; frame-src *; style-src * 'unsafe-inline';" )
-        // ct_iframe.setAttribute  ( 'csp', "default-src * self 'unsafe-inline'; font-src 'self' *fonts.gstatic.com/; style-src-elem 'self' *fonts.googleapis.com *demo.opengist.io/ *thomice.li 'unsafe-inline'; script-src * 'self' 'unsafe-eval' 'unsafe-inline'; object-src * 'self'; img-src * self 'unsafe-inline'; connect-src self * 'unsafe-inline'; frame-src * self 'unsafe-inline';" )
 
         /*
             assign css, body, js
@@ -172,16 +170,6 @@ export class BackendCore
         const content_body          = ( bGithub ? json.div : "" )
         const content_js            = ( bGithub ? "" : await this.GetJavascript( el, uuid, ( css_theme_sel == "dark" ? json.embed.js_dark : json.embed.js ) ) )
     
-        /*
-            CSS Overrides > Github
-        */
-
-        const css_gh_bg_color       = ( css_theme_sel == "dark" ? this.settings.gh_clr_bg_dark : this.settings.gh_clr_bg_light )
-        const css_gh_sb_color       = ( css_theme_sel == "dark" ? this.settings.gh_clr_sb_dark : this.settings.gh_clr_sb_light )
-        const css_gh_bg_header_bg   = ( css_theme_sel == "dark" ? "rgb( 35 36 41/var( --tw-bg-opacity ) )" : "rgb( 238 239 241/var( --tw-bg-opacity ) )" )
-        const css_gh_bg_header_bor  = ( css_theme_sel == "dark" ? "1px solid rgb( 54 56 64/var( --tw-border-opacity ) )" : "rgb( 222 223 227/var( --tw-border-opacity ) )" )
-        const css_gh_tx_color       = ( css_theme_sel == "dark" ? this.settings.gh_clr_tx_dark : this.settings.gh_clr_tx_light )
-
         /*
             Declare custom css override
         */
@@ -244,7 +232,8 @@ export class BackendCore
 
             </head>
 
-            <body>
+
+            <body class="gistr-theme-${css_theme_sel}">
                 ${ content_body }
             </body>
         </html>
@@ -482,6 +471,41 @@ export class BackendCore
         body .gist .blob-wrapper tr:first-child td
         {
             text-wrap:              ${css_gh_wrap};
+        }
+
+        body.gistr-theme-dark .gist .pl-s1
+        {
+            color:                  #ced2d5;
+        }
+
+        body.gistr-theme-dark .gist .pl-s
+        {
+            color:                  #a5d6ff;
+        }
+
+        body.gistr-theme-light .gist .pl-k
+        {
+            color:                  #bc4c00;
+        }
+
+        body.gistr-theme-light .gist .pl-s1
+        {
+            color:                  #000000;
+        }
+
+        body.gistr-theme-light .gist .pl-c1
+        {
+            color:                  #0550ae;
+        }
+
+        body.gistr-theme-light .gist .gist-data
+        {
+            font-weight:            bold;
+        }
+
+        body.gistr-theme-light .gist .pl-en
+        {
+            color:                  #eb1e73;
         }
 
         body .gist .pl-enti, body .gist .pl-mb, body .gist .pl-pdb
