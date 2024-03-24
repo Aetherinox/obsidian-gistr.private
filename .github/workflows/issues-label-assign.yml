@@ -385,10 +385,10 @@
               {
                   await github.rest.issues.update(
                   {
-                      owner:        context.repo.owner,
-                      repo:         context.repo.repo,
-                      pull_number:  context.issue.number,
-                      title:        `${ pr_title_append } ${ context.payload.issue.title }`
+                      owner:          context.repo.owner,
+                      repo:           context.repo.repo,
+                      issue_number:   context.issue.number,
+                      title:          `${ pr_title_append } ${ context.payload.issue.title }`
                   } );
               }
 
