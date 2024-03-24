@@ -137,7 +137,7 @@
           uses: actions-cool/issues-helper@v3
           with:
             actions: 'update-issue'
-            token: ${{ secrets.GITHUB_TOKEN }}
+            token: ${{ secrets.ADMINSERV_TOKEN }}
             issue-number: ${{ github.event.issue.number }}
             title: "${{ env.LABEL_BUG }}: ${{ github.event.issue.title }}"
   
@@ -155,7 +155,7 @@
             contains( steps.bug_title.outputs.lowercase, 'failed' ) )
           run: gh issue edit "$NUMBER" --add-label "$LABELS"
           env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GITHUB_TOKEN: ${{ secrets.ADMINSERV_TOKEN }}
             GH_REPO: ${{ github.repository }}
             NUMBER: ${{ github.event.issue.number }}
             LABELS: ${{ env.LABEL_BUG }}
@@ -173,7 +173,7 @@
             contains( steps.bug_body.outputs.lowercase, 'failed' ) )
           run: gh issue edit "$NUMBER" --add-label "$LABELS"
           env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GITHUB_TOKEN: ${{ secrets.ADMINSERV_TOKEN }}
             GH_REPO: ${{ github.repository }}
             NUMBER: ${{ github.event.issue.number }}
             LABELS: ${{ env.LABEL_BUG }}
@@ -229,7 +229,7 @@
           uses: actions-cool/issues-helper@v3
           with:
             actions: 'update-issue'
-            token: ${{ secrets.GITHUB_TOKEN }}
+            token: ${{ secrets.ADMINSERV_TOKEN }}
             issue-number: ${{ github.event.issue.number }}
             title: "${{ env.LABEL_FEATURE }}: ${{ github.event.issue.title }}"
   
@@ -246,7 +246,7 @@
             contains( steps.feature_title.outputs.lowercase, 'request' ) )
           run: gh issue edit "$NUMBER" --add-label "$LABELS"
           env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GITHUB_TOKEN: ${{ secrets.ADMINSERV_TOKEN }}
             GH_REPO: ${{ github.repository }}
             NUMBER: ${{ github.event.issue.number }}
             LABELS: ${{ env.LABEL_FEATURE }}
@@ -266,7 +266,7 @@
             contains( steps.feature_body.outputs.lowercase, 'request' ) )
           run: gh issue edit "$NUMBER" --add-label "$LABELS"
           env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GITHUB_TOKEN: ${{ secrets.ADMINSERV_TOKEN }}
             GH_REPO: ${{ github.repository }}
             NUMBER: ${{ github.event.issue.number }}
             LABELS: ${{ env.LABEL_FEATURE }}
@@ -311,7 +311,7 @@
             contains( steps.urgent_title.outputs.lowercase, 'important' ) )
           run: gh issue edit "$NUMBER" --add-label "$LABELS"
           env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GITHUB_TOKEN: ${{ secrets.ADMINSERV_TOKEN }}
             GH_REPO: ${{ github.repository }}
             NUMBER: ${{ github.event.issue.number }}
             LABELS: ${{ env.LABEL_URGENT }}
@@ -328,7 +328,7 @@
             contains( steps.urgent_body.outputs.lowercase, 'important' ) )
           run: gh issue edit "$NUMBER" --add-label "$LABELS"
           env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GITHUB_TOKEN: ${{ secrets.ADMINSERV_TOKEN }}
             GH_REPO: ${{ github.repository }}
             NUMBER: ${{ github.event.issue.number }}
             LABELS: ${{ env.LABEL_URGENT }}
@@ -391,6 +391,8 @@
                       title:          `${ pr_title_append } ${ context.payload.issue.title }`
                   } );
               }
+          env:
+            GITHUB_TOKEN: ${{ secrets.ADMINSERV_TOKEN }}
 
 
         #- name: ${{ env.LABEL_ROADMAP }} › Title › Rename
