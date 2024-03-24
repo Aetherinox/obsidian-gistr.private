@@ -92,15 +92,73 @@
                   }
               }
   
-        # ---------------------------------------------------------------------------------------
-        #   Check Title
-        #
-        #   this job checks to see if a new issue has certain keywords in the title and body
-        #   and also if the beginning of the title starts with "bug"
-        #
-        #   if not, re-name the issue in the format of
-        #       Bug: Title Name
-        # ---------------------------------------------------------------------------------------
+    # ---------------------------------------------------------------------------------------
+    #   Label > Roadmap
+    # ---------------------------------------------------------------------------------------
+
+    Submission-Label-Bug:
+      name:  "Bug › Label"
+      runs-on: ubuntu-latest
+      permissions:
+        contents: 'read'
+        id-token: 'write'
+        issues: 'write'
+      steps:
+
+        - name: ${{ env.LABEL_BUG }} › Assignment
+          uses: actions/github-script@v7
+          with:
+            github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
+            script: |
+              const iss_body            = `${ context.payload.issue.body }`;
+              const iss_title           = `${ context.payload.issue.title }`;
+              const iss_title_append    = `${{ env.LABEL_BUG }}:`;
+              const add_labels          = [];
+
+              const containsList =
+              [
+                "bug",
+                "issue",
+                "fail",
+              ];
+
+              const bIncludesWord  = containsList.some( s => s.includes( iss_title ) || iss_title.includes( s ) );
+
+              /*
+                  Check if title contains word in containsList 
+              */
+
+              if ( iss_title.toLowerCase( ).startsWith( iss_title_append.toLowerCase( ) ) || bIncludesWord )
+              {
+
+                /*
+                    Rename title to contain Bug:
+                */
+
+                if ( !iss_title.toLowerCase( ).startsWith( iss_title_append.toLowerCase( ) ) )
+                {
+                    add_labels.push( "${{ env.LABEL_BUG }}" );
+                    console.log("yes")
+
+                    const title           = context.payload.issue.title
+                    let title_new         = title.replace( /^\bug\s*?:[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*]*\s\b/gi, '' );
+                    title_new         		= title.replace( /^\bfail\s*?:[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*]*\s\b/gi, '' );
+                    title_new         		= title.replace( /^\bissue\s*?:[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*]*\s\b/gi, '' );
+
+                    await github.rest.issues.update(
+                    {
+                        owner:            context.repo.owner,
+                        repo:             context.repo.repo,
+                        issue_number:     context.issue.number,
+                        title:            `${ iss_title_append } ${ title_new }`,
+                        labels:           add_labels
+                    } );
+                }
+              }
+
+    # ---------------------------------------------------------------------------------------
+    #   Label > Roadmap
+    # ---------------------------------------------------------------------------------------
 
     Submission-Label-Roadmap:
       name:  "Roadmap › Label"
