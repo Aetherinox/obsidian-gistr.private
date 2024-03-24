@@ -143,6 +143,8 @@
 
                 if ( !iss_title.toLowerCase( ).startsWith( iss_title_append.toLowerCase( ) ) )
                 {
+                    add_labels.push( "${{ env.LABEL_ROADMAP }}" );
+
                     const title           = context.payload.issue.title
                     let title_new         = title.replace( /^\broad map\s*?:[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*]*\s\b/gi, '' );
                     title_new         		= title.replace( /^\broadmap\s*?:[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*]*\s\b/gi, '' );
@@ -154,21 +156,7 @@
                         repo:             context.repo.repo,
                         issue_number:     context.issue.number,
                         title:            `${ iss_title_append } ${ title_new }`,
+                        add_labels
                     } );
                 }
-
-                add_labels.push( "${{ env.LABEL_ROADMAP }}" );
-
-                /*
-                    Add Label
-                */
-
-                github.rest.issues.update(
-                {
-                    owner:          context.repo.owner,
-                    repo:           context.repo.repo,
-                    issue_number:   context.issue.number,
-                    add_labels,
-                } );
-
               }
