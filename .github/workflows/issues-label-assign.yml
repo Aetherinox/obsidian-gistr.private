@@ -113,7 +113,7 @@
               const iss_body            = `${ context.payload.issue.body }`;
               const iss_title           = `${ context.payload.issue.title }`;
               const iss_title_append    = `${{ env.LABEL_BUG }}:`;
-              const add_labels          = [];
+              let add_labels            = context.payload.issue.labels.map(label => label.name);
 
               const containsList =
               [
@@ -177,7 +177,7 @@
               const iss_body            = `${ context.payload.issue.body }`;
               const iss_title           = `${ context.payload.issue.title }`;
               const iss_title_append    = `${{ env.LABEL_ROADMAP }}:`;
-              const add_labels          = [];
+              let add_labels            = context.payload.issue.labels.map(label => label.name);
 
               const containsList =
               [
