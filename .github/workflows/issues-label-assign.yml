@@ -148,7 +148,7 @@
                     title_new         		= title.replace( /^\broadmap\s*?:[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*]*\s\b/gi, '' );
                     title_new         		= title.replace( /^\bplanned\s*?:[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*]*\s\b/gi, '' );
 
-                    await github.rest.issues.update(
+                    github.rest.issues.update(
                     {
                         owner:            context.repo.owner,
                         repo:             context.repo.repo,
@@ -163,7 +163,7 @@
                     Add Label
                 */
 
-                await github.rest.issues.update(
+                github.rest.issues.update(
                 {
                     owner:          context.repo.owner,
                     repo:           context.repo.repo,
