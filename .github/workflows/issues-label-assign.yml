@@ -369,42 +369,22 @@
               const pr_title_append   = `${{ env.LABEL_ROADMAP }}:`;
               const labels            = [];
 
-              if ( !pr_title.toLowerCase( ).startsWith( pr_title_append.toLowerCase( ) ) )
-              {
-                  await github.rest.issues.update(
-                  {
-                      owner:          context.repo.owner,
-                      repo:           context.repo.repo,
-                      issue_number:   context.issue.number,
-                      title:          `${ pr_title_append } ${ context.payload.issue.title }`
-                  } );
-              }
-
-        - name: ${{ env.LABEL_ROADMAP }} › Sleep
-          run: sleep 20s
-          shell: bash
-
-        - name: ${{ env.LABEL_ROADMAP }} › Set Label
-          uses: actions/github-script@v7
-          with:
-            github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
-            script: |
-              const pr_title          = `${ context.payload.issue.title }`;
-              const pr_title_append   = `${{ env.LABEL_ROADMAP }}:`;
-              const labels            = [];
-
-              console.log( pr_title.toLowerCase( ) )
-              console.log( pr_title_append.toLowerCase( ) )
-
               if ( pr_title.toLowerCase( ).startsWith( pr_title_append.toLowerCase( ) ) )
               {
                   labels.push( "${{ env.LABEL_ROADMAP }}" );
               }
 
-              await github.rest.issues.setLabels(
+              if ( !pr_title.toLowerCase( ).startsWith( pr_title_append.toLowerCase( ) ) )
               {
-                  issue_number:   context.issue.number,
-                  owner:          context.repo.owner,
-                  repo:           context.repo.repo,
-                  labels,
-              } );
+
+                  labels.push( "${{ env.LABEL_ROADMAP }}" );
+
+                  await github.rest.issues.update(
+                  {
+                      owner:          context.repo.owner,
+                      repo:           context.repo.repo,
+                      issue_number:   context.issue.number,
+                      title:          `${ pr_title_append } ${ context.payload.issue.title }`,
+                      labels,
+                  } );
+              }
