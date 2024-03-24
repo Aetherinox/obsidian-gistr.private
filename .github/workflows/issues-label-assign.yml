@@ -383,7 +383,7 @@
 
               if ( !pr_title.startsWith( pr_title_append ) )
               {
-                  await github.rest.pulls.update(
+                  await github.rest.issues.update(
                   {
                       owner:        context.repo.owner,
                       repo:         context.repo.repo,
