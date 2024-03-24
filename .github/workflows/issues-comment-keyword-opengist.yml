@@ -21,10 +21,10 @@
   # ---------------------------------------------------------------------------------------
   
   env:
-    ACTION_NAME: OpenGist
-    ASSIGN_USER: Aetherinox
-    BOT_NAME_1: AdminServ
-    BOT_NAME_2: AdminServX
+    ACTION_NAME:  OpenGist
+    ASSIGN_USER:  Aetherinox
+    BOT_NAME_1:   AdminServ
+    BOT_NAME_2:   AdminServX
   
   # ---------------------------------------------------------------------------------------
   #   jobs
@@ -33,11 +33,11 @@
   jobs:
   
     # ---------------------------------------------------------------------------------------
-    # Check for phrase [ OpenGist ]
+    #   Check for keyword "OpenGist"
     # ---------------------------------------------------------------------------------------
   
-    Phrase_OpenGist_Check:
-      name:  "Phrase Check [ OpenGist ]"
+    phrase-search-opengist:
+      name:  "Search Phrase › OpenGist"
       runs-on: ubuntu-latest
       permissions: write-all
       steps:
@@ -70,7 +70,7 @@
                   Check for keyword in message title and body
               */
 
-              var findWordList 	        = /(\s*open\s*-?gist\s*)/;
+              var findWordList 	        = /(\s*open\s*-?gist\s*)/ig;
               const bFoundMatchTitle    = Boolean( findWordList.test( iss_title ) );
               const bFoundMatchBody     = Boolean( findWordList.test( iss_body ) );
   
