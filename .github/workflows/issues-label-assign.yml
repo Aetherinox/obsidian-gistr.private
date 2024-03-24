@@ -392,11 +392,19 @@
 
               if ( assignees.length > 0 )
               {
-                  await github.issues.addAssignees(
+                  try
                   {
-                      issue_number:   context.issue.number,
-                      owner:          context.repo.owner,
-                      repo:           context.repo.repo,
-                      assignees
-                  });
+                      await github.rest.issues.addAssignees(
+                      {
+                          issue_number:   context.issue.number,
+                          owner:          context.repo.owner,
+                          repo:           context.repo.repo,
+                          assignees
+                      });
+
+                  }
+                  catch (error)
+                  {
+                      core.setFailed(error.message);
+                  }
               }
