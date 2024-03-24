@@ -157,7 +157,7 @@
                         repo:             context.repo.repo,
                         issue_number:     context.issue.number,
                         title:            `${ iss_title_append } ${ title_new }`,
-                        add_labels
+                        labels:           add_labels
                     } );
                 }
               }
