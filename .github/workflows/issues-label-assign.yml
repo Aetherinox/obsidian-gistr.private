@@ -11,400 +11,399 @@
 #     - roadmap
 # ---------------------------------------------------------------------------------------
 
-  name: "Issues: Assign Label"
-  run-name: "New Issue: Assign Label - ${{ github.event.issue.number }}: ${{ github.event.issue.title }}"
-  
-  on:
-    issues:
-      types:
-        - reopened
-        - opened
-  
-  env:
-    LABEL_BUG:      Bug
-    LABEL_FEATURE:  Feature
-    LABEL_URGENT:   Urgent
-    LABEL_ROADMAP:  Roadmap
-    ASSIGN_USER:    Aetherinox
-    BOT_NAME_1:     AdminServ
-    BOT_NAME_2:     AdminServX
-    LABELS_JSON: |
-      [
-        { "name": "Bug", "color": "d73a4a", "description": "Something isn't working" },
-        { "name": "Feature", "color": "36552B", "description": "Feature request" },
-        { "name": "Urgent", "color": "ccb11d", "description": "This issue required priority." },
-        { "name": "Roadmap", "color": "8F1784", "description": "Feature or bug currently planned for implementation." }
-      ]
-  
-  
-  jobs:
-  
-    # ---------------------------------------------------------------------------------------
-    #   Verify Existing Labels
-    #   This job will ensure you have labels already created in your repo.
-    #
-    #   All labels come from the JSON table LABELS_JSON.
-    # ---------------------------------------------------------------------------------------
-  
-    Submission_Labels_Verify:
-      name: "Labels: Verify"
-      runs-on: ubuntu-latest
-      permissions: write-all
-      steps:
-  
-        - name: Checkout
-          uses: actions/checkout@v3
+name: "Issues: Assign Label"
+run-name: "New Issue: Assign Label - ${{ github.event.issue.number }}: ${{ github.event.issue.title }}"
 
-        # ---------------------------------------------------------------------------------------
-        #   Check if repo has labels currently added to issues
-        # ---------------------------------------------------------------------------------------
-          
-        - name: Verify Existing Labels
-          uses: actions/github-script@v7
-          with:
-            script: |
-              const labels = JSON.parse( process.env.LABELS_JSON );
-              for ( const label of labels )
-              {
-                  try
-                  {
-                      await github.rest.issues.createLabel(
-                      {
-                          owner:        context.repo.owner,
-                          repo:         context.repo.repo,
-                          name:         label.name,
-                          description:  label.description || '',
-                          color:        label.color
-                      });
-                  }
-                  catch ( err )
-                  {
-                      // label already exists
-                      if ( err.status === 422 )
-                      {
-                          console.log( `Label '${label.name}' already exists. Skipping.` );
-                      }
-                      else
-                      {
-                          // Log other errors
-                          console.error( `Error creating label '${label.name}': ${err}` );
-                      }
-                  }
-              }
-  
-    # ---------------------------------------------------------------------------------------
-    #   Label > Bug
-    # ---------------------------------------------------------------------------------------
+on:
+  issues:
+    types:
+      - reopened
+      - opened
 
-    Submission-Label-Bug:
-      name:  "Bug › Label"
-      runs-on: ubuntu-latest
-      permissions:
-        contents: 'read'
-        id-token: 'write'
-        issues: 'write'
-      steps:
+env:
+  LABEL_BUG:      Bug
+  LABEL_FEATURE:  Feature
+  LABEL_URGENT:   Urgent
+  LABEL_ROADMAP:  Roadmap
+  ASSIGN_USER:    Aetherinox
+  BOT_NAME_1:     AdminServ
+  BOT_NAME_2:     AdminServX
+  LABELS_JSON: |
+    [
+      { "name": "Bug", "color": "d73a4a", "description": "Something isn't working" },
+      { "name": "Feature", "color": "36552B", "description": "Feature request" },
+      { "name": "Urgent", "color": "ccb11d", "description": "This issue required priority." },
+      { "name": "Roadmap", "color": "8F1784", "description": "Feature or bug currently planned for implementation." }
+    ]
 
-        - name: ${{ env.LABEL_BUG }} › Assignment
-          uses: actions/github-script@v7
-          with:
-            github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
-            script: |
 
-              const issueLabels = await github.rest.issues.listLabelsOnIssue(
-              {
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: context.issue.number
-              });
+jobs:
 
-              let add_labels            = issueLabels.data.map(label => label.name);
+  # ---------------------------------------------------------------------------------------
+  #   Verify Existing Labels
+  #   This job will ensure you have labels already created in your repo.
+  #
+  #   All labels come from the JSON table LABELS_JSON.
+  # ---------------------------------------------------------------------------------------
 
-              const iss_body            = `${ context.payload.issue.body }`;
-              const iss_title           = `${ context.payload.issue.title }`;
-              const iss_title_append    = `${{ env.LABEL_BUG }}:`;
+  labels-preconfigure:
+    name: Prepare Package
+    runs-on: ubuntu-latest
+    steps:
 
-              const containsList =
-              [
-                "bug",
-                "broke",
-                "issue",
-                "fail",
-              ];
+      - name: "✅ Start"
+        run: | 
+              echo "Assigning labels and assignees"
 
-              const bIncludesWord  = containsList.some( s => s.includes( iss_title ) || iss_title.includes( s ) );
+      - name: "☑️ Checkout"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-              /*
-                  Check if title contains word in containsList 
-              */
+      # ---------------------------------------------------------------------------------------
+      #   Check if repo has labels currently added to issues
+      # ---------------------------------------------------------------------------------------
+        
+      - name: Verify Existing Labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const labels = JSON.parse( process.env.LABELS_JSON );
+            for ( const label of labels )
+            {
+                try
+                {
+                    await github.rest.issues.createLabel(
+                    {
+                        owner:        context.repo.owner,
+                        repo:         context.repo.repo,
+                        name:         label.name,
+                        description:  label.description || '',
+                        color:        label.color
+                    });
+                }
+                catch ( err )
+                {
+                    // label already exists
+                    if ( err.status === 422 )
+                    {
+                        console.log( `Label '${label.name}' already exists. Skipping.` );
+                    }
+                    else
+                    {
+                        // Log other errors
+                        console.error( `Error creating label '${label.name}': ${err}` );
+                    }
+                }
+            }
 
-              if ( iss_title.toLowerCase( ).startsWith( iss_title_append.toLowerCase( ) ) || bIncludesWord )
-              {
 
-                  /*
-                      Rename title to contain Bug:
-                  */
+  labels-assign:
+    name: >-
+      🏷️ Labels › Assign
+    needs:
+    - labels-preconfigure
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    environment:
+      name: Orion
+    steps:
 
-                  if ( !iss_title.toLowerCase( ).startsWith( iss_title_append.toLowerCase( ) ) )
-                  {
-                      add_labels.push( "${{ env.LABEL_BUG }}" );
+    name:  "Bug › Label"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+      issues: 'write'
+    steps:
 
-                      const title           = context.payload.issue.title
-                      let title_new         = title.replace( /^\s?bug\s*(.*?)\b/gi, '' );
-                      title_new         		= title.replace( /^\s?fail\s*(.*?)\b/gi, '' );
-                      title_new         		= title.replace( /^\s?issue\s*(.*?)\b/gi, '' );
+      - name: ${{ env.LABEL_BUG }} › Assignment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
+          script: |
 
-                      await github.rest.issues.update(
-                      {
-                          owner:            context.repo.owner,
-                          repo:             context.repo.repo,
-                          issue_number:     context.issue.number,
-                          title:            `${ iss_title_append } ${ title_new }`,
-                          labels:           add_labels
-                      } );
-                  }
-              }
+            const issueLabels = await github.rest.issues.listLabelsOnIssue(
+            {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number
+            });
 
-    # ---------------------------------------------------------------------------------------
-    #   Label > Feature
-    # ---------------------------------------------------------------------------------------
+            let add_labels            = issueLabels.data.map(label => label.name);
 
-    Submission-Label-Feature:
-      name:  "Feature › Label"
-      runs-on: ubuntu-latest
-      permissions:
-        contents: 'read'
-        id-token: 'write'
-        issues: 'write'
-      steps:
+            const iss_body            = `${ context.payload.issue.body }`;
+            const iss_title           = `${ context.payload.issue.title }`;
+            const iss_title_append    = `${{ env.LABEL_BUG }}:`;
 
-        - name: ${{ env.LABEL_FEATURE }} › Assignment
-          uses: actions/github-script@v7
-          with:
-            github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
-            script: |
+            const containsList =
+            [
+              "bug",
+              "broke",
+              "issue",
+              "fail",
+            ];
 
-              const issueLabels = await github.rest.issues.listLabelsOnIssue(
-              {
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: context.issue.number
-              });
+            const bIncludesWord  = containsList.some( s => s.includes( iss_title ) || iss_title.includes( s ) );
 
-              let add_labels            = issueLabels.data.map(label => label.name);
+            /*
+                Check if title contains word in containsList 
+            */
 
-              const iss_body            = `${ context.payload.issue.body }`;
-              const iss_title           = `${ context.payload.issue.title }`;
-              const iss_title_append    = `${{ env.LABEL_FEATURE }}:`;
+            if ( iss_title.toLowerCase( ).startsWith( iss_title_append.toLowerCase( ) ) || bIncludesWord )
+            {
 
-              const containsList =
-              [
-                "feature",
-                "request",
-                "add support",
-              ];
+                /*
+                    Rename title to contain Bug:
+                */
 
-              const bIncludesWord  = containsList.some( s => s.includes( iss_title ) || iss_title.includes( s ) );
+                if ( !iss_title.toLowerCase( ).startsWith( iss_title_append.toLowerCase( ) ) )
+                {
+                    add_labels.push( "${{ env.LABEL_BUG }}" );
 
-              /*
-                  Check if title contains word in containsList 
-              */
+                    const title           = context.payload.issue.title
+                    let title_new         = title.replace( /^\s?bug\s*(.*?)\b/gi, '' );
+                    title_new         		= title.replace( /^\s?fail\s*(.*?)\b/gi, '' );
+                    title_new         		= title.replace( /^\s?issue\s*(.*?)\b/gi, '' );
 
-              if ( iss_title.toLowerCase( ).startsWith( iss_title_append.toLowerCase( ) ) || bIncludesWord )
-              {
-                  /*
-                      Rename title to contain Feature:
-                  */
+                    await github.rest.issues.update(
+                    {
+                        owner:            context.repo.owner,
+                        repo:             context.repo.repo,
+                        issue_number:     context.issue.number,
+                        title:            `${ iss_title_append } ${ title_new }`,
+                        labels:           add_labels
+                    } );
+                }
+            }
 
-                  if ( !iss_title.toLowerCase( ).startsWith( iss_title_append.toLowerCase( ) ) )
-                  {
-                      add_labels.push( "${{ env.LABEL_FEATURE }}" );
+      # ---------------------------------------------------------------------------------------
+      #   Label > Feature
+      # ---------------------------------------------------------------------------------------
 
-                      const title           = context.payload.issue.title
-                      let title_new         = title.replace( /^\s?feature\s*(.*?)\b/gi, '' );
-                      title_new             = title.replace( /^\s?request\s*(.*?)\b/gi, '' );
-                      title_new             = title.replace( /^\s?add(.*?)\s?feature\s*(.*?)\b/gi, '' );
-                      title_new             = title.replace( /^\s?add(.*?)\s?support\s*(.*?)\b/gi, '' );
+      - name: ${{ env.LABEL_FEATURE }} › Assignment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
+          script: |
 
-                      await github.rest.issues.update(
-                      {
-                          owner:            context.repo.owner,
-                          repo:             context.repo.repo,
-                          issue_number:     context.issue.number,
-                          title:            `${ iss_title_append } ${ title_new }`,
-                          labels:           add_labels
-                      } );
-                  }
-              }
+            const issueLabels = await github.rest.issues.listLabelsOnIssue(
+            {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number
+            });
 
-    # ---------------------------------------------------------------------------------------
-    #   Label > Urgent
-    # ---------------------------------------------------------------------------------------
+            let add_labels            = issueLabels.data.map(label => label.name);
 
-    Submission-Label-Urgent:
-      name:  "Urgent › Label"
-      runs-on: ubuntu-latest
-      permissions:
-        contents: 'read'
-        id-token: 'write'
-        issues: 'write'
-      steps:
+            const iss_body            = `${ context.payload.issue.body }`;
+            const iss_title           = `${ context.payload.issue.title }`;
+            const iss_title_append    = `${{ env.LABEL_FEATURE }}:`;
 
-        - name: ${{ env.LABEL_URGENT }} › Assignment
-          uses: actions/github-script@v7
-          with:
-            github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
-            script: |
+            const containsList =
+            [
+              "feature",
+              "request",
+              "add support",
+            ];
 
-              const issueLabels = await github.rest.issues.listLabelsOnIssue(
-              {
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: context.issue.number
-              });
+            const bIncludesWord  = containsList.some( s => s.includes( iss_title ) || iss_title.includes( s ) );
 
-              let add_labels            = issueLabels.data.map(label => label.name);
+            /*
+                Check if title contains word in containsList 
+            */
 
-              const iss_body            = `${ context.payload.issue.body }`;
-              const iss_title           = `${ context.payload.issue.title }`;
-              const iss_title_append    = `${{ env.LABEL_URGENT }}:`;
+            if ( iss_title.toLowerCase( ).startsWith( iss_title_append.toLowerCase( ) ) || bIncludesWord )
+            {
+                /*
+                    Rename title to contain Feature:
+                */
 
-              const containsList =
-              [
-                "urgent",
-                "urgency",
-                "emergency",
-                "important",
-                "critical",
-              ];
+                if ( !iss_title.toLowerCase( ).startsWith( iss_title_append.toLowerCase( ) ) )
+                {
+                    add_labels.push( "${{ env.LABEL_FEATURE }}" );
 
-              const bIncludesWord  = containsList.some( s => s.includes( iss_title ) || iss_title.includes( s ) );
+                    const title           = context.payload.issue.title
+                    let title_new         = title.replace( /^\s?feature\s*(.*?)\b/gi, '' );
+                    title_new             = title.replace( /^\s?request\s*(.*?)\b/gi, '' );
+                    title_new             = title.replace( /^\s?add(.*?)\s?feature\s*(.*?)\b/gi, '' );
+                    title_new             = title.replace( /^\s?add(.*?)\s?support\s*(.*?)\b/gi, '' );
 
-              /*
-                  Check if title contains word in containsList 
-              */
+                    await github.rest.issues.update(
+                    {
+                        owner:            context.repo.owner,
+                        repo:             context.repo.repo,
+                        issue_number:     context.issue.number,
+                        title:            `${ iss_title_append } ${ title_new }`,
+                        labels:           add_labels
+                    } );
+                }
+            }
 
-              if ( iss_title.toLowerCase( ).startsWith( iss_title_append.toLowerCase( ) ) || bIncludesWord )
-              {
-                  /*
-                      Rename title to contain Urgent:
-                  */
+      - name: ${{ env.LABEL_URGENT }} › Assignment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
+          script: |
 
-                  if ( !iss_title.toLowerCase( ).startsWith( iss_title_append.toLowerCase( ) ) )
-                  {
-                      add_labels.push( "${{ env.LABEL_URGENT }}" );
+            const issueLabels = await github.rest.issues.listLabelsOnIssue(
+            {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number
+            });
 
-                      const title           = context.payload.issue.title
-                      let title_new         = title.replace( /^\s?emergency\s*(.*?)\b/gi, '' );
-                      title_new             = title.replace( /^\s?urgent\s*(.*?)\b/gi, '' );
-                      title_new             = title.replace( /^\s?urgency\s*(.*?)\b/gi, '' );
-                      title_new             = title.replace( /^\s?important\s*(.*?)\b/gi, '' );
-                      title_new             = title.replace( /^\s?critical\s*(.*?)\b/gi, '' );
+            let add_labels            = issueLabels.data.map(label => label.name);
 
-                      await github.rest.issues.update(
-                      {
-                          owner:            context.repo.owner,
-                          repo:             context.repo.repo,
-                          issue_number:     context.issue.number,
-                          title:            `${ iss_title_append } ${ title_new }`,
-                          labels:           add_labels
-                      } );
-                  }
-              }
+            const iss_body            = `${ context.payload.issue.body }`;
+            const iss_title           = `${ context.payload.issue.title }`;
+            const iss_title_append    = `${{ env.LABEL_URGENT }}:`;
 
-    # ---------------------------------------------------------------------------------------
-    #   Label > Roadmap
-    # ---------------------------------------------------------------------------------------
+            const containsList =
+            [
+              "urgent",
+              "urgency",
+              "emergency",
+              "important",
+              "critical",
+            ];
 
-    Submission-Label-Roadmap:
-      name:  "Roadmap › Label"
-      runs-on: ubuntu-latest
-      permissions:
-        contents: 'read'
-        id-token: 'write'
-        issues: 'write'
-      steps:
+            const bIncludesWord  = containsList.some( s => s.includes( iss_title ) || iss_title.includes( s ) );
 
-        - name: ${{ env.LABEL_ROADMAP }} › Assignment
-          uses: actions/github-script@v7
-          with:
-            github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
-            script: |
+            /*
+                Check if title contains word in containsList 
+            */
 
-              const issueLabels = await github.rest.issues.listLabelsOnIssue(
-              {
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: context.issue.number
-              });
+            if ( iss_title.toLowerCase( ).startsWith( iss_title_append.toLowerCase( ) ) || bIncludesWord )
+            {
+                /*
+                    Rename title to contain Urgent:
+                */
 
-              let add_labels            = issueLabels.data.map(label => label.name);
+                if ( !iss_title.toLowerCase( ).startsWith( iss_title_append.toLowerCase( ) ) )
+                {
+                    add_labels.push( "${{ env.LABEL_URGENT }}" );
 
-              const iss_body            = `${ context.payload.issue.body }`;
-              const iss_title           = `${ context.payload.issue.title }`;
-              const iss_title_append    = `${{ env.LABEL_ROADMAP }}:`;
+                    const title           = context.payload.issue.title
+                    let title_new         = title.replace( /^\s?emergency\s*(.*?)\b/gi, '' );
+                    title_new             = title.replace( /^\s?urgent\s*(.*?)\b/gi, '' );
+                    title_new             = title.replace( /^\s?urgency\s*(.*?)\b/gi, '' );
+                    title_new             = title.replace( /^\s?important\s*(.*?)\b/gi, '' );
+                    title_new             = title.replace( /^\s?critical\s*(.*?)\b/gi, '' );
 
-              const containsList =
-              [
-                "roadmap",
-                "road map",
-                "planned",
-              ];
+                    await github.rest.issues.update(
+                    {
+                        owner:            context.repo.owner,
+                        repo:             context.repo.repo,
+                        issue_number:     context.issue.number,
+                        title:            `${ iss_title_append } ${ title_new }`,
+                        labels:           add_labels
+                    } );
+                }
+            }
 
-              const bIncludesWord  = containsList.some( s => s.includes( iss_title ) || iss_title.includes( s ) );
+  # ---------------------------------------------------------------------------------------
+  #   Label > Roadmap
+  # ---------------------------------------------------------------------------------------
 
-              /*
-                  Check if title contains word in containsList 
-              */
+      - name: ${{ env.LABEL_ROADMAP }} › Assignment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
+          script: |
 
-              if ( iss_title.toLowerCase( ).startsWith( iss_title_append.toLowerCase( ) ) || bIncludesWord )
-              {
-                  /*
-                      Rename title to contain Roadmap:
-                  */
+            const issueLabels = await github.rest.issues.listLabelsOnIssue(
+            {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number
+            });
 
-                  if ( !iss_title.toLowerCase( ).startsWith( iss_title_append.toLowerCase( ) ) )
-                  {
-                      add_labels.push( "${{ env.LABEL_ROADMAP }}" );
+            let add_labels            = issueLabels.data.map(label => label.name);
 
-                      const title           = context.payload.issue.title
-                      let title_new         = title.replace( /^\s?broad(.*?)\s?map\s*(.*?)\b/gi, '' );
-                      title_new         		= title.replace( /^\s?planned\s*(.*?)\b/gi, '' );
-                      title_new         		= title.replace( /^\s?broadmap\s*(.*?)\b/gi, '' );
+            const iss_body            = `${ context.payload.issue.body }`;
+            const iss_title           = `${ context.payload.issue.title }`;
+            const iss_title_append    = `${{ env.LABEL_ROADMAP }}:`;
 
-                      await github.rest.issues.update(
-                      {
-                          owner:            context.repo.owner,
-                          repo:             context.repo.repo,
-                          issue_number:     context.issue.number,
-                          title:            `${ iss_title_append } ${ title_new }`,
-                          labels:           add_labels
-                      } );
-                  }
-              }
+            const containsList =
+            [
+              "roadmap",
+              "road map",
+              "planned",
+            ];
 
-        - name: Set Assignees
-          uses: actions/github-script@v7
-          with:
-            github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
-            script: |
-              const assignees = ['Aetherinox'];
+            const bIncludesWord  = containsList.some( s => s.includes( iss_title ) || iss_title.includes( s ) );
 
-              if ( assignees.length > 0 )
-              {
-                  try
-                  {
-                      await github.rest.issues.addAssignees(
-                      {
-                          issue_number:   context.issue.number,
-                          owner:          context.repo.owner,
-                          repo:           context.repo.repo,
-                          assignees
-                      });
+            /*
+                Check if title contains word in containsList 
+            */
 
-                  }
-                  catch (error)
-                  {
-                      core.setFailed(error.message);
-                  }
-              }
+            if ( iss_title.toLowerCase( ).startsWith( iss_title_append.toLowerCase( ) ) || bIncludesWord )
+            {
+                /*
+                    Rename title to contain Roadmap:
+                */
+
+                if ( !iss_title.toLowerCase( ).startsWith( iss_title_append.toLowerCase( ) ) )
+                {
+                    add_labels.push( "${{ env.LABEL_ROADMAP }}" );
+
+                    const title           = context.payload.issue.title
+                    let title_new         = title.replace( /^\s?broad(.*?)\s?map\s*(.*?)\b/gi, '' );
+                    title_new         		= title.replace( /^\s?planned\s*(.*?)\b/gi, '' );
+                    title_new         		= title.replace( /^\s?broadmap\s*(.*?)\b/gi, '' );
+
+                    await github.rest.issues.update(
+                    {
+                        owner:            context.repo.owner,
+                        repo:             context.repo.repo,
+                        issue_number:     context.issue.number,
+                        title:            `${ iss_title_append } ${ title_new }`,
+                        labels:           add_labels
+                    } );
+                }
+            }
+
+
+  # ---------------------------------------------------------------------------------------
+  #   Job > Distribute Release on Github Releases
+  # ---------------------------------------------------------------------------------------
+
+  dist-release:
+    name: >-
+      📦 Github › Release
+    runs-on: ubuntu-latest
+    needs: [ labels-assign ]
+    if: |
+      always()
+      && contains(needs.*.result, 'success')
+      && !contains(needs.*.result, 'failure')
+    permissions:
+      contents: write
+    steps:
+
+      - name: Set Assignees
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
+          script: |
+            const assignees = ['Aetherinox'];
+
+            if ( assignees.length > 0 )
+            {
+                try
+                {
+                    await github.rest.issues.addAssignees(
+                    {
+                        issue_number:   context.issue.number,
+                        owner:          context.repo.owner,
+                        repo:           context.repo.repo,
+                        assignees
+                    });
+                }
+                catch (error)
+                {
+                    core.setFailed(error.message);
+                }
+            }
