@@ -379,6 +379,11 @@
                   labels.push( "${{ env.LABEL_ROADMAP }}" );
               }
 
+              if ( pr_title.toLowerCase( ).startsWith( pr_title_append.toLowerCase( ) ) )
+              {
+                  labels.push( "${{ env.LABEL_ROADMAP }}" );
+              }
+
               /*
                   Rename title to contain Roadmap:
               */
