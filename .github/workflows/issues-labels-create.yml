@@ -47,7 +47,7 @@ env:
       { "name": "Status/No Action",   "color": "a1033f", "description": "This request was closed without any action being taken" },
       { "name": "Status/Pending",     "color": "D5155E", "description": "Pending pull request" },
       { "name": "Status/Reopened",    "color": "978127", "description": "A previously closed PR which has been re-opened" },
-      { "name": "Priority/Urgent",    "color": "ccb11d", "description": "Requires urgent attention" },
+      { "name": "!Urgent",            "color": "ccb11d", "description": "Requires urgent attention" }
     ]
 
 jobs:
