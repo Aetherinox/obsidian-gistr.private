@@ -344,7 +344,10 @@
     Submission-Roadmap-Label-Check:
       name:  "Roadmap › Check Label"
       runs-on: ubuntu-latest
-      permissions: write-all
+      permissions:
+        contents: 'read'
+        id-token: 'write'
+        issues: 'write' #__This fixed the HttpError: Resource not accessible by integra
       steps:
   
         # ---------------------------------------------------------------------------------------
