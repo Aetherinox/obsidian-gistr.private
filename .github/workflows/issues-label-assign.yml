@@ -391,7 +391,7 @@
               console.log( pr_title )
               console.log( pr_title_append )
 
-              if ( !pr_title.startsWith( pr_title_append ) )
+              if ( !pr_title.toLowerCase( ).startsWith( pr_title_append.toLowerCase( ) ) )
               {
                   await github.rest.issues.update(
                   {
