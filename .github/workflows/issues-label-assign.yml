@@ -121,45 +121,54 @@
               const iss_title_append    = `${{ env.LABEL_ROADMAP }}:`;
               const add_labels          = [];
 
+              const containsList =
+              [
+                "roadmap",
+                "road map",
+                "planned",
+              ];
+
+              const bIncludesWord  = containsList.some( s => s.includes( iss_title ) || iss_title.includes( s ) );
+
               /*
-                  - title starts with Roadmap:
-                  - title starts with planned
-                  - title starts with road map
+                  Check if title contains word in containsList 
               */
 
-              if ( iss_title.toLowerCase( ).startsWith( iss_title_append.toLowerCase( ) ) || iss_title.toLowerCase( ).startsWith( "planned" ) || iss_title.toLowerCase( ).startsWith( "road map" ) )
+              if ( iss_title.toLowerCase( ).startsWith( iss_title_append.toLowerCase( ) ) || bIncludesWord )
               {
-                  add_labels.push( "${{ env.LABEL_ROADMAP }}" );
+
+                /*
+                    Rename title to contain Roadmap:
+                */
+
+                if ( !iss_title.toLowerCase( ).startsWith( iss_title_append.toLowerCase( ) ) )
+                {
+                    const title           = context.payload.issue.title
+                    let title_new         = title.replace( /^\broad map\s*?:[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*]*\s\b/gi, '' );
+                    title_new         		= title.replace( /^\broadmap\s*?:[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*]*\s\b/gi, '' );
+                    title_new         		= title.replace( /^\bplanned\s*?:[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*]*\s\b/gi, '' );
+
+                    await github.rest.issues.update(
+                    {
+                        owner:            context.repo.owner,
+                        repo:             context.repo.repo,
+                        issue_number:     context.issue.number,
+                        title:            `${ iss_title_append } ${ title_new }`,
+                    } );
+                }
+
+                add_labels.push( "${{ env.LABEL_ROADMAP }}" );
+
+                /*
+                    Add Label
+                */
+
+                await github.rest.issues.update(
+                {
+                    owner:          context.repo.owner,
+                    repo:           context.repo.repo,
+                    issue_number:   context.issue.number,
+                    add_labels,
+                } );
+
               }
-
-              /*
-                  Rename title to contain Roadmap:
-              */
-
-              if ( !iss_title.toLowerCase( ).startsWith( iss_title_append.toLowerCase( ) ) )
-              {
-                  add_labels.push( "${{ env.LABEL_ROADMAP }}" );
-
-                  const title           = context.payload.issue.title
-                  const title_new       = title.replace( /\broad map\s*?:[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*]*\s\b/gi, '' );
-
-                  await github.rest.issues.update(
-                  {
-                      owner:            context.repo.owner,
-                      repo:             context.repo.repo,
-                      issue_number:     context.issue.number,
-                      title:            `${ iss_title_append } ${ title_new }`,
-                  } );
-              }
-
-              /*
-                  Add Label
-              */
-
-              await github.rest.issues.update(
-              {
-                  owner:          context.repo.owner,
-                  repo:           context.repo.repo,
-                  issue_number:   context.issue.number,
-                  add_labels,
-              } );
