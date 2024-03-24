@@ -48,8 +48,8 @@
             github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
             script: |
               const fs            = require( 'fs' );
-              const iss_body      = `${ context.payload.issue.body }`;
               const iss_title     = `${ context.payload.issue.title }`;
+              const iss_body      = `${ context.payload.issue.body }`;
               let message         = [ "\n<br />\n" ]
   
               let bot_msg =
@@ -66,23 +66,35 @@
               <sub>I am a bot reaching out to you with an automated response. If the above info doesn't apply to you, please ignore it.</sub>
               `;
   
-              const containsList =
-              [
-                "opengist",
-                "open gist",
-              ];
+              /*
+                  Check for keyword in message title and body
+              */
+
+              var findWordList 	        = /(\s*open\s*-?gist\s*)/;
+              const bFoundMatchTitle    = Boolean( findWordList.test( iss_title ) );
+              const bFoundMatchBody     = Boolean( findWordList.test( iss_body ) );
   
-              const bIncludesWordTitle  = containsList.some( s => s.includes( iss_title ) || iss_title.includes( s ) );
-  
-              if ( bIncludesWordTitle )
+              /*
+                  found searched word, append / prepare message for bot to send
+              */
+
+              if ( bFoundMatchTitle || bFoundMatchBody )
               {
                   message.push  ( bot_msg );
+                  bHasMessage   = true;
               }
               
-              await github.rest.issues.createComment(
+              /*
+                  Bot has message to send
+              */
+
+              if ( bHasMessage == true )
               {
-                  issue_number:   context.issue.number,
-                  owner:          context.repo.owner,
-                  repo:           context.repo.repo,
-                  body:           message.join('\n'),
-              } );
+                  await github.rest.issues.createComment(
+                  {
+                      issue_number:   context.issue.number,
+                      owner:          context.repo.owner,
+                      repo:           context.repo.repo,
+                      body:           message.join('\n'),
+                  } );
+              }
