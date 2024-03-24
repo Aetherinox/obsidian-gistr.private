@@ -371,10 +371,10 @@
 
 
               /*
-                  Title already contains Roadmap:
+                  Title already contains Roadmap or other keywords
               */
 
-              if ( pr_title.toLowerCase( ).startsWith( pr_title_append.toLowerCase( ) ) )
+              if ( pr_title.toLowerCase( ).startsWith( "planned" ) || ( pr_title.toLowerCase( ).startsWith( "road map" ) )
               {
                   labels.push( "${{ env.LABEL_ROADMAP }}" );
               }
