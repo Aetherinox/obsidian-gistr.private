@@ -51,8 +51,13 @@
               const iss_title     = `${ context.payload.issue.title }`;
               const iss_body      = `${ context.payload.issue.body }`;
               let message         = [ "\n<br />\n" ]
+              let bHasMessage     = false
   
-              let bot_msg =
+              /*********************************************
+                  Keyword > OpenGist
+              **********************************************/
+
+              let OG_message =
               `
               ⚠️ It appears you may be looking for OpenGist help.
               - [Opengist Repo](https://github.com/thomiceli/opengist)
@@ -70,18 +75,47 @@
                   Check for keyword in message title and body
               */
 
-              var findWordList 	        = /(\s*open\s*-?gist\s*)/ig;
-              const bFoundMatchTitle    = Boolean( findWordList.test( iss_title ) );
-              const bFoundMatchBody     = Boolean( findWordList.test( iss_body ) );
+              const OGfindWordList        = /(\s*open\s*-?gist\s*)/ig;
+              const OGbFoundMatchTitle    = Boolean( OGfindWordList.test( iss_title ) );
+              const OGbFoundMatchBody     = Boolean( OGfindWordList.test( iss_body ) );
   
               /*
-                  found searched word, append / prepare message for bot to send
+                  found searched word "Opengist"
+                      append / prepare message for bot to send
               */
 
-              if ( bFoundMatchTitle || bFoundMatchBody )
+              if ( OGbFoundMatchTitle || OGbFoundMatchBody )
               {
-                  message.push  ( bot_msg );
+                  message.push  ( OG_message );
                   bHasMessage   = true;
+              }
+
+              /*********************************************
+                  Keyword > Help
+              **********************************************/
+
+              let HE_message =
+              `
+              💡 It appears you might need help, please check the resources below for documentation that might assist with your issue:
+              - [Gistr Documentation](https://aetherinox.github.io/obsidian-gistr)
+              - [Obsidian Documentation](https://help.obsidian.md/Home)
+  
+              ---
+  
+              <sub>I am a bot reaching out to you with an automated response. If the above info doesn't apply to you, please ignore it.</sub>
+              `;
+
+              /*
+                  found searched word "for help"
+                      append / prepare message for bot to send
+              */
+
+              const HEfindWordList 	    = /(\s*need\s*help\s*|\s*how\s*can\s*I\s*|\s*where\s*(do|can|should)\s*I\s*find\s*)/ig;
+
+              if ( HEfindWordList )
+              {
+                message.push  ( HE_message );
+                bHasMessage   = true;
               }
               
               /*
