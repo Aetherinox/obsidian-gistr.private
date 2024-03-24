@@ -393,7 +393,7 @@
               }
 
 
-        - name: ${{ env.LABEL_ROADMAP }} › Title › Rename"
+        - name: ${{ env.LABEL_ROADMAP }} › Title › Rename
           if: |
             github.event.issue &&
             github.event.issue.user.login != '$env.BOT_NAME_1' &&
