@@ -380,6 +380,10 @@
                   } );
               }
 
+        - name: ${{ env.LABEL_ROADMAP }} › Sleep
+          run: sleep 20s
+          shell: bash
+
         - name: ${{ env.LABEL_ROADMAP }} › Set Label
           uses: actions/github-script@v7
           with:
