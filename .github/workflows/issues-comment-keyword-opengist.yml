@@ -110,9 +110,11 @@
                       append / prepare message for bot to send
               */
 
-              const HEfindWordList 	    = /(\s*need\s*help\s*|\s*how\s*can\s*I\s*|\s*where\s*(do|can|should)\s*I\s*find\s*)/ig;
+              const HEfindWordList 	      = /(\s*need\s*help\s*|\s*how\s*can\s*I\s*|\s*where\s*(do|can|should)\s*I\s*find\s*)/ig;
+              const HEbFoundMatchTitle    = Boolean( HEfindWordList.test( iss_title ) );
+              const HEbFoundMatchBody     = Boolean( HEfindWordList.test( iss_body ) );
 
-              if ( HEfindWordList )
+              if ( HEbFoundMatchTitle || HEbFoundMatchBody )
               {
                 message.push  ( HE_message );
                 bHasMessage   = true;
