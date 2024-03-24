@@ -45,6 +45,7 @@
         - name: 👄 Keywords › Opengist
           uses: actions/github-script@v7
           with:
+            github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
             script: |
               const fs            = require( 'fs' );
               const iss_body      = `${ context.payload.issue.body }`;
