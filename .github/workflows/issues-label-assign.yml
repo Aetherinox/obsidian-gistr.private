@@ -52,6 +52,8 @@
       permissions: write-all
       steps:
   
+        - uses: actions/checkout@v3
+
         - name: Verify Existing Labels
           uses: actions/github-script@v7
           with:
