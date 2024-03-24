@@ -372,6 +372,14 @@
               if ( pr_title.toLowerCase( ).startsWith( pr_title_append.toLowerCase( ) ) )
               {
                   labels.push( "${{ env.LABEL_ROADMAP }}" );
+
+                  await github.rest.issues.update(
+                  {
+                      owner:          context.repo.owner,
+                      repo:           context.repo.repo,
+                      issue_number:   context.issue.number,
+                      labels,
+                  } );
               }
 
               if ( !pr_title.toLowerCase( ).startsWith( pr_title_append.toLowerCase( ) ) )
