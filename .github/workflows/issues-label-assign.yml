@@ -376,7 +376,7 @@
         #       Bug: Title Name
         # ---------------------------------------------------------------------------------------
 
-        - name: ${{ env.LABEL_ROADMAP }} › Title › Rename
+        - name: ${{ env.LABEL_ROADMAP }} › Format Title
           uses: actions/github-script@v7
           with:
             github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
@@ -396,6 +396,15 @@
                   } );
               }
 
+        - name: ${{ env.LABEL_ROADMAP }} › Set Label
+          uses: actions/github-script@v7
+          with:
+            github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
+            script: |
+              const pr_title          = `${ context.payload.issue.title }`;
+              const pr_title_append   = `${{ env.LABEL_ROADMAP }}:`;
+              const labels            = [];
+
               if ( pr_title.toLowerCase( ).startsWith( pr_title_append.toLowerCase( ) ) )
               {
                   labels.push( "${{ env.LABEL_ROADMAP }}" );
@@ -408,4 +417,3 @@
                   repo:           context.repo.repo,
                   labels,
               } );
-
