@@ -144,13 +144,14 @@
                 if ( !iss_title.toLowerCase( ).startsWith( iss_title_append.toLowerCase( ) ) )
                 {
                     add_labels.push( "${{ env.LABEL_ROADMAP }}" );
+                    console.log("yes")
 
                     const title           = context.payload.issue.title
                     let title_new         = title.replace( /^\broad map\s*?:[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*]*\s\b/gi, '' );
                     title_new         		= title.replace( /^\broadmap\s*?:[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*]*\s\b/gi, '' );
                     title_new         		= title.replace( /^\bplanned\s*?:[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*]*\s\b/gi, '' );
 
-                    github.rest.issues.update(
+                    await github.rest.issues.update(
                     {
                         owner:            context.repo.owner,
                         repo:             context.repo.repo,
