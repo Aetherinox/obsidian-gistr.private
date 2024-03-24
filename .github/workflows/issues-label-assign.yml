@@ -388,28 +388,13 @@
           with:
             github-token: ${{ secrets.ADMINSERV_TOKEN }}
             script: |
-              const labelsToAssignees =
-              {
-                  'product: Aetherinox': ['Aetherinox'],
-              };
-
-              const labels      = context.payload.issues.labels.map( label => label.name );
-              const assignees   = [];
-
-              for ( const label of labels )
-              {
-                  if ( label in labelsToAssignees )
-                  {
-                      assignees.push( ...labelsToAssignees[ label ] );
-                  }
-              }
+              const assignees = ['Aetherinox'];
 
               if ( assignees.length > 0 )
               {
-                  const issue_number = context.payload.issues.number;
                   await github.issues.addAssignees(
                   {
-                      issue_number,
+                      issue_number: context.payload.issues.number,
                       owner: context.repo.owner,
                       repo: context.repo.repo,
                       assignees
