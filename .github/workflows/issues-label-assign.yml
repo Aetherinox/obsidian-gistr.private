@@ -105,17 +105,11 @@ jobs:
     - labels-preconfigure
     runs-on: ubuntu-latest
     permissions:
-      id-token: write
-    environment:
-      name: Orion
-    steps:
-
-    name:  "Bug › Label"
-    runs-on: ubuntu-latest
-    permissions:
       contents: 'read'
       id-token: 'write'
       issues: 'write'
+    environment:
+      name: Orion
     steps:
 
       - name: ${{ env.LABEL_BUG }} › Assignment
