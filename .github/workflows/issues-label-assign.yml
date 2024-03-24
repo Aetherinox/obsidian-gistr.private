@@ -369,22 +369,22 @@
               const pr_title_append   = `${{ env.LABEL_ROADMAP }}:`;
               const labels            = [];
 
+
+              /*
+                  Title already contains Roadmap:
+              */
+
               if ( pr_title.toLowerCase( ).startsWith( pr_title_append.toLowerCase( ) ) )
               {
                   labels.push( "${{ env.LABEL_ROADMAP }}" );
-
-                  await github.rest.issues.update(
-                  {
-                      owner:          context.repo.owner,
-                      repo:           context.repo.repo,
-                      issue_number:   context.issue.number,
-                      labels,
-                  } );
               }
+
+              /*
+                  Rename title to contain Roadmap:
+              */
 
               if ( !pr_title.toLowerCase( ).startsWith( pr_title_append.toLowerCase( ) ) )
               {
-
                   labels.push( "${{ env.LABEL_ROADMAP }}" );
 
                   await github.rest.issues.update(
@@ -393,6 +393,13 @@
                       repo:           context.repo.repo,
                       issue_number:   context.issue.number,
                       title:          `${ pr_title_append } ${ context.payload.issue.title }`,
-                      labels,
                   } );
               }
+
+              await github.rest.issues.update(
+              {
+                  owner:          context.repo.owner,
+                  repo:           context.repo.repo,
+                  issue_number:   context.issue.number,
+                  labels,
+              } );
