@@ -375,10 +375,6 @@
         #   if not, re-name the issue in the format of
         #       Bug: Title Name
         # ---------------------------------------------------------------------------------------
-  
-        - run: |
-            git config --global user.email '161414668+AdminServ@users.noreply.github.com'
-            git config --global user.name 'adminserv'
 
         - name: ${{ env.LABEL_ROADMAP }} › Title › Rename
           uses: actions/github-script@v7
@@ -387,9 +383,7 @@
             script: |
               const pr_title          = `${ context.payload.issue.title }`;
               const pr_title_append   = `${{ env.LABEL_ROADMAP }}:`;
-
-              console.log( pr_title )
-              console.log( pr_title_append )
+              const labels            = [];
 
               if ( !pr_title.toLowerCase( ).startsWith( pr_title_append.toLowerCase( ) ) )
               {
@@ -401,3 +395,17 @@
                       title:          `${ pr_title_append } ${ context.payload.issue.title }`
                   } );
               }
+
+              if ( pr_title.toLowerCase( ).startsWith( pr_title_append.toLowerCase( ) ) )
+              {
+                  labels.push( "${{ env.LABEL_ROADMAP }}" );
+              }
+
+              await github.rest.issues.setLabels(
+              {
+                  issue_number:   context.issue.number,
+                  owner:          context.repo.owner,
+                  repo:           context.repo.repo,
+                  labels,
+              } );
+
