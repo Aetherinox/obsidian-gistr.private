@@ -380,6 +380,7 @@
         - name: ${{ env.LABEL_ROADMAP }} › Title › Rename
           uses: actions/github-script@v7
           with:
+            github-token: ${{ secrets.ADMINSERV_TOKEN }}
             script: |
               const pr_title          = `${ context.payload.issue.title }`;
               const pr_title_append   = `${{ env.LABEL_ROADMAP }}:`;
