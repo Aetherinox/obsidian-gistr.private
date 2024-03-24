@@ -389,6 +389,9 @@
               const pr_title_append   = `${{ env.LABEL_ROADMAP }}:`;
               const labels            = [];
 
+              console.log( pr_title.toLowerCase( ) )
+              console.log( pr_title_append.toLowerCase( ) )
+
               if ( pr_title.toLowerCase( ).startsWith( pr_title_append.toLowerCase( ) ) )
               {
                   labels.push( "${{ env.LABEL_ROADMAP }}" );
