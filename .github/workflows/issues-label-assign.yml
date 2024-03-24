@@ -393,7 +393,7 @@
                   'product: Aetherinox': ['Aetherinox'],
               };
 
-              const labels      = context.payload.pull_request.labels.map( label => label.name );
+              const labels      = context.payload.issues.labels.map( label => label.name );
               const assignees   = [];
 
               for ( const label of labels )
@@ -406,7 +406,7 @@
 
               if ( assignees.length > 0 )
               {
-                  const issue_number = context.payload.pull_request.number;
+                  const issue_number = context.payload.issues.number;
                   await github.issues.addAssignees(
                   {
                       issue_number,
