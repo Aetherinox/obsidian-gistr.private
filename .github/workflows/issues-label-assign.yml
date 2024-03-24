@@ -110,10 +110,17 @@
           with:
             github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
             script: |
+
+              const issueLabels = await github.rest.issues.listLabelsOnIssue({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number
+              });
+              let add_labels            = issueLabels.data.map(label => label.name);
+
               const iss_body            = `${ context.payload.issue.body }`;
               const iss_title           = `${ context.payload.issue.title }`;
               const iss_title_append    = `${{ env.LABEL_BUG }}:`;
-              let add_labels            = context.payload.issue.labels.map(label => label.name);
 
               const containsList =
               [
@@ -174,10 +181,18 @@
           with:
             github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
             script: |
+              const issueLabels = await github.rest.issues.listLabelsOnIssue({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number
+              });
+              let add_labels            = issueLabels.data.map(label => label.name);
+
               const iss_body            = `${ context.payload.issue.body }`;
               const iss_title           = `${ context.payload.issue.title }`;
               const iss_title_append    = `${{ env.LABEL_ROADMAP }}:`;
-              let add_labels            = context.payload.issue.labels.map(label => label.name);
+
+              
 
               const containsList =
               [
