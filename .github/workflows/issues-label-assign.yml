@@ -351,22 +351,6 @@
       steps:
   
         # ---------------------------------------------------------------------------------------
-        #   get issue title & body, convert to lowercase to match
-        # ---------------------------------------------------------------------------------------
-  
-        - name: ${{ env.LABEL_ROADMAP }} › Title › String Manipulation
-          id: roadmap_title
-          uses: ASzc/change-string-case-action@v6
-          with:
-            string: ${{ github.event.issue.title }}
-  
-        - name: ${{ env.LABEL_ROADMAP }} › Body › String Manipulation
-          id: roadmap_body
-          uses: ASzc/change-string-case-action@v6
-          with:
-            string: ${{ github.event.issue.body }}
-  
-        # ---------------------------------------------------------------------------------------
         #   Check Title
         #
         #   this job checks to see if a new issue has certain keywords in the title and body
