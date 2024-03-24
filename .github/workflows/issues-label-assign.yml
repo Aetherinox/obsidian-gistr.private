@@ -93,7 +93,7 @@
               }
   
     # ---------------------------------------------------------------------------------------
-    #   Label > Roadmap
+    #   Label > Bug
     # ---------------------------------------------------------------------------------------
 
     Submission-Label-Bug:
@@ -238,7 +238,7 @@
               }
 
     # ---------------------------------------------------------------------------------------
-    #   Label > Feature
+    #   Label > Urgent
     # ---------------------------------------------------------------------------------------
 
     Submission-Label-Urgent:
@@ -381,4 +381,37 @@
                           labels:           add_labels
                       } );
                   }
+              }
+
+        - name: Set Assignees
+          uses: actions/github-script@v4
+          with:
+            github-token: ${{ secrets.ADMINSERV_TOKEN }}
+            script: |
+              const labelsToAssignees =
+              {
+                  'product: Aetherinox': ['Aetherinox'],
+              };
+
+              const labels      = context.payload.pull_request.labels.map( label => label.name );
+              const assignees   = [];
+
+              for ( const label of labels )
+              {
+                  if ( label in labelsToAssignees )
+                  {
+                      assignees.push( ...labelsToAssignees[ label ] );
+                  }
+              }
+
+              if ( assignees.length > 0 )
+              {
+                  const issue_number = context.payload.pull_request.number;
+                  await github.issues.addAssignees(
+                  {
+                      issue_number,
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      assignees
+                  });
               }
