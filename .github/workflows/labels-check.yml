@@ -442,6 +442,6 @@ jobs:
         add-issue-labels: 'Status ↯ Locked'
         github-token: ${{ secrets.ADMINSERV_TOKEN }}
         issue-inactive-days: '180'
-        issue-lock-reason: 'Autoclosed by AdminServ for inactivity'
+        issue-lock-reason: 'resolved'
         pr-inactive-days: '365'
-        pr-lock-reason: 'Autoclosed by AdminServ for inactivity'
+        pr-lock-reason: 'resolved'
