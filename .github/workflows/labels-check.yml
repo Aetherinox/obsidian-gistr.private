@@ -233,7 +233,7 @@ jobs:
                 const iss_body_lc       = iss_body.toLowerCase( );
 
                 console.log( `      └── 📁 ` + iss_title );
-                console.log( `         └── 📄 Issue #${ issue.number } last updated on ${ time_LastUpdate }` );
+                console.log( `         └── 📄 Issue #${ issue.number } last updated on ${ date_UpdateHuman }` );
                 console.log( `         └── 📄 ${add_labels}` );
                 console.log( `\n` )
 
