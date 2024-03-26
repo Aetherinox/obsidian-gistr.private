@@ -142,7 +142,7 @@
   
               let iss_title               = `${ context.payload.issue.title }`;
               let iss_body                = `${ context.payload.issue.body }`;
-              const iss_tag               = `${{ env.LABEL_BUG }}:`;
+              const iss_tag               = `${{ env.LABEL_BUG }}`;
 
               const iss_title_lc          = iss_title.toLowerCase( )
               const iss_body_lc           = iss_body.toLowerCase( );
@@ -178,7 +178,7 @@
                       let title_new         = title.replace( /^\s?bug\s*(.*?)\b/gi, '' );
                       title_new         		= title.replace( /^\s?fail\s*(.*?)\b/gi, '' );
                       title_new         		= title.replace( /^\s?issue\s*(.*?)\b/gi, '' );
-                      iss_title             = `${ iss_tag } ${ title_new }`;
+                      iss_title             = `${ iss_tag }: ${ title_new }`;
                   }
 
                   add_labels.push( `${ iss_tag }` );
@@ -214,7 +214,7 @@
   
               let iss_title               = `${ context.payload.issue.title }`;
               let iss_body                = `${ context.payload.issue.body }`;
-              const iss_tag               = `${{ env.LABEL_FEATURE }}:`;
+              const iss_tag               = `${{ env.LABEL_FEATURE }}`;
 
               const iss_title_lc          = iss_title.toLowerCase( )
               const iss_body_lc           = iss_body.toLowerCase( );
@@ -249,7 +249,7 @@
                       title_new             = title.replace( /^\s?request\s*(.*?)\b/gi, '' );
                       title_new             = title.replace( /^\s?add(.*?)\s?feature\s*(.*?)\b/gi, '' );
                       title_new             = title.replace( /^\s?add(.*?)\s?support\s*(.*?)\b/gi, '' );
-                      iss_title             = `${ iss_tag } ${ title_new }`;
+                      iss_title             = `${ iss_tag }: ${ title_new }`;
                   }
 
                   add_labels.push( `${ iss_tag }` );
@@ -285,7 +285,7 @@
   
               let iss_title               = `${ context.payload.issue.title }`;
               let iss_body                = `${ context.payload.issue.body }`;
-              const iss_tag               = `${{ env.LABEL_URGENT }}:`;
+              const iss_tag               = `${{ env.LABEL_URGENT }}`;
 
               const iss_title_lc          = iss_title.toLowerCase( )
               const iss_body_lc           = iss_body.toLowerCase( );
@@ -323,7 +323,7 @@
                       title_new             = title.replace( /^\s?urgency\s*(.*?)\b/gi, '' );
                       title_new             = title.replace( /^\s?important\s*(.*?)\b/gi, '' );
                       title_new             = title.replace( /^\s?critical\s*(.*?)\b/gi, '' );
-                      iss_title             = `${ iss_tag } ${ title_new }`;
+                      iss_title             = `${ iss_tag }: ${ title_new }`;
                   }
 
                   add_labels.push( `${ iss_tag }` );
@@ -359,7 +359,7 @@
   
               let iss_title               = `${ context.payload.issue.title }`;
               let iss_body                = `${ context.payload.issue.body }`;
-              const iss_tag               = `${{ env.LABEL_ROADMAP }}:`;
+              const iss_tag               = `${{ env.LABEL_ROADMAP }}`;
 
               const iss_title_lc          = iss_title.toLowerCase( )
               const iss_body_lc           = iss_body.toLowerCase( );
@@ -393,7 +393,7 @@
                       let title_new         = title.replace( /^\s?broad(.*?)\s?map\s*(.*?)\b/gi, '' );
                       title_new         		= title.replace( /^\s?planned\s*(.*?)\b/gi, '' );
                       title_new         		= title.replace( /^\s?broadmap\s*(.*?)\b/gi, '' );
-                      iss_title             = `${ iss_tag } ${ title_new }`;
+                      iss_title             = `${ iss_tag }: ${ title_new }`;
                   }
 
                   add_labels.push( `${ iss_tag }` );
