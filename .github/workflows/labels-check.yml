@@ -167,14 +167,14 @@ jobs:
             const curtime         = new Date( ).getTime( );
             const issues          = await github.rest.issues.listForRepo( { owner: context.repo.owner, repo: context.repo.repo, state: 'open' } );
   
-            console.log( `Found ${issues.data.length} open issues` );
+            console.log( `  📦──  Found ${issues.data.length} open issues` );
 
             for ( const issue of issues.data )
             {
                 const time_LastUpdate     = new Date( issue.updated_at ).getTime( );
                 //if ( curtime < time_LastUpdate + expireAfterMs ) continue;
 
-                console.log( `Issue #${ issue.number } last updated on ${ time_LastUpdate }` );
+                console.log( `  └── Issue #${ issue.number } last updated on ${ time_LastUpdate }` );
 
                 /*
                     Anything past this point is stale / to be closed
