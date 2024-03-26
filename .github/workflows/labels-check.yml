@@ -219,7 +219,7 @@ jobs:
                     // Rename title to contain Roadmap:
                     if ( !iss_title_lc.startsWith( iss_tag.toLowerCase( ) ) )
                     {
-                        const title           = context.payload.issue.title;
+                        const title           = issue.title;
                         let title_new         = title.replace( /^\s?bug\s*(.*?)\b/gi, '' );
                         title_new         		= title.replace( /^\s?fail\s*(.*?)\b/gi, '' );
                         title_new         		= title.replace( /^\s?issue\s*(.*?)\b/gi, '' );
@@ -228,7 +228,7 @@ jobs:
 
                     await github.rest.issues.update(
                     {
-                        owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number,
+                        owner: context.repo.owner, repo: context.repo.repo, issue_number: issue.number,
                         title: `${ iss_title }`, labels: add_labels
                     } );
                 }
