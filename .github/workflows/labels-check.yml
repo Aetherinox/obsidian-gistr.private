@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------------------------------
 #   @parent     : github workflow
-#   @desc       : manually activated workflow to create issue labels
+#   @desc       : checks each issue / PR for a valid label
 #   @author     : Aetherinox
 #   @url        : https://github.com/Aetherinox
 # ---------------------------------------------------------------------------------------
@@ -14,6 +14,8 @@ run-name: "🎫 Labels › Check"
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "0 */2 * * *"
 
 # ---------------------------------------------------------------------------------------
 #   environment variables
@@ -153,7 +155,7 @@ jobs:
       #   Check if repo has labels currently added to issues
       # ---------------------------------------------------------------------------------------
         
-      - name: 🏷️ Check › Bugs
+      - name: 🏷️ Checking Issues
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
@@ -163,15 +165,24 @@ jobs:
                 Change last number ( 36 = hours )
             */
 
+            core.info('No more issues found to process. Exiting.');
+
             const expireAfterMs   = 1000 * 60 * 60 * 36;
             const curtime         = new Date( ).getTime( );
+            const curDate         = curtime.toISOString().replace('Z', '');
             const issues          = await github.rest.issues.listForRepo( { owner: context.repo.owner, repo: context.repo.repo, state: 'open' } );
   
+            console.log( curtime )
+            console.log( curDate )
+
             console.log( `  📦──  Found ${issues.data.length} open issues` );
 
             for ( const issue of issues.data )
             {
                 const time_LastUpdate     = new Date( issue.updated_at ).getTime( );
+                const timeDate             = time_LastUpdate.toISOString().replace('Z', '');
+                console.log( time_LastUpdate )
+                console.log( timeDate )
                 //if ( curtime < time_LastUpdate + expireAfterMs ) continue;
 
                 /*
@@ -365,5 +376,3 @@ jobs:
                 */
 
             }
-
-
