@@ -85,6 +85,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       package_version: ${{ steps.check_fetch_labels.outputs.PACKAGE_VERSION }}
+      deployment_type_label: ${{ steps.step_deployment_type_label.outputs.result }}
     steps:
 
       - name: "✅ Start"
@@ -167,10 +168,27 @@ jobs:
 
             //issues.data
 
+      - name: Get deployment-type label
+        id: step_deployment_type_label
+        uses: actions/github-script@v6
+        with:
+          result-encoding: string
+          script: |
+
+            const issues = await github.rest.issues.listForRepo(
+            {
+                owner:    context.repo.owner,
+                repo:     context.repo.repo,
+                state:    'open',
+            } );
+
+            return issue.labels.map( label => label.name );
+
       - name: "👁️‍🗨️ Debug › Print Package"
         id: build_print_package
         run: |
           echo "The xxx was '${{ steps.check_fetch_labels.outputs.xxx }}'"
+          echo "The xxx was '${{needs.labels-check-startup.outputs.deployment_type_label}}'"
 
   issues-assign-labels:
     name: >-
@@ -183,10 +201,16 @@ jobs:
       id-token: 'write'
       issues: 'write'
     env:
+      deployment_type_label: ${{needs.labels-check-startup.outputs.deployment_type_label}}
       PACKAGE_VERSION: ${{ needs.labels-check-startup.outputs.package_version }}
     environment:
       name: Orion
     steps:
+
+      - name: "👁️‍🗨️ Debug › Print Package"
+        id: build_print_package
+        run: |
+          echo "The xxx was '${{needs.issues-assign-labels.outputs.deployment_type_label}}'"
 
       # ---------------------------------------------------------------------------------------
       #   Label > Bug
