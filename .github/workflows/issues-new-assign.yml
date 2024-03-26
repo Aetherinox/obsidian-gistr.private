@@ -331,39 +331,38 @@
                   issue_number:       context.issue.number
               });
   
-              let add_labels            = issueLabels.data.map(label => label.name);
+              let add_labels              = issueLabels.data.map(label => label.name);
   
-              const iss_body            = `${ context.payload.issue.body }`;
-              const iss_title           = `${ context.payload.issue.title }`;
-              const iss_title_append    = `${{ env.LABEL_ROADMAP }}:`;
-  
+              const iss_body              = `${ context.payload.issue.body }`;
+              const iss_title             = `${ context.payload.issue.title }`;
+              const iss_tag               = `${{ env.LABEL_ROADMAP }}:`;
+
+              const iss_title_lc          = iss_title.toLowerCase( )
+              const iss_tag_lc            = iss_tag.toLowerCase( )
+
               const containsList =
               [
                 "roadmap",
                 "road map",
                 "planned",
               ];
-  
-              const bIncludesWord  = containsList.some( s => s.includes( iss_title ) || iss_title.includes( s ) );
+
+              const bIncludesWord         = containsList.some( s => s.includes( iss_title_lc ) || iss_title_lc.includes( s ) );
   
               /*
-                  Check if title contains word in containsList 
+                  - Check if issue title matches the issue label "Roadmap:"
+                  - Check if title contains word in containsList 
               */
 
-              console.log( iss_title.toLowerCase( ) )
-              console.log( iss_title_append.toLowerCase( ) )
-              console.log( bIncludesWord )
-  
-              if ( iss_title.toLowerCase( ).startsWith( iss_title_append.toLowerCase( ) ) || bIncludesWord )
+              if ( iss_title_lc.startsWith( iss_tag_lc ) || bIncludesWord )
               {
+
                   /*
                       Rename title to contain Roadmap:
                   */
   
-                  if ( !iss_title.toLowerCase( ).startsWith( iss_title_append.toLowerCase( ) ) )
+                  if ( !iss_title_lc.startsWith( iss_tag_lc ) )
                   {
-                      add_labels.push( "${{ env.LABEL_ROADMAP }}" );
-  
                       const title           = context.payload.issue.title
                       let title_new         = title.replace( /^\s?broad(.*?)\s?map\s*(.*?)\b/gi, '' );
                       title_new         		= title.replace( /^\s?planned\s*(.*?)\b/gi, '' );
@@ -374,9 +373,11 @@
                           owner:            context.repo.owner,
                           repo:             context.repo.repo,
                           issue_number:     context.issue.number,
-                          title:            `${ iss_title_append } ${ title_new }`,
+                          title:            `${ iss_tag } ${ title_new }`,
                           labels:           add_labels
                       } );
+                      
+                      add_labels.push( "${{ env.LABEL_ROADMAP }}" );
                   }
               }
   
