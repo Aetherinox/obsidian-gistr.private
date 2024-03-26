@@ -338,6 +338,7 @@
               const iss_tag               = `${{ env.LABEL_ROADMAP }}:`;
 
               const iss_title_lc          = iss_title.toLowerCase( )
+              const iss_body_lc           = iss_body.toLowerCase( );
               const iss_tag_lc            = iss_tag.toLowerCase( )
 
               const containsList =
@@ -347,14 +348,15 @@
                 "planned",
               ];
 
-              const bIncludesWord         = containsList.some( s => s.includes( iss_title_lc ) || iss_title_lc.includes( s ) );
-  
+              const bIncludesWordTitle    = containsList.some( s => s.includes( iss_title_lc ) || iss_title_lc.includes( s ) );
+              const bIncludesWordBody     = containsList.some( s => s.includes( iss_body_lc ) || iss_body_lc.includes( s ) );
+
               /*
                   - Check if issue title matches the issue label "Roadmap:"
                   - Check if title contains word in containsList 
               */
 
-              if ( iss_title_lc.startsWith( iss_tag_lc ) || bIncludesWord )
+              if ( iss_title_lc.startsWith( iss_tag_lc ) || bIncludesWordTitle || bIncludesWordBody )
               {
 
                   /*
