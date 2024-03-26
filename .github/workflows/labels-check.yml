@@ -226,7 +226,7 @@ jobs:
                 console.log( `      └── 📁 ` + iss_title );
                 console.log( `         └── 📄 Issue #${ issue.number } last updated on ${ date_UpdateHuman }` );
                 console.log( `         └── 📄 ${add_labels}` );
-                console.log( `\n` )
+                console.log( `\n\n` )
 
                 /*
                     Keywords
@@ -393,5 +393,55 @@ jobs:
                     state: 'closed', state_reason: 'not planned'
                 } );
                 */
-
             }
+
+
+
+  issues-stale-check:
+    name: 🎫 Labels › Check
+    runs-on: ubuntu-latest
+    needs: issues-labels-create
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+
+    steps:
+    - name: Check Stale Condition
+      uses: actions/stale@v9
+      with:
+        repo-token: ${{ secrets.ADMINSERV_TOKEN }}
+        stale-issue-message: |
+          ⚠️ It looks like there hasn't been any recent updates on this
+          issue.  If you created this issue and no longer consider it
+          open, then please login to github and close the issue.  
+          
+          If there is no further activity on this issue, it will be 
+          automatically closed in the next few days.
+
+          ---
+
+          <sub>I am a bot reaching out to you with an automated response.</sub>
+
+        stale-issue-label: 'Status ↯ Stale'
+        close-issue-label: 'Status ↯ Autoclosed'
+        exempt-issue-labels: 'feature,Type ⇴ Feature,bug,Type ⇴ Bug'
+        days-before-stale: 30
+        days-before-close: 7
+        days-before-pr-stale: -1
+        days-before-pr-close: -1
+
+  lock:
+    name: Lock Closed Issues
+    runs-on: ubuntu-latest
+    steps:
+    - name: "Autoclose Inactives"
+      uses: dessant/lock-threads@v5
+      with:
+        add-pr-labels: 'Status ↯ Locked'
+        add-issue-labels: 'Status ↯ Locked'
+        github-token: ${{ secrets.ADMINSERV_TOKEN }}
+        issue-inactive-days: '180'
+        issue-lock-reason: 'Autoclosed by AdminServ for inactivity'
+        pr-inactive-days: '365'
+        pr-lock-reason: 'Autoclosed by AdminServ for inactivity'
