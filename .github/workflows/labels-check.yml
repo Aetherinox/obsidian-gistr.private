@@ -178,9 +178,9 @@ jobs:
             for ( const issue of issues.data )
             {
                 const time_LastUpdate     = new Date( issue.updated_at ).getTime( );
-                const timeDate             = time_LastUpdate.toISOString().replace('Z', '');
                 console.log( time_LastUpdate )
-                console.log( timeDate )
+
+                
                 //if ( curtime < time_LastUpdate + expireAfterMs ) continue;
 
                 /*
