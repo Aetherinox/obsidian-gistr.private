@@ -200,7 +200,7 @@ jobs:
 
             for ( const issue of issues.data )
             {
-                let date_UpdateDate    = new Date( `${ context.payload.pull_request.created_at }` );
+                let date_UpdateDate    = new Date( `${ issue.updated_at }` );
                 date_UpdateDate.toISOString( )
 
                 let date_UpdateHuman  = dateTimeformat( date_UpdateDate ) + " UTC";
