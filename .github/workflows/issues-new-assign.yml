@@ -349,6 +349,10 @@
               /*
                   Check if title contains word in containsList 
               */
+
+              console.log( iss_title.toLowerCase( ) )
+              console.log( iss_title_append.toLowerCase( ) )
+              console.log( bIncludesWord )
   
               if ( iss_title.toLowerCase( ).startsWith( iss_title_append.toLowerCase( ) ) || bIncludesWord )
               {
