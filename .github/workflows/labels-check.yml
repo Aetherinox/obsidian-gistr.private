@@ -193,32 +193,38 @@ jobs:
                 let iss_body            = `${ issue.body }`;
                 const iss_body_lc       = iss_body.toLowerCase( );
 
-                const iss_tag           = `${{ env.PREFIX_BUG }}`;
-
                 console.log( `      └── 📁 ` + iss_title );
                 console.log( `         └── 📄 Issue #${ issue.number } last updated on ${ time_LastUpdate }` );
                 console.log( `         └── 📄 ${add_labels}` );
                 console.log( `\n` )
 
+                /*
+                    Keywords
+                */
+
+                const KwordsBugs          = [ "bug", "broke", "issue", "fail" ];
+                const KwordFeature        = [ "feature", "request", "add support" ];
+                const KwordUrgent         = [ "urgent", "urgency", "emergency", "important", "critical" ];
+                const KwordRoadmap        = [ "roadmap", "road map", "planned" ];
 
                 /*
                     Label > Bugs
                 */
 
-                const KeywordsBugs          = [ "bug", "broke", "issue", "fail" ];
-    
-                const bIncludesWordTitle    = KeywordsBugs.some( s => s.includes( iss_title_lc ) || iss_title_lc.includes( s ) );
-                const bIncludesWordBody     = KeywordsBugs.some( s => s.includes( iss_body_lc ) || iss_body_lc.includes( s ) );
+                const iss_tag             = `${{ env.PREFIX_BUG }}`;
+                const inss_label          = `${{ env.LABEL_BUG }}`;
+                const bKwordBugsIncT      = KwordsBugs.some( s => s.includes( iss_title_lc ) || iss_title_lc.includes( s ) );
+                const bKwordBugsIncB      = KwordsBugs.some( s => s.includes( iss_body_lc ) || iss_body_lc.includes( s ) );
 
                 /*
                     - Check if issue title matches the issue label "Bug:"
                     - Check if title contains word in containsList 
                 */
 
-                if ( iss_title_lc.startsWith( iss_tag.toLowerCase( ) ) || bIncludesWordTitle || bIncludesWordBody )
+                if ( iss_title_lc.startsWith( iss_tag.toLowerCase( ) ) || bKwordBugsIncT || bKwordBugsIncB )
                 {
 
-                    add_labels.push( `${{ env.LABEL_BUG }}` );
+                    add_labels.push( `${ inss_label }` );
 
                     // Rename title to contain Roadmap:
                     if ( !iss_title_lc.startsWith( iss_tag.toLowerCase( ) ) )
@@ -236,6 +242,10 @@ jobs:
                         title: `${ iss_title }`, labels: add_labels
                     } );
                 }
+
+
+
+
 
                 /*
                 await github.rest.issues.update(
