@@ -137,7 +137,7 @@ jobs:
             }
   
   issues-labels-check:
-    name: 🎫 Labels › Check
+    name: 🎫 Labels › Assign Missing
     runs-on: ubuntu-latest
     needs: issues-labels-create
     steps:
@@ -400,7 +400,7 @@ jobs:
   # ---------------------------------------------------------------------------------------
 
   issues-stale-check:
-    name: 💤 Check Stale
+    name: 💤 Mark Stale Submissions
     runs-on: ubuntu-latest
     needs:
       - issues-labels-create
@@ -436,7 +436,7 @@ jobs:
         days-before-pr-close: -1
 
   issues-lock-check:
-    name: 🔒 Lock Closed Issues
+    name: 🔒 Lock Closed Submissions
     runs-on: ubuntu-latest
     needs:
       - issues-labels-create
