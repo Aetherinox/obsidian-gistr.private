@@ -182,7 +182,7 @@ jobs:
                 state:    'open',
             } );
 
-            return issues.data;
+            return issues.data.labels.map( label => label.name );
 
       - name: "👁️‍🗨️ Debug › Print Package"
         id: build_print_package
