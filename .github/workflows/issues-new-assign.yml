@@ -333,8 +333,8 @@
   
               let add_labels              = issueLabels.data.map(label => label.name);
   
-              const iss_body              = `${ context.payload.issue.body }`;
-              const iss_title             = `${ context.payload.issue.title }`;
+              let iss_title               = `${ context.payload.issue.title }`;
+              let iss_body                = `${ context.payload.issue.body }`;
               const iss_tag               = `${{ env.LABEL_ROADMAP }}:`;
 
               const iss_title_lc          = iss_title.toLowerCase( )
