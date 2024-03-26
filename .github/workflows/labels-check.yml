@@ -161,6 +161,9 @@ jobs:
                     issue_number:   issue.number,
                 });
 
+                let add_labels              = issue.labels.map(label => label.name);
+                console.log( "Map " + add_labels )
+
                 // const labelEvent  = timeline.data.find( event => event.event === 'labeled' && event.label.name === 'status-stale' );
 
                 let iss_title       = `${ issue.title }`;
