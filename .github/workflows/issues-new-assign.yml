@@ -231,9 +231,9 @@ jobs:
             let iss_body                = `${ context.payload.issue.body }`;
             const iss_tag               = `${{ env.PREFIX_FEATURE }}`;
 
-            const iss_title_lc          = iss_title.toLowerCase( )
+            const iss_title_lc          = iss_title.toLowerCase( );
             const iss_body_lc           = iss_body.toLowerCase( );
-            const iss_tag_lc            = iss_tag.toLowerCase( )
+            const iss_tag_lc            = iss_tag.toLowerCase( );
 
             const containsList =
             [
@@ -257,6 +257,8 @@ jobs:
                     Rename title to contain Roadmap:
                 */
 
+                add_labels.push( `${{ env.LABEL_FEATURE }}` );
+
                 if ( !iss_title_lc.startsWith( iss_tag_lc ) )
                 {
                     const title           = context.payload.issue.title
@@ -266,8 +268,6 @@ jobs:
                     title_new             = title.replace( /^\s?add(.*?)\s?support\s*(.*?)\b/gi, '' );
                     iss_title             = `${ iss_tag }: ${ title_new }`;
                 }
-
-                add_labels.push( `${{ env.LABEL_FEATURE }}` );
 
                 await github.rest.issues.update(
                 {
