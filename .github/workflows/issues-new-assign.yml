@@ -153,7 +153,8 @@ jobs:
                 issue_number:     context.issue.number
             });
 
-            let add_labels              = issueLabels.data.map(label => label.name);
+            let add_labels              = issue.labels.map(label => label.name);
+            console.log( add_labels )
 
             let iss_title               = `${ context.payload.issue.title }`;
             let iss_body                = `${ context.payload.issue.body }`;

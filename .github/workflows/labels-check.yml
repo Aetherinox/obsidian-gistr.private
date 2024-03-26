@@ -126,6 +126,13 @@ jobs:
           github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
           script: |
         
+            /*
+                Change last number ( 36 = hours )
+            */
+
+            const expireAfterMs   = 1000 * 60 * 60 * 36;
+            const curtime         = new Date( ).getTime( );
+
             const issues = await github.rest.issues.listForRepo(
             {
                 owner:    context.repo.owner,
@@ -137,7 +144,15 @@ jobs:
 
             for ( const issue of issues.data )
             {
-                console.log( `Checking issue #${issue.number} created at ${issue.created_at}` );
+                const time_LastUpdate    = new Date( issue.updated_at ).getTime( );
+
+                console.log( `Issue #${ issue.number } last updated on ${ time_LastUpdate }` );
+
+                /*
+                    Anything past this point is stale / to be closed
+                */
+
+                //if ( curtime < time_LastUpdate + expireAfterMs ) continue;
 
                 const timeline = await github.rest.issues.listEventsForTimeline(
                 {
@@ -146,13 +161,12 @@ jobs:
                     issue_number:   issue.number,
                 });
 
-                //const labelEvent = timeline.data.find( event => event.event === 'labeled' && event.label.name === 'likely-no' );
+                // const labelEvent  = timeline.data.find( event => event.event === 'labeled' && event.label.name === 'status-stale' );
 
-                let iss_title               = `${ issue.title }`;
-                let iss_body                = `${ issue.body }`;
+                let iss_title       = `${ issue.title }`;
+                let iss_body        = `${ issue.body }`;
 
                 console.log( iss_title )
-                console.log( iss_body )
 
                 /*
                 await github.rest.issues.update(
