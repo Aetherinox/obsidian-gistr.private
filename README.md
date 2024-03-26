@@ -1,4 +1,4 @@
-<p align="center"><img src="https://github.com/Aetherinox/obsidian-gistr/assets/118329232/106bcb32-6c6f-423c-a8c6-c6aee3d31c65" width="860"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/Aetherinox/obsidian-gistr/main/Docs/images/banner.png" width="860"></p>
 <h1 align="center"><b>Obsidian: Gistr</b></h1>
 
 <div align="center">
@@ -181,7 +181,7 @@ gist.yourdomain.com/username/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 <br />
 
-<p align="center"><img style="width: 85%;text-align: center;border: 1px solid #353535;" src="https://github.com/Aetherinox/obsidian-gistr/assets/118329232/3e396b9f-7b31-4e9c-8557-2d6276c9afaa"></p>
+<p align="center"><img style="width: 85%;text-align: center;border: 1px solid #353535;" src="Docs/images/3.png"></p>
 
 <br />
 
@@ -252,7 +252,7 @@ The following instructions explain how to install this plugin for Obsidian.
 ```
 - Launch Obsidian and click the Settings Cog Icon `⚙️`
 - On the left, select **Community Plugins**
-- Locate `Gistr` and enable it. <img src="https://github.com/Aetherinox/obsidian-gistr/assets/118329232/3e512f8a-5c7d-4bff-a3e8-3ef88e673e72" data-canonical-src="https://github.com/Aetherinox/obsidian-gistr/assets/118329232/3e512f8a-5c7d-4bff-a3e8-3ef88e673e72" height=20px />
+- Locate `Gistr` and enable it. <img src="https://raw.githubusercontent.com/Aetherinox/obsidian-opengist/main/Docs/images/ui/obsidian-enable.png" data-canonical-src="https://raw.githubusercontent.com/Aetherinox/obsidian-opengist/main/Docs/images/ui/obsidian-enable.png" height=20px />
 
 <br />
 <br />
@@ -265,7 +265,7 @@ Plugin can also be installed utilizing the [BRAT](https://github.com/TfTHacker/o
 - In BRAT settings, click the button **Add Beta Plugin**
 - In the textbox, supply the URL to this repo
   - `https://github.com/Aetherinox/obsidian-gistr`
-- Once Gistr is installed, activate it in your Obsidian settings. <img src="https://github.com/Aetherinox/obsidian-gistr/assets/118329232/3e512f8a-5c7d-4bff-a3e8-3ef88e673e72" data-canonical-src="https://github.com/Aetherinox/obsidian-gistr/assets/118329232/3e512f8a-5c7d-4bff-a3e8-3ef88e673e72" height=20px />
+- Once Gistr is installed, activate it in your Obsidian settings. <img src="https://raw.githubusercontent.com/Aetherinox/obsidian-opengist/main/Docs/images/ui/obsidian-enable.png" data-canonical-src="https://raw.githubusercontent.com/Aetherinox/obsidian-opengist/main/Docs/images/ui/obsidian-enable.png" height=20px />
 
 <br />
 
