@@ -174,8 +174,6 @@ jobs:
                 const time_LastUpdate     = new Date( issue.updated_at ).getTime( );
                 //if ( curtime < time_LastUpdate + expireAfterMs ) continue;
 
-                console.log( `  └── Issue #${ issue.number } last updated on ${ time_LastUpdate }` );
-
                 /*
                     Anything past this point is stale / to be closed
                 */
@@ -196,6 +194,10 @@ jobs:
                 const iss_body_lc       = iss_body.toLowerCase( );
 
                 const iss_tag           = `${{ env.PREFIX_BUG }}`;
+
+                console.log( `    └── ' + iss_title );
+                console.log( `    └── Issue #${ issue.number } last updated on ${ time_LastUpdate }` );
+
 
                 /*
                     Label > Bugs
@@ -232,8 +234,6 @@ jobs:
                         title: `${ iss_title }`, labels: add_labels
                     } );
                 }
-
-                console.log( iss_title )
 
                 /*
                 await github.rest.issues.update(
