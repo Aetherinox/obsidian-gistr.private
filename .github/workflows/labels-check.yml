@@ -132,17 +132,3 @@ jobs:
                 repo:     context.repo.repo,
                 state:    'open',
             } );
-  
-            console.log( `Found ${issues.data.length} open issues` );
-
-            for ( const issue of issues.data )
-            {
-                console.log( `Checking issue #${issue.number} created at ${issue.created_at}` );
-
-                let iss_title               = `${ issue.title }`;
-                let iss_body                = `${ issue.body }`;
-
-                console.log( iss_title )
-                console.log( iss_body )
-
-            }
