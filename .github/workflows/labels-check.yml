@@ -207,9 +207,9 @@ jobs:
 
                 const time_UpdateMs     = new Date( issue.updated_at ).getTime( );
 
-                console.log( date_UpdateDate )
-                console.log( date_UpdateHuman )
-                console.log( time_UpdateMs )
+                console.log( "date_UpdateDate " + date_UpdateDate )
+                console.log( "date_UpdateHuman " + date_UpdateHuman )
+                console.log( "time_UpdateMs " + time_UpdateMs )
 
                 //if ( curtime < time_UpdateMs + expireAfterMs ) continue;
 
