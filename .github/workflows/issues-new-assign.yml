@@ -175,7 +175,7 @@ jobs:
             const bIncludesWordBody     = containsList.some( s => s.includes( iss_body_lc ) || iss_body_lc.includes( s ) );
 
             /*
-                - Check if issue title matches the issue label "Roadmap:"
+                - Check if issue title matches the issue label "Bug:"
                 - Check if title contains word in containsList 
             */
 
@@ -246,7 +246,7 @@ jobs:
             const bIncludesWordBody     = containsList.some( s => s.includes( iss_body_lc ) || iss_body_lc.includes( s ) );
 
             /*
-                - Check if issue title matches the issue label "Roadmap:"
+                - Check if issue title matches the issue label "Feature:"
                 - Check if title contains word in containsList 
             */
 
@@ -308,18 +308,18 @@ jobs:
 
             const containsList =
             [
-              "urgent",
-              "urgency",
-              "emergency",
-              "important",
-              "critical",
+                "urgent",
+                "urgency",
+                "emergency",
+                "important",
+                "critical",
             ];
 
             const bIncludesWordTitle    = containsList.some( s => s.includes( iss_title_lc ) || iss_title_lc.includes( s ) );
             const bIncludesWordBody     = containsList.some( s => s.includes( iss_body_lc ) || iss_body_lc.includes( s ) );
 
             /*
-                - Check if issue title matches the issue label "Roadmap:"
+                - Check if issue title matches the issue label "Urgent:"
                 - Check if title contains word in containsList 
             */
 

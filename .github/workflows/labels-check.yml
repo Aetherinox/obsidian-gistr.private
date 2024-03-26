@@ -20,6 +20,24 @@ on:
 # ---------------------------------------------------------------------------------------
 
 env:
+  PREFIX_BUG:           "Bug"
+  PREFIX_FEATURE:       "Feature"
+  PREFIX_ROADMAP:       "Roadmap"
+  PREFIX_DEPENDENCY:    "Dependency"
+  PREFIX_PR:            "PR"
+  PREFIX_DOCS:          "Docs"
+  PREFIX_GIT:           "Git Action"
+  PREFIX_URGENT:        "Urgent"
+
+  LABEL_BUG:            "Type ⇴ Bug"
+  LABEL_FEATURE:        "Type ⇴ Feature"
+  LABEL_ROADMAP:        "Type ⇴ Roadmap"
+  LABEL_DEPENDENCY:     "Type ⇴ Dependency"
+  LABEL_PR:             "Type ⇴ PR"
+  LABEL_DOCS:           "Type ⇴ Docs"
+  LABEL_GIT:            "Type ⇴ Git Action"
+  LABEL_URGENT:         "⚠ Urgent"
+
   ASSIGN_USER:          Aetherinox
   BOT_NAME_1:           AdminServ
   BOT_NAME_2:           AdminServX
@@ -62,9 +80,11 @@ jobs:
   #   All labels come from the JSON table LABELS_JSON.
   # ---------------------------------------------------------------------------------------
 
-  issues-labels-create:
+  labels-check-startup:
     name: 🎫 Labels › Check
     runs-on: ubuntu-latest
+    outputs:
+      package_version: ${{ steps.check_fetch_labels.outputs.PACKAGE_VERSION }}
     steps:
 
       - name: "✅ Start"
@@ -122,6 +142,7 @@ jobs:
         
       - name: 🏷️ Check Labels
         uses: actions/github-script@v7
+        id: check_fetch_labels
         with:
           github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
           script: |
@@ -142,44 +163,39 @@ jobs:
   
             console.log( `Found ${issues.data.length} open issues` );
 
-            for ( const issue of issues.data )
-            {
-                const time_LastUpdate    = new Date( issue.updated_at ).getTime( );
+            echo "PACKAGE_VERSION=${ issues.data }" >> $GITHUB_OUTPUT
 
-                console.log( `Issue #${ issue.number } last updated on ${ time_LastUpdate }` );
+            //issues.data
 
-                /*
-                    Anything past this point is stale / to be closed
-                */
+      - name: "👁️‍🗨️ Debug › Print Package"
+        id: build_print_package
+        run: |
+          echo ${{ steps.check_fetch_labels.outputs.PACKAGE_VERSION }}
 
-                //if ( curtime < time_LastUpdate + expireAfterMs ) continue;
+  issues-assign-labels:
+    name: >-
+      🏷️ Labels › Assign
+    needs:
+    - labels-check-startup
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+      issues: 'write'
+    env:
+      PACKAGE_VERSION: ${{ needs.labels-check-startup.outputs.package_version }}
+    environment:
+      name: Orion
+    steps:
 
-                const timeline = await github.rest.issues.listEventsForTimeline(
-                {
-                    owner:          context.repo.owner,
-                    repo:           context.repo.repo,
-                    issue_number:   issue.number,
-                });
+      # ---------------------------------------------------------------------------------------
+      #   Label > Bug
+      # ---------------------------------------------------------------------------------------
 
-                let add_labels              = issue.labels.map(label => label.name);
-                console.log( "add_labels " + add_labels )
+      - name: 🏷️ ${{ env.PREFIX_BUG }} › Assignment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
+          script: |
 
-                // const labelEvent  = timeline.data.find( event => event.event === 'labeled' && event.label.name === 'status-stale' );
 
-                let iss_title       = `${ issue.title }`;
-                let iss_body        = `${ issue.body }`;
-
-                console.log( iss_title )
-
-                /*
-                await github.rest.issues.update(
-                {
-                    owner:          context.repo.owner,
-                    repo:           context.repo.repo,
-                    issue_number:   issue.number,
-                    state:          'closed',
-                    state_reason:   'not planned'
-                });
-                */
-
-            }
