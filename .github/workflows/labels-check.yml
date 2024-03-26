@@ -395,18 +395,22 @@ jobs:
                 */
             }
 
-
+  # ---------------------------------------------------------------------------------------
+  #   Check Stale Issues
+  # ---------------------------------------------------------------------------------------
 
   issues-stale-check:
     name: 💤 Check Stale
     runs-on: ubuntu-latest
-    needs: issues-labels-create
+    needs:
+      - issues-labels-create
+      - issues-labels-check
     permissions:
       contents: write
       issues: write
       pull-requests: write
-
     steps:
+  
     - name: 💤 Check Stale Condition
       uses: actions/stale@v9
       with:
@@ -431,10 +435,12 @@ jobs:
         days-before-pr-stale: -1
         days-before-pr-close: -1
 
-  lock:
+  issues-lock-check:
     name: 🔒 Lock Closed Issues
     runs-on: ubuntu-latest
-    needs: issues-labels-create
+    needs:
+      - issues-labels-create
+      - issues-labels-check
     steps:
   
     - name: "🔒 Autoclose Inactives"
