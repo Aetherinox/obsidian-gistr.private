@@ -162,7 +162,7 @@ jobs:
                 });
 
                 let add_labels              = issue.labels.map(label => label.name);
-                console.log( "Map " + add_labels )
+                console.log( "add_labels " + add_labels )
 
                 // const labelEvent  = timeline.data.find( event => event.event === 'labeled' && event.label.name === 'status-stale' );
 
