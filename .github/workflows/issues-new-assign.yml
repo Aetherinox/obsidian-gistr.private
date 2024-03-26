@@ -196,7 +196,7 @@
                       iss_title             = `${ iss_tag }: ${ title_new }`;
                   }
 
-                  add_labels.push( `${ env.TAG_BUG }` );
+                  add_labels.push( `${{ env.TAG_BUG }}` );
 
                   await github.rest.issues.update(
                   {
@@ -267,7 +267,7 @@
                       iss_title             = `${ iss_tag }: ${ title_new }`;
                   }
 
-                  add_labels.push( `${ env.TAG_FEATURE }` );
+                  add_labels.push( `${{ env.TAG_FEATURE }}` );
 
                   await github.rest.issues.update(
                   {
@@ -341,7 +341,7 @@
                       iss_title             = `${ iss_tag }: ${ title_new }`;
                   }
 
-                  add_labels.push( `${ env.TAG_URGENT }` );
+                  add_labels.push( `${{ env.TAG_URGENT }}` );
 
                   await github.rest.issues.update(
                   {
@@ -411,7 +411,7 @@
                       iss_title             = `${ iss_tag }: ${ title_new }`;
                   }
 
-                  add_labels.push( `${ env.TAG_ROADMAP }` );
+                  add_labels.push( `${{ env.TAG_ROADMAP }}` );
 
                   await github.rest.issues.update(
                   {
