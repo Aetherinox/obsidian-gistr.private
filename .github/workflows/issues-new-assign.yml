@@ -367,18 +367,19 @@
                       let title_new         = title.replace( /^\s?broad(.*?)\s?map\s*(.*?)\b/gi, '' );
                       title_new         		= title.replace( /^\s?planned\s*(.*?)\b/gi, '' );
                       title_new         		= title.replace( /^\s?broadmap\s*(.*?)\b/gi, '' );
-  
-                      await github.rest.issues.update(
-                      {
-                          owner:            context.repo.owner,
-                          repo:             context.repo.repo,
-                          issue_number:     context.issue.number,
-                          title:            `${ iss_tag } ${ title_new }`,
-                          labels:           add_labels
-                      } );
-                      
-                      add_labels.push( "${{ env.LABEL_ROADMAP }}" );
+                      iss_title             = `${ iss_tag } ${ title_new }`;
                   }
+
+                  add_labels.push( "${{ env.LABEL_ROADMAP }}" );
+
+                  await github.rest.issues.update(
+                  {
+                      owner:            context.repo.owner,
+                      repo:             context.repo.repo,
+                      issue_number:     context.issue.number,
+                      title:            `${ iss_title }`,
+                      labels:           add_labels
+                  } );
               }
   
     # ---------------------------------------------------------------------------------------
