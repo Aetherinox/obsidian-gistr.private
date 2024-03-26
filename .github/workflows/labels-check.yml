@@ -188,27 +188,19 @@ jobs:
                 Change last number ( 36 = hours )
             */
 
-            core.info('No more issues found to process. Exiting.');
-
-            const expireAfterMs   = 1000 * 60 * 60 * 36;
-            const curtime         = new Date( ).getTime( );
-            const issues          = await github.rest.issues.listForRepo( { owner: context.repo.owner, repo: context.repo.repo, state: 'open' } );
+            const expireAfterMs     = 1000 * 60 * 60 * 36;        // milliseconds ( 36 hours )
+            const curtime           = new Date( ).getTime( );     // 1711471510629
+            const issues            = await github.rest.issues.listForRepo( { owner: context.repo.owner, repo: context.repo.repo, state: 'open' } );
   
-            console.log( curtime )
-
             console.log( `  📦──  Found ${issues.data.length} open issues` );
 
             for ( const issue of issues.data )
             {
-                let date_UpdateDate     = new Date( `${ issue.updated_at }` );          // Tue Mar 26 2024 16:40:41 GMT+0000 (Coordinated Universal Time)
-                console.log( "date_UpdateDate " + date_UpdateDate )
-                date_UpdateDate.toISOString( )
-                console.log( "toISOString " + date_UpdateDate )
+                let date_UpdateDate     = new Date( `${ issue.updated_at }` ?? `${ issue.created_at }` );   // Tue Mar 26 2024 16:40:41 GMT+0000 (Coordinated Universal Time)
+                date_UpdateDate.toISOString( )                                                              // Tue Mar 26 2024 16:40:41 GMT+0000 (Coordinated Universal Time) (string)
 
-                let date_UpdateHuman    = dateTimeformat( date_UpdateDate ) + " UTC";   // 03.26.2024 4:40 PM UTC
-                const time_UpdateMs     = new Date( issue.updated_at ).getTime( );      // 1711471241000
-
-
+                let date_UpdateHuman    = dateTimeformat( date_UpdateDate ) + " UTC";                       // 03.26.2024 4:40 PM UTC
+                const time_UpdateMs     = new Date( issue.updated_at ).getTime( );                          // 1711471241000
 
                 //if ( curtime < time_UpdateMs + expireAfterMs ) continue;
 
@@ -240,10 +232,10 @@ jobs:
                     Keywords
                 */
 
-                const KwordsBugs          = [ "bug", "broke", "issue", "fail" ];
-                const KwordFeature        = [ "feature", "request", "add support" ];
-                const KwordUrgn           = [ "urgent", "urgency", "emergency", "important", "critical" ];
-                const KwordRoad           = [ "roadmap", "road map", "planned" ];
+                const bug_words           = [ "bug", "broke", "issue", "fail" ];
+                const bug_feat            = [ "feature", "request", "add support" ];
+                const bug_urgn            = [ "urgent", "urgency", "emergency", "important", "critical" ];
+                const bug_road            = [ "roadmap", "road map", "planned" ];
 
                 /*
                     Label > Bugs
@@ -251,8 +243,8 @@ jobs:
 
                 const bug_tag             = `${{ env.PREFIX_BUG }}`;
                 const bug_lbl             = `${{ env.LABEL_BUG }}`;
-                const bug_bIncWordT       = KwordsBugs.some( s => s.includes( iss_title_lc ) || iss_title_lc.includes( s ) );
-                const bug_bIncWordB       = KwordsBugs.some( s => s.includes( iss_body_lc ) || iss_body_lc.includes( s ) );
+                const bug_bIncWordT       = bug_words.some( s => s.includes( iss_title_lc ) || iss_title_lc.includes( s ) );
+                const bug_bIncWordB       = bug_words.some( s => s.includes( iss_body_lc ) || iss_body_lc.includes( s ) );
 
                 /*
                     - Check if issue title matches the issue label "Bug:"
@@ -287,8 +279,8 @@ jobs:
 
                 const feat_tag            = `${{ env.PREFIX_FEATURE }}`;
                 const feat_lbl            = `${{ env.LABEL_FEATURE }}`;
-                const feat_bIncWordT      = KwordFeature.some( s => s.includes( iss_title_lc ) || iss_title_lc.includes( s ) );
-                const feat_bIncWordB      = KwordFeature.some( s => s.includes( iss_body_lc ) || iss_body_lc.includes( s ) );
+                const feat_bIncWordT      = bug_feat.some( s => s.includes( iss_title_lc ) || iss_title_lc.includes( s ) );
+                const feat_bIncWordB      = bug_feat.some( s => s.includes( iss_body_lc ) || iss_body_lc.includes( s ) );
 
                 /*
                     - Check if issue title matches the issue label "Feature:"
@@ -324,8 +316,8 @@ jobs:
 
                 const urgn_tag            = `${{ env.PREFIX_URGENT }}`;
                 const urgn_lbl            = `${{ env.LABEL_URGENT }}`;
-                const urgn_bIncWordT      = KwordUrgn.some( s => s.includes( iss_title_lc ) || iss_title_lc.includes( s ) );
-                const urgn_bIncWordB      = KwordUrgn.some( s => s.includes( iss_body_lc ) || iss_body_lc.includes( s ) );
+                const urgn_bIncWordT      = bug_urgn.some( s => s.includes( iss_title_lc ) || iss_title_lc.includes( s ) );
+                const urgn_bIncWordB      = bug_urgn.some( s => s.includes( iss_body_lc ) || iss_body_lc.includes( s ) );
 
                 /*
                     - Check if issue title matches the issue label "Urgent:"
@@ -362,8 +354,8 @@ jobs:
 
                 const road_tag            = `${{ env.PREFIX_ROADMAP }}`;
                 const road_lbl            = `${{ env.LABEL_ROADMAP }}`;
-                const road_bIncWordT      = KwordRoad.some( s => s.includes( iss_title_lc ) || iss_title_lc.includes( s ) );
-                const road_bIncWordB      = KwordRoad.some( s => s.includes( iss_body_lc ) || iss_body_lc.includes( s ) );
+                const road_bIncWordT      = bug_road.some( s => s.includes( iss_title_lc ) || iss_title_lc.includes( s ) );
+                const road_bIncWordB      = bug_road.some( s => s.includes( iss_body_lc ) || iss_body_lc.includes( s ) );
 
                 /*
                     - Check if issue title matches the issue label "Roadmap:"
