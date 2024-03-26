@@ -139,30 +139,10 @@ jobs:
             {
                 console.log( `Checking issue #${issue.number} created at ${issue.created_at}` );
 
-                const timeline = await github.rest.issues.listEventsForTimeline(
-                {
-                    owner:          context.repo.owner,
-                    repo:           context.repo.repo,
-                    issue_number:   issue.number,
-                });
-
-                //const labelEvent = timeline.data.find( event => event.event === 'labeled' && event.label.name === 'likely-no' );
-
                 let iss_title               = `${ issue.title }`;
                 let iss_body                = `${ issue.body }`;
 
                 console.log( iss_title )
                 console.log( iss_body )
-
-                /*
-                await github.rest.issues.update(
-                {
-                    owner:          context.repo.owner,
-                    repo:           context.repo.repo,
-                    issue_number:   issue.number,
-                    state:          'closed',
-                    state_reason:   'not planned'
-                });
-                */
 
             }
