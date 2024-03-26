@@ -169,11 +169,9 @@ jobs:
 
             const expireAfterMs   = 1000 * 60 * 60 * 36;
             const curtime         = new Date( ).getTime( );
-            const curDate         = curtime.toISOString().replace('Z', '');
             const issues          = await github.rest.issues.listForRepo( { owner: context.repo.owner, repo: context.repo.repo, state: 'open' } );
   
             console.log( curtime )
-            console.log( curDate )
 
             console.log( `  📦──  Found ${issues.data.length} open issues` );
 
