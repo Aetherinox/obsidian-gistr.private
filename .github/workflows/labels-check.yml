@@ -195,8 +195,10 @@ jobs:
 
                 const iss_tag           = `${{ env.PREFIX_BUG }}`;
 
-                console.log( `      └── 📄 ` + iss_title );
+                console.log( `      └── 📁 ` + iss_title );
                 console.log( `         └── 📄 Issue #${ issue.number } last updated on ${ time_LastUpdate }` );
+                console.log( `         └── 📄 ${add_labels}` );
+                console.log( `\n` )
 
 
                 /*
