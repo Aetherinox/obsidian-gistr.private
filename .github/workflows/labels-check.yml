@@ -163,14 +163,14 @@ jobs:
   
             console.log( `Found ${issues.data.length} open issues` );
 
-            echo "PACKAGE_VERSION=${ issues.data }" >> $GITHUB_OUTPUT
+            console.log(`::set-output name=xxx::${issues.data}`)
 
             //issues.data
 
       - name: "👁️‍🗨️ Debug › Print Package"
         id: build_print_package
         run: |
-          echo ${{ steps.check_fetch_labels.outputs.PACKAGE_VERSION }}
+          echo "The xxx was '${{ steps.check_fetch_labels.outputs.xxx }}'"
 
   issues-assign-labels:
     name: >-
