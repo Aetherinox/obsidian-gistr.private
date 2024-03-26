@@ -50,7 +50,7 @@ env:
       { "name": "AC/Needs Rebase",        "color": "8F1784", "description": "Due to the permissions on the requesting repo, this pull request must be rebased by the author" },
       { "name": "AC/Security Warning",    "color": "8F1784", "description": "Pull request contents does not conform to developer policies, or includes potentially dangerous code" },
       { "name": "AC/Changes Made",        "color": "8F1784", "description": "The requested changes have been made and is pending a re-scan" },
-      { "name": "AC/Skipped Scan",        "color": "8F1784", "description": "Code scanning skipped because PR author believes result is wrong" },
+      { "name": "AC/Skipped Scan",        "color": "8F1784", "description": "Code scanning skipped because PR author believes result is wrong" }
     ]
 
 jobs:
