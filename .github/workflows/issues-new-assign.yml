@@ -542,15 +542,15 @@ jobs:
             {
 
                 console.log( "⚠️ " + road_tag + " ---------------------------------------" )
-                console.log( "Already starts with " + bug_tag + " ......... " + iss_title_lc.startsWith( bug_tag.toLowerCase( ) ) )
-                console.log( "Already starts with " + feat_tag + " ..... " + iss_title_lc.startsWith( feat_tag.toLowerCase( ) ) )
-                console.log( "Already starts with " + urgn_tag + " ...... " + iss_title_lc.startsWith( urgn_tag.toLowerCase( ) ) )
-                console.log( "Already starts with " + road_tag + " ..... " + iss_title_lc.startsWith( road_tag.toLowerCase( ) ) )
+                console.log( "Already starts with " + bug_tag + " ...... " + iss_title_lc.startsWith( bug_tag.toLowerCase( ) ) )
+                console.log( "Already starts with " + feat_tag + " .. " + iss_title_lc.startsWith( feat_tag.toLowerCase( ) ) )
+                console.log( "Already starts with " + urgn_tag + " ... " + iss_title_lc.startsWith( urgn_tag.toLowerCase( ) ) )
+                console.log( "Already starts with " + road_tag + " .. " + iss_title_lc.startsWith( road_tag.toLowerCase( ) ) )
 
                 // change LBL per category
                 add_labels.push( `${ road_lbl }` );
 
-                console.log( `Adding Tag ....................... ${ road_lbl }` )
+                console.log( `Adding Tag .................... ${ road_lbl }` )
 
                 // Rename title to contain Roadmap:
                 // Make sure issue / pr title doesnt already contain a beginning title tag
