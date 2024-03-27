@@ -138,16 +138,16 @@ jobs:
 
 
       # ---------------------------------------------------------------------------------------
-      #   Label > Bug
+      #   Get Issue Title
       # ---------------------------------------------------------------------------------------
 
-      - name: 🏷️ ${{ env.PREFIX_BUG }} › Assignment
+      - name: 🏷️ Get Issue Title
         uses: actions/github-script@v7
         id: label_issues_initialize
         with:
           github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
           script: |
-            let iss_title               = `${ context.payload.issue.title }`;
+            let iss_title = `${ context.payload.issue.title }`;
 
             core.setOutput( 'issue_title', iss_title )
             console.log( "\n\n" )
