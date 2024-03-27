@@ -303,7 +303,23 @@ jobs:
                 if ( iss_title_lc.startsWith( bug_tag.toLowerCase( ) ) || bug_bIncWordT || bug_bFoundMatchTitle || bug_bFoundMatchBody )
                 {
 
+                    add_labels.push( `${ bug_lbl }` );
 
+                    // Rename title to contain Bug:
+                    if ( !iss_title_lc.startsWith(  ) && !iss_title_lc.startsWith( feat_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( urgn_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( road_tag.toLowerCase( ) ) )
+                    {
+                        const title           = issue.title;
+                        let title_new         = title.replace( /^\s?bug\s*(.*?)\b/gi, '' );
+                        title_new         		= title.replace( /^\s?fail\s*(.*?)\b/gi, '' );
+                        title_new         		= title.replace( /^\s?issue\s*(.*?)\b/gi, '' );
+                        iss_title             = `${ bug_tag }: ${ title_new }`;
+                    }
+
+                    await github.rest.issues.update(
+                    {
+                        owner: context.repo.owner, repo: context.repo.repo, issue_number: issue.number,
+                        title: `${ iss_title }`, labels: add_labels
+                    } );
                 }
 
 
