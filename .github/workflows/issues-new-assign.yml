@@ -240,6 +240,7 @@ jobs:
 
       - name: 🏷️ ${{ env.PREFIX_FEATURE }} › Assignment
         uses: actions/github-script@v7
+        id: label_issues_feature
         with:
           github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
           script: |
@@ -253,10 +254,8 @@ jobs:
 
             let add_labels              = issueLabels.data.map( label => label.name );
 
-            let iss_title               = `"${{ steps.label_issues_bug.outputs.issue_title }}"`;
+            let iss_title               = `"${{ steps.label_issues_bug.outputs.issue_title }}` ?? ${ context.payload.issue.title };
             let iss_body                = `${ context.payload.issue.body }`;
-
-            console.log( "Get New Title " + iss_title )
 
             const iss_title_lc          = iss_title.toLowerCase( );
 
@@ -330,6 +329,8 @@ jobs:
                     title: `${ iss_title }`, labels: add_labels
                 } );
 
+                core.setOutput( 'issue_title', iss_title )
+
                 console.log( "\n\n" )
             }
 
@@ -339,6 +340,7 @@ jobs:
 
       - name: 🏷️ ${{ env.PREFIX_URGENT }} › Assignment
         uses: actions/github-script@v7
+        id: label_issues_urgent
         with:
           github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
           script: |
@@ -352,7 +354,7 @@ jobs:
 
             let add_labels              = issueLabels.data.map( label => label.name );
 
-            let iss_title               = `${ context.payload.issue.title }`;
+            let iss_title               = `"${{ steps.label_issues_feature.outputs.issue_title }}` ?? ${ context.payload.issue.title };
             let iss_body                = `${ context.payload.issue.body }`;
 
             const iss_title_lc          = iss_title.toLowerCase( );
@@ -428,6 +430,8 @@ jobs:
                     title: `${ iss_title }`, labels: add_labels
                 } );
 
+                core.setOutput( 'issue_title', iss_title )
+
                 console.log( "\n\n" )
             }
 
@@ -437,6 +441,7 @@ jobs:
 
       - name: 🏷️ ${{ env.PREFIX_ROADMAP }} › Assignment
         uses: actions/github-script@v7
+        id: label_issues_roadmap
         with:
           github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
           script: |
@@ -450,7 +455,7 @@ jobs:
 
             let add_labels              = issueLabels.data.map( label => label.name );
 
-            let iss_title               = `${ context.payload.issue.title }`;
+            let iss_title               = `"${{ steps.label_issues_urgent.outputs.issue_title }}` ?? ${ context.payload.issue.title };
             let iss_body                = `${ context.payload.issue.body }`;
 
             const iss_title_lc          = iss_title.toLowerCase( );
@@ -528,6 +533,8 @@ jobs:
                     owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number,
                     title: `${ iss_title }`, labels: add_labels
                 } );
+
+                core.setOutput( 'issue_title', iss_title )
 
                 console.log( "\n\n" )
             }
