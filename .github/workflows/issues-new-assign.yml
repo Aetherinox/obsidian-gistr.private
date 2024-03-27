@@ -231,6 +231,11 @@ jobs:
                 console.log( "\n\n" )
             }
 
+      - name: Sleep for 30 seconds
+        uses: whatnick/wait-action@master
+        with:
+          time: '30s'
+
       # ---------------------------------------------------------------------------------------
       #   Label > FEATURE
       # ---------------------------------------------------------------------------------------
@@ -327,6 +332,11 @@ jobs:
 
                 console.log( "\n\n" )
             }
+
+      - name: Sleep for 30 seconds
+        uses: whatnick/wait-action@master
+        with:
+          time: '30s'
 
       # ---------------------------------------------------------------------------------------
       #   Label > URGENT
@@ -425,6 +435,11 @@ jobs:
 
                 console.log( "\n\n" )
             }
+
+      - name: Sleep for 30 seconds
+        uses: whatnick/wait-action@master
+        with:
+          time: '30s'
 
       # ---------------------------------------------------------------------------------------
       #   Label > ROADMAP
