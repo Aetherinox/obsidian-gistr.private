@@ -237,12 +237,11 @@ jobs:
                     owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number,
                     title: `${ iss_title }`, labels: add_labels
                 } );
-
-                core.setOutput( 'issue_title', iss_title )
-
-                console.log( "\n\n" )
             }
 
+            core.setOutput( 'issue_title', iss_title )
+            console.log( "\n\n" )
+            
       # ---------------------------------------------------------------------------------------
       #   Label > FEATURE
       # ---------------------------------------------------------------------------------------
@@ -350,11 +349,10 @@ jobs:
                     owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number,
                     title: `${ iss_title }`, labels: add_labels
                 } );
-
-                core.setOutput( 'issue_title', iss_title )
-
-                console.log( "\n\n" )
             }
+
+            core.setOutput( 'issue_title', iss_title )
+            console.log( "\n\n" )
 
       # ---------------------------------------------------------------------------------------
       #   Label > URGENT
@@ -465,11 +463,10 @@ jobs:
                     owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number,
                     title: `${ iss_title }`, labels: add_labels
                 } );
-
-                core.setOutput( 'issue_title', iss_title )
-
-                console.log( "\n\n" )
             }
+
+            core.setOutput( 'issue_title', iss_title )
+            console.log( "\n\n" )
 
       # ---------------------------------------------------------------------------------------
       #   Label > ROADMAP
@@ -580,12 +577,10 @@ jobs:
                     owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number,
                     title: `${ iss_title }`, labels: add_labels
                 } );
-
-                core.setOutput( 'issue_title', iss_title )
-
-                console.log( "\n\n" )
             }
 
+            core.setOutput( 'issue_title', iss_title )
+            console.log( "\n\n" )
 
   # ---------------------------------------------------------------------------------------
   #   Issues > Add Assignees
