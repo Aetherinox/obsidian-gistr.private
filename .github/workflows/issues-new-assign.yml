@@ -157,7 +157,6 @@ jobs:
 
             let iss_title               = `${ context.payload.issue.title }`;
             let iss_body                = `${ context.payload.issue.body }`;
-            const iss_tag               = `${{ env.PREFIX_BUG }}`;
 
             const iss_title_lc          = iss_title.toLowerCase( );
 
@@ -209,7 +208,7 @@ jobs:
                     let title_new         = title.replace( /^\s?bug\s*(.*?)\b/gi, '' );
                     title_new         		= title.replace( /^\s?fail\s*(.*?)\b/gi, '' );
                     title_new         		= title.replace( /^\s?issue\s*(.*?)\b/gi, '' );
-                    iss_title             = `${ bug_tag }: ${ title_new }`;
+                    iss_title             = `${ bug_tag } ${ title_new }`;
                 }
 
                 await github.rest.issues.update(
@@ -240,7 +239,6 @@ jobs:
 
             let iss_title               = `${ context.payload.issue.title }`;
             let iss_body                = `${ context.payload.issue.body }`;
-            const iss_tag               = `${{ env.PREFIX_FEATURE }}`;
 
             const iss_title_lc          = iss_title.toLowerCase( );
 
@@ -294,7 +292,7 @@ jobs:
                     title_new             = title.replace( /^\s?request\s*(.*?)\b/gi, '' );
                     title_new             = title.replace( /^\s?add(.*?)\s?feature\s*(.*?)\b/gi, '' );
                     title_new             = title.replace( /^\s?add(.*?)\s?support\s*(.*?)\b/gi, '' );
-                    iss_title             = `${ feat_tag }: ${ title_new }`; // change TAG per category
+                    iss_title             = `${ feat_tag } ${ title_new }`; // change TAG per category
                 }
 
                 await github.rest.issues.update(
@@ -308,7 +306,7 @@ jobs:
       #   Label > URGENT
       # ---------------------------------------------------------------------------------------
 
-      - name: 🏷️ ${{ env.PREFIX_URGEMT }} › Assignment
+      - name: 🏷️ ${{ env.PREFIX_URGENT }} › Assignment
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
@@ -325,7 +323,6 @@ jobs:
 
             let iss_title               = `${ context.payload.issue.title }`;
             let iss_body                = `${ context.payload.issue.body }`;
-            const iss_tag               = `${{ env.PREFIX_URGENT }}`;
 
             const iss_title_lc          = iss_title.toLowerCase( );
 
@@ -380,7 +377,7 @@ jobs:
                     title_new             = title.replace( /^\s?urgency\s*(.*?)\b/gi, '' );
                     title_new             = title.replace( /^\s?important\s*(.*?)\b/gi, '' );
                     title_new             = title.replace( /^\s?critical\s*(.*?)\b/gi, '' );
-                    iss_title             = `${ urgn_tag }: ${ title_new }`; // change TAG per category
+                    iss_title             = `${ urgn_tag } ${ title_new }`; // change TAG per category
                 }
 
                 await github.rest.issues.update(
@@ -411,7 +408,6 @@ jobs:
 
             let iss_title               = `${ context.payload.issue.title }`;
             let iss_body                = `${ context.payload.issue.body }`;
-            const iss_tag               = `${{ env.PREFIX_ROADMAP }}`;
 
             const iss_title_lc          = iss_title.toLowerCase( );
 
@@ -419,13 +415,13 @@ jobs:
                 Tags
             */
 
-            const bug_tag               = `${{ env.PREFIX_BUG }}`;
+            const bug_tag               = `${{ env.PREFIX_BUG }}:`;
             const bug_lbl               = `${{ env.LABEL_BUG }}`;
-            const feat_tag              = `${{ env.PREFIX_FEATURE }}`;
+            const feat_tag              = `${{ env.PREFIX_FEATURE }}:`;
             const feat_lbl              = `${{ env.LABEL_FEATURE }}`;
-            const urgn_tag              = `${{ env.PREFIX_URGENT }}`;
+            const urgn_tag              = `${{ env.PREFIX_URGENT }}:`;
             const urgn_lbl              = `${{ env.LABEL_URGENT }}`;
-            const road_tag              = `${{ env.PREFIX_ROADMAP }}`;
+            const road_tag              = `${{ env.PREFIX_ROADMAP }}:`;
             const road_lbl              = `${{ env.LABEL_ROADMAP }}`;
 
             /*
@@ -469,7 +465,7 @@ jobs:
                     title_new             = title.replace( /^\s?urgency\s*(.*?)\b/gi, '' );
                     title_new             = title.replace( /^\s?important\s*(.*?)\b/gi, '' );
                     title_new             = title.replace( /^\s?critical\s*(.*?)\b/gi, '' );
-                    iss_title             = `${ road_tag }: ${ title_new }`; // change TAG per category
+                    iss_title             = `${ road_tag } ${ title_new }`; // change TAG per category
                     console.log( "C" )
                 }
 
