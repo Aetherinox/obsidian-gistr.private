@@ -191,10 +191,11 @@ jobs:
             const bFoundMatchBody       = Boolean( findWordList.test( iss_body ) );
 
             console.log( "Title Lowercase ............ " + iss_title_lc  )
-            console.log( "Startswith " + bug_tag.toLowerCase( ) + "............ " + iss_title_lc.startsWith( bug_tag.toLowerCase( ) ) )
-            console.log( "Title Includes Keyword .... " + bIncWordT  )
-            console.log( "Regex Found Title ......... " + bFoundMatchTitle  )
-            console.log( "Regex Found Body .......... " + bFoundMatchBody  )
+            console.log( "Startswith " + bug_tag.toLowerCase( ) + "............. " + iss_title_lc.startsWith( bug_tag.toLowerCase( ) ) )
+            console.log( "Title Includes Keyword ..... " + bIncWordT  )
+            console.log( "Regex Found Title .......... " + bFoundMatchTitle  )
+            console.log( "Regex Found Body ........... " + bFoundMatchBody  )
+            console.log( "\n" )
 
             /*
                 - Check if issue title matches the issue label "Bug:"
@@ -207,17 +208,18 @@ jobs:
                 add_labels.push( `${ bug_lbl }` );
 
                 console.log( " ⚠️ " + bug_tag + " ---------------------------------------" )
-                console.log( "STARTS WITH " + bug_tag + " ......... " + iss_title_lc.startsWith( bug_tag.toLowerCase( ) ) )
-                console.log( "STARTS WITH " + feat_tag + " ..... " + iss_title_lc.startsWith( feat_tag.toLowerCase( ) ) )
-                console.log( "STARTS WITH " + urgn_tag + " ...... " + iss_title_lc.startsWith( urgn_tag.toLowerCase( ) ) )
-                console.log( "STARTS WITH " + road_tag + " ..... " + iss_title_lc.startsWith( road_tag.toLowerCase( ) ) )
+                console.log( "Already starts with " + bug_tag + " ......... " + iss_title_lc.startsWith( bug_tag.toLowerCase( ) ) )
+                console.log( "Already starts with " + feat_tag + " ..... " + iss_title_lc.startsWith( feat_tag.toLowerCase( ) ) )
+                console.log( "Already starts with " + urgn_tag + " ...... " + iss_title_lc.startsWith( urgn_tag.toLowerCase( ) ) )
+                console.log( "Already starts with " + road_tag + " ..... " + iss_title_lc.startsWith( road_tag.toLowerCase( ) ) )
 
                 // Rename title to contain Bug:
                 // Make sure issue / pr title doesnt already contain a beginning title tag
 
                 if ( !iss_title_lc.startsWith( bug_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( feat_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( urgn_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( road_tag.toLowerCase( ) ) )
                 {
-                    console.log( "ALL CONDITIONS FALSE -- Renaming" )
+                    console.log( "\n" )
+                    console.log( "Renaming Title" )
                     console.log( `Old Title: ..... ${ iss_title }` )
 
                     const title           = context.payload.issue.title
