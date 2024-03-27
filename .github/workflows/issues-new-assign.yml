@@ -164,13 +164,13 @@ jobs:
                 Tags
             */
 
-            const bug_tag               = `${{ env.PREFIX_BUG }}`;
+            const bug_tag               = `${{ env.PREFIX_BUG }}:`;
             const bug_lbl               = `${{ env.LABEL_BUG }}`;
-            const feat_tag              = `${{ env.PREFIX_FEATURE }}`;
+            const feat_tag              = `${{ env.PREFIX_FEATURE }}:`;
             const feat_lbl              = `${{ env.LABEL_FEATURE }}`;
-            const urgn_tag              = `${{ env.PREFIX_URGENT }}`;
+            const urgn_tag              = `${{ env.PREFIX_URGENT }}:`;
             const urgn_lbl              = `${{ env.LABEL_URGENT }}`;
-            const road_tag              = `${{ env.PREFIX_ROADMAP }}`;
+            const road_tag              = `${{ env.PREFIX_ROADMAP }}:`;
             const road_lbl              = `${{ env.LABEL_ROADMAP }}`;
 
             /*
@@ -258,13 +258,13 @@ jobs:
                 Tags
             */
 
-            const bug_tag               = `${{ env.PREFIX_BUG }}`;
+            const bug_tag               = `${{ env.PREFIX_BUG }}:`;
             const bug_lbl               = `${{ env.LABEL_BUG }}`;
-            const feat_tag              = `${{ env.PREFIX_FEATURE }}`;
+            const feat_tag              = `${{ env.PREFIX_FEATURE }}:`;
             const feat_lbl              = `${{ env.LABEL_FEATURE }}`;
-            const urgn_tag              = `${{ env.PREFIX_URGENT }}`;
+            const urgn_tag              = `${{ env.PREFIX_URGENT }}:`;
             const urgn_lbl              = `${{ env.LABEL_URGENT }}`;
-            const road_tag              = `${{ env.PREFIX_ROADMAP }}`;
+            const road_tag              = `${{ env.PREFIX_ROADMAP }}:`;
             const road_lbl              = `${{ env.LABEL_ROADMAP }}`;
 
             /*
@@ -354,13 +354,13 @@ jobs:
                 Tags
             */
 
-            const bug_tag               = `${{ env.PREFIX_BUG }}`;
+            const bug_tag               = `${{ env.PREFIX_BUG }}:`;
             const bug_lbl               = `${{ env.LABEL_BUG }}`;
-            const feat_tag              = `${{ env.PREFIX_FEATURE }}`;
+            const feat_tag              = `${{ env.PREFIX_FEATURE }}:`;
             const feat_lbl              = `${{ env.LABEL_FEATURE }}`;
-            const urgn_tag              = `${{ env.PREFIX_URGENT }}`;
+            const urgn_tag              = `${{ env.PREFIX_URGENT }}:`;
             const urgn_lbl              = `${{ env.LABEL_URGENT }}`;
-            const road_tag              = `${{ env.PREFIX_ROADMAP }}`;
+            const road_tag              = `${{ env.PREFIX_ROADMAP }}:`;
             const road_lbl              = `${{ env.LABEL_ROADMAP }}`;
 
             /*
