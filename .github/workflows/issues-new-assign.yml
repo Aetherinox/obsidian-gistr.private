@@ -178,6 +178,10 @@ jobs:
 
             const iss_title_lc          = iss_title.toLowerCase( );
 
+            console.log( "Feat Title .................... " + iss_title )
+            console.log( "Feat Output ................... " + `${{ steps.label_issues_initialize.outputs.issue_title }}` )
+            console.log( "Feat Payload .................. " + `${ context.payload.issue.title }` )
+
             /*
                 Tags
             */
