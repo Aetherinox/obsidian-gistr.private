@@ -611,6 +611,7 @@ jobs:
     name: >-
       ✍️ Issue › Assign
     runs-on: ubuntu-latest
+    needs: [ issues-assign-labels ]
     if: |
       always()
       && contains(needs.*.result, 'success')
