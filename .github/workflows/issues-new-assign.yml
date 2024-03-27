@@ -375,6 +375,10 @@ jobs:
             let iss_title               = `${{ steps.label_issues_feature.outputs.issue_title }}` ?? `${ context.payload.issue.title }`;
             let iss_body                = `${ context.payload.issue.body }`;
 
+            console.log( "Urgent Title ....... " + iss_title )
+            console.log( "Output Title ....... " + `${{ steps.label_issues_feature.outputs.issue_title }}` )
+            console.log( "Payload Title ...... " + `${ context.payload.issue.title }` )
+            
             const iss_title_lc          = iss_title.toLowerCase( );
 
             /*
