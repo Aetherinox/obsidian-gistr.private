@@ -136,6 +136,23 @@ jobs:
       name: Orion
     steps:
 
+
+      # ---------------------------------------------------------------------------------------
+      #   Label > Bug
+      # ---------------------------------------------------------------------------------------
+
+      - name: 🏷️ ${{ env.PREFIX_BUG }} › Assignment
+        uses: actions/github-script@v7
+        id: label_issues_initialize
+        with:
+          github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
+          script: |
+            let iss_title               = `${ context.payload.issue.title }`;
+
+            core.setOutput( 'issue_title', iss_title )
+            console.log( "\n\n" )
+            
+
       # ---------------------------------------------------------------------------------------
       #   Label > Bug
       # ---------------------------------------------------------------------------------------
@@ -143,6 +160,7 @@ jobs:
       - name: 🏷️ ${{ env.PREFIX_BUG }} › Assignment
         uses: actions/github-script@v7
         id: label_issues_bug
+        needs: [ label_issues_initialize ]
         with:
           github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
           script: |
@@ -157,6 +175,8 @@ jobs:
             let add_labels              = issueLabels.data.map( label => label.name );
 
             let iss_title               = `${ context.payload.issue.title }`;
+            let iss_title               = `${{ steps.label_issues_initialize.outputs.issue_title }}` || `${ context.payload.issue.title }`;
+
             let iss_body                = `${ context.payload.issue.body }`;
 
             const iss_title_lc          = iss_title.toLowerCase( );
@@ -250,6 +270,7 @@ jobs:
       - name: 🏷️ ${{ env.PREFIX_FEATURE }} › Assignment
         uses: actions/github-script@v7
         id: label_issues_feature
+        needs: [ label_issues_initialize ]
         with:
           github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
           script: |
@@ -363,6 +384,7 @@ jobs:
       - name: 🏷️ ${{ env.PREFIX_URGENT }} › Assignment
         uses: actions/github-script@v7
         id: label_issues_urgent
+        needs: [ label_issues_initialize ]
         with:
           github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
           script: |
@@ -477,6 +499,7 @@ jobs:
       - name: 🏷️ ${{ env.PREFIX_ROADMAP }} › Assignment
         uses: actions/github-script@v7
         id: label_issues_roadmap
+        needs: [ label_issues_initialize ]
         with:
           github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
           script: |
