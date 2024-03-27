@@ -142,6 +142,7 @@ jobs:
 
       - name: 🏷️ ${{ env.PREFIX_BUG }} › Assignment
         uses: actions/github-script@v7
+        id: label_issues_bug
         with:
           github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
           script: |
@@ -228,13 +229,10 @@ jobs:
                     title: `${ iss_title }`, labels: add_labels
                 } );
 
+                core.setOutput( 'issue_title', iss_title )
+
                 console.log( "\n\n" )
             }
-
-      - name: Sleep for 30 seconds
-        uses: whatnick/wait-action@master
-        with:
-          time: '30s'
 
       # ---------------------------------------------------------------------------------------
       #   Label > FEATURE
@@ -255,8 +253,10 @@ jobs:
 
             let add_labels              = issueLabels.data.map( label => label.name );
 
-            let iss_title               = `${ context.payload.issue.title }`;
+            let iss_title               = `"${{ steps.label_issues_bug.outputs.issue_title }}"`;
             let iss_body                = `${ context.payload.issue.body }`;
+
+            console.log( "Get New Title " + iss_title )
 
             const iss_title_lc          = iss_title.toLowerCase( );
 
@@ -332,11 +332,6 @@ jobs:
 
                 console.log( "\n\n" )
             }
-
-      - name: Sleep for 30 seconds
-        uses: whatnick/wait-action@master
-        with:
-          time: '30s'
 
       # ---------------------------------------------------------------------------------------
       #   Label > URGENT
@@ -435,11 +430,6 @@ jobs:
 
                 console.log( "\n\n" )
             }
-
-      - name: Sleep for 30 seconds
-        uses: whatnick/wait-action@master
-        with:
-          time: '30s'
 
       # ---------------------------------------------------------------------------------------
       #   Label > ROADMAP
