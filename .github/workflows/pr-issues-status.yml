@@ -376,7 +376,7 @@ jobs:
                         append / prepare message for bot to send
                 */
     
-                const urgn_findWordList       = /here/ig;
+                const urgn_findWordList       = /(?:I?\s*have\s*(?:a|an)\s*(?:issue|problem|bug))|(?:will\s*not\s*work)|(?:it\s*is\s*(?:broken|broke|stuck))|(?:found\s*(?:an?|the)\s*(?:bug|issue))/ig;
                 const urgn_bFoundMatchTitle   = Boolean( urgn_findWordList.test( iss_title ) );
                 const urgn_bFoundMatchBody    = Boolean( urgn_findWordList.test( iss_body ) );
 
