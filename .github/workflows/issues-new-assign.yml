@@ -255,6 +255,8 @@ jobs:
             let add_labels              = issueLabels.data.map( label => label.name );
 
             let iss_title               = `"${{ steps.label_issues_bug.outputs.issue_title }}` ?? `${ context.payload.issue.title }`;
+
+            console.log( iss_title )
             let iss_body                = `${ context.payload.issue.body }`;
 
             const iss_title_lc          = iss_title.toLowerCase( );
