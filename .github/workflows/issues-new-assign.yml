@@ -730,7 +730,7 @@ jobs:
                     append / prepare message for bot to send
             */
 
-            const HEfindWordList 	      = /(\s*have\s*(a|some)?\s*question\s*s?\s*|\s*can\s*you\s*tell\s*me\s*|\s*need\s*help\s*|\s*how\s*(can\s*I|I\s*can)\s*|\s*where\s*(do|can|should)\s*I\s*find\s*|\s*(can(\')?t|can\s*not)\s*find\s*)/ig;
+            const HEfindWordList 	      = /^\b(?:have\s*(?:a|some)?\s*question*s?)|(?:can\s*you\s*(?:tell|help)\s*me)|(?:need\s*(?:some)?\s*(?:help|assistance|guidance))|(?:how\s*can\s*I\s*find)|(?:point\s*me\s*in\s*the\s*direction)|(?:where\s*can\s*I\s*find)|(?:where\s*(?:\N*)\s*(?:\N*)\s*find)|(?:please\s*help)|(?:where\s*\N*\s*(?:located|at))|(?:documentation)\b$/igm;
             const HEbFoundMatchTitle    = Boolean( HEfindWordList.test( iss_title ) );
             const HEbFoundMatchBody     = Boolean( HEfindWordList.test( iss_body ) );
 
