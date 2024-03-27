@@ -191,10 +191,10 @@ jobs:
             const bFoundMatchBody       = Boolean( findWordList.test( iss_body ) );
 
             console.log( "Title Lowercase ............ " + iss_title_lc  )
-            console.log( "Startswith " + bug_tag.toLowerCase( ) + "........... " + iss_title_lc.startsWith( bug_tag.toLowerCase( ) ) )
+            console.log( "Startswith " + bug_tag.toLowerCase( ) + "............ " + iss_title_lc.startsWith( bug_tag.toLowerCase( ) ) )
             console.log( "Title Includes Keyword .... " + bIncWordT  )
-            console.log( "Regex Found Title ..... " + bFoundMatchTitle  )
-            console.log( "Regex Found Body ...... " + bFoundMatchBody  )
+            console.log( "Regex Found Title ......... " + bFoundMatchTitle  )
+            console.log( "Regex Found Body .......... " + bFoundMatchBody  )
 
             /*
                 - Check if issue title matches the issue label "Bug:"
