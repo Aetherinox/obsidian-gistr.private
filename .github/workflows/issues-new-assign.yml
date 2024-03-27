@@ -199,11 +199,19 @@ jobs:
 
                 add_labels.push( `${ bug_lbl }` );
 
+                console.log( " ⚠️ " + bug_tag + " ---------------------------------------" )
+                console.log( "STARTS WITH " + bug_tag + " ......... " + iss_title_lc.startsWith( bug_tag.toLowerCase( ) ) )
+                console.log( "STARTS WITH " + feat_tag + " ..... " + iss_title_lc.startsWith( feat_tag.toLowerCase( ) ) )
+                console.log( "STARTS WITH " + urgn_tag + " ...... " + iss_title_lc.startsWith( urgn_tag.toLowerCase( ) ) )
+                console.log( "STARTS WITH " + road_tag + " ..... " + iss_title_lc.startsWith( road_tag.toLowerCase( ) ) )
+
                 // Rename title to contain Bug:
                 // Make sure issue / pr title doesnt already contain a beginning title tag
 
                 if ( !iss_title_lc.startsWith( bug_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( feat_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( urgn_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( road_tag.toLowerCase( ) ) )
                 {
+                    console.log( "ALL CONDITIONS FALSE -- Renaming" )
+
                     const title           = context.payload.issue.title
                     let title_new         = title.replace( /^\s?bug\s*(.*?)\b/gi, '' );
                     title_new         		= title.replace( /^\s?fail\s*(.*?)\b/gi, '' );
@@ -216,6 +224,8 @@ jobs:
                     owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number,
                     title: `${ iss_title }`, labels: add_labels
                 } );
+
+                console.log( "\n\n" )
             }
 
       # ---------------------------------------------------------------------------------------
@@ -282,11 +292,19 @@ jobs:
                 // change LBL per category
                 add_labels.push( `${ feat_lbl }` );
 
+                console.log( " ⚠️ " + feat_tag + " ---------------------------------------" )
+                console.log( "STARTS WITH " + bug_tag + " ......... " + iss_title_lc.startsWith( bug_tag.toLowerCase( ) ) )
+                console.log( "STARTS WITH " + feat_tag + " ..... " + iss_title_lc.startsWith( feat_tag.toLowerCase( ) ) )
+                console.log( "STARTS WITH " + urgn_tag + " ...... " + iss_title_lc.startsWith( urgn_tag.toLowerCase( ) ) )
+                console.log( "STARTS WITH " + road_tag + " ..... " + iss_title_lc.startsWith( road_tag.toLowerCase( ) ) )
+
                 // Rename title to contain Feature:
                 // Make sure issue / pr title doesnt already contain a beginning title tag
 
                 if ( !iss_title_lc.startsWith( bug_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( feat_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( urgn_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( road_tag.toLowerCase( ) ) )
                 {
+                    console.log( "ALL CONDITIONS FALSE -- Renaming" )
+
                     const title           = context.payload.issue.title
                     let title_new         = title.replace( /^\s?feature\s*(.*?)\b/gi, '' );
                     title_new             = title.replace( /^\s?request\s*(.*?)\b/gi, '' );
@@ -300,6 +318,8 @@ jobs:
                     owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number,
                     title: `${ iss_title }`, labels: add_labels
                 } );
+
+                console.log( "\n\n" )
             }
 
       # ---------------------------------------------------------------------------------------
@@ -366,11 +386,19 @@ jobs:
                 // change LBL per category
                 add_labels.push( `${ urgn_lbl }` );
 
+                console.log( " ⚠️ " + urgn_tag + " ---------------------------------------" )
+                console.log( "STARTS WITH " + bug_tag + " ......... " + iss_title_lc.startsWith( bug_tag.toLowerCase( ) ) )
+                console.log( "STARTS WITH " + feat_tag + " ..... " + iss_title_lc.startsWith( feat_tag.toLowerCase( ) ) )
+                console.log( "STARTS WITH " + urgn_tag + " ...... " + iss_title_lc.startsWith( urgn_tag.toLowerCase( ) ) )
+                console.log( "STARTS WITH " + road_tag + " ..... " + iss_title_lc.startsWith( road_tag.toLowerCase( ) ) )
+
                 // Rename title to contain Urgent:
                 // Make sure issue / pr title doesnt already contain a beginning title tag
 
                 if ( !iss_title_lc.startsWith( bug_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( feat_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( urgn_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( road_tag.toLowerCase( ) ) )
                 {
+                    console.log( "ALL CONDITIONS FALSE -- Renaming" )
+
                     const title           = context.payload.issue.title
                     let title_new         = title.replace( /^\s?emergency\s*(.*?)\b/gi, '' );
                     title_new             = title.replace( /^\s?urgent\s*(.*?)\b/gi, '' );
@@ -385,6 +413,8 @@ jobs:
                     owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number,
                     title: `${ iss_title }`, labels: add_labels
                 } );
+
+                console.log( "\n\n" )
             }
 
       # ---------------------------------------------------------------------------------------
@@ -454,15 +484,16 @@ jobs:
                 // Rename title to contain Roadmap:
                 // Make sure issue / pr title doesnt already contain a beginning title tag
 
-                console.log( "STARTS WITH " + bug_tag + " ..... " + iss_title_lc.startsWith( bug_tag.toLowerCase( ) ) )
+                console.log( " ⚠️ " + road_tag + " ---------------------------------------" )
+                console.log( "STARTS WITH " + bug_tag + " ......... " + iss_title_lc.startsWith( bug_tag.toLowerCase( ) ) )
                 console.log( "STARTS WITH " + feat_tag + " ..... " + iss_title_lc.startsWith( feat_tag.toLowerCase( ) ) )
-                console.log( "STARTS WITH " + urgn_tag + " ..... " + iss_title_lc.startsWith( urgn_tag.toLowerCase( ) ) )
+                console.log( "STARTS WITH " + urgn_tag + " ...... " + iss_title_lc.startsWith( urgn_tag.toLowerCase( ) ) )
                 console.log( "STARTS WITH " + road_tag + " ..... " + iss_title_lc.startsWith( road_tag.toLowerCase( ) ) )
 
                 console.log( "A1" )
                 if ( !iss_title_lc.startsWith( bug_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( feat_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( urgn_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( road_tag.toLowerCase( ) ) )
                 {
-                    console.log( "B1" )
+                    console.log( "ALL CONDITIONS FALSE -- Renaming" )
 
                     const title           = context.payload.issue.title
                     let title_new         = title.replace( /^\s?emergency\s*(.*?)\b/gi, '' );
@@ -471,16 +502,18 @@ jobs:
                     title_new             = title.replace( /^\s?important\s*(.*?)\b/gi, '' );
                     title_new             = title.replace( /^\s?critical\s*(.*?)\b/gi, '' );
                     iss_title             = `${ road_tag } ${ title_new }`; // change TAG per category
-                    console.log( "C1" )
+                    console.log( "B1" )
                 }
 
-                console.log( "D1" )
-                console.log( `${ iss_title }` )
+                console.log( "C1" )
+                console.log( `Current Title: ..... ${ iss_title }` )
                 await github.rest.issues.update(
                 {
                     owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number,
                     title: `${ iss_title }`, labels: add_labels
                 } );
+
+                console.log( "\n\n" )
             }
 
 
