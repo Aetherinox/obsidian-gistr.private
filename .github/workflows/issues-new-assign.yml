@@ -153,273 +153,67 @@ jobs:
                 issue_number:     context.issue.number
             });
 
-            let add_labels              = issueLabels.data.map(label => label.name);
+            let add_labels              = issueLabels.data.map( label => label.name );
 
             let iss_title               = `${ context.payload.issue.title }`;
             let iss_body                = `${ context.payload.issue.body }`;
             const iss_tag               = `${{ env.PREFIX_BUG }}`;
 
-            const iss_title_lc          = iss_title.toLowerCase( )
-            const iss_body_lc           = iss_body.toLowerCase( );
-            const iss_tag_lc            = iss_tag.toLowerCase( )
+            const iss_title_lc          = iss_title.toLowerCase( );
 
-            const containsList =
-            [
-              "bug",
-              "broke",
-              "issue",
-              "fail",
-            ];
+            /*
+                Tags
+            */
 
-            const bIncludesWordTitle    = containsList.some( s => s.includes( iss_title_lc ) || iss_title_lc.includes( s ) );
-            const bIncludesWordBody     = containsList.some( s => s.includes( iss_body_lc ) || iss_body_lc.includes( s ) );
+            const bug_tag               = `${{ env.PREFIX_BUG }}`;
+            const bug_lbl               = `${{ env.LABEL_BUG }}`;
+            const feat_tag              = `${{ env.PREFIX_FEATURE }}`;
+            const feat_lbl              = `${{ env.LABEL_FEATURE }}`;
+            const urgn_tag              = `${{ env.PREFIX_URGENT }}`;
+            const urgn_lbl              = `${{ env.LABEL_URGENT }}`;
+            const road_tag              = `${{ env.PREFIX_ROADMAP }}`;
+            const road_lbl              = `${{ env.LABEL_ROADMAP }}`;
+
+            /*
+                Bugs
+            */
+
+            const bug_words             = [ "bug", "broke", "issue", "fail" ];
+            const bug_bIncWordT         = bug_words.some( s => s.includes( iss_title_lc ) || iss_title_lc.includes( s ) );
+
+            /*
+                found searched word "for help"
+                    append / prepare message for bot to send
+            */
+
+            const bug_findWordList 	      = /(?:I?\s*have\s*(?:a|an)\s*(?:issue|problem|bug))|(?:will\s*not\s*work)|(?:it\s*is\s*(?:broken|broke|stuck))|(?:found\s*(?:an?|the)\s*(?:bug|issue))|(?:can\s*I\s*fix\s*the\s*(?:bug|issue))|(?:(?:does not|doesn'?t|don'?t|won'?t|can'?t|can\s?not|will\s*not)\s*(?:work|load|function))|(?:it\s*(?:will\s?not|won'?t|can\s?not|can'?t))\s*get\s*the\s*(?:website|site|webpage|page)|(?:the\s*(?:window|frame)\s*is\s*(?:blank|white|empty|missing))/ig;
+            const bug_bFoundMatchTitle    = Boolean( bug_findWordList.test( iss_title ) );
+            const bug_bFoundMatchBody     = Boolean( bug_findWordList.test( iss_body ) );
 
             /*
                 - Check if issue title matches the issue label "Bug:"
-                - Check if title contains word in containsList 
+                - Check if title contains word in bug_words 
             */
 
-            if ( iss_title_lc.startsWith( iss_tag_lc ) || bIncludesWordTitle || bIncludesWordBody )
+            if ( iss_title_lc.startsWith( bug_tag.toLowerCase( ) ) || bug_bIncWordT || bug_bFoundMatchTitle || bug_bFoundMatchBody )
             {
 
-                /*
-                    Rename title to contain Roadmap:
-                */
+                add_labels.push( `${ bug_lbl }` );
 
-                if ( !iss_title_lc.startsWith( iss_tag_lc ) )
+                // Rename title to contain Bug:
+                if ( !iss_title_lc.startsWith( bug_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( feat_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( urgn_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( road_tag.toLowerCase( ) ) )
                 {
-
                     const title           = context.payload.issue.title
                     let title_new         = title.replace( /^\s?bug\s*(.*?)\b/gi, '' );
                     title_new         		= title.replace( /^\s?fail\s*(.*?)\b/gi, '' );
                     title_new         		= title.replace( /^\s?issue\s*(.*?)\b/gi, '' );
-                    iss_title             = `${ iss_tag }: ${ title_new }`;
-                }
-
-                add_labels.push( `${{ env.LABEL_BUG }}` );
-
-                await github.rest.issues.update(
-                {
-                    owner:            context.repo.owner,
-                    repo:             context.repo.repo,
-                    issue_number:     context.issue.number,
-                    title:            `${ iss_title }`,
-                    labels:           add_labels
-                } );
-            }
-
-      # ---------------------------------------------------------------------------------------
-      #   Label > Feature
-      # ---------------------------------------------------------------------------------------
-
-      - name: 🏷️ ${{ env.PREFIX_FEATURE }} › Assignment
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
-          script: |
-
-            const issueLabels = await github.rest.issues.listLabelsOnIssue(
-            {
-                owner:              context.repo.owner,
-                repo:               context.repo.repo,
-                issue_number:       context.issue.number
-            });
-
-            let add_labels              = issueLabels.data.map(label => label.name);
-
-            let iss_title               = `${ context.payload.issue.title }`;
-            let iss_body                = `${ context.payload.issue.body }`;
-            const iss_tag               = `${{ env.PREFIX_FEATURE }}`;
-
-            const iss_title_lc          = iss_title.toLowerCase( );
-            const iss_body_lc           = iss_body.toLowerCase( );
-            const iss_tag_lc            = iss_tag.toLowerCase( );
-
-            const containsList =
-            [
-              "feature",
-              "request",
-              "add support",
-            ];
-
-            const bIncludesWordTitle    = containsList.some( s => s.includes( iss_title_lc ) || iss_title_lc.includes( s ) );
-            const bIncludesWordBody     = containsList.some( s => s.includes( iss_body_lc ) || iss_body_lc.includes( s ) );
-
-            /*
-                - Check if issue title matches the issue label "Feature:"
-                - Check if title contains word in containsList 
-            */
-
-            if ( iss_title_lc.startsWith( iss_tag_lc ) || bIncludesWordTitle || bIncludesWordBody )
-            {
-
-                /*
-                    Rename title to contain Roadmap:
-                */
-
-                add_labels.push( `${{ env.LABEL_FEATURE }}` );
-
-                if ( !iss_title_lc.startsWith( iss_tag_lc ) )
-                {
-                    const title           = context.payload.issue.title
-                    let title_new         = title.replace( /^\s?feature\s*(.*?)\b/gi, '' );
-                    title_new             = title.replace( /^\s?request\s*(.*?)\b/gi, '' );
-                    title_new             = title.replace( /^\s?add(.*?)\s?feature\s*(.*?)\b/gi, '' );
-                    title_new             = title.replace( /^\s?add(.*?)\s?support\s*(.*?)\b/gi, '' );
-                    iss_title             = `${ iss_tag }: ${ title_new }`;
+                    iss_title             = `${ bug_tag }: ${ title_new }`;
                 }
 
                 await github.rest.issues.update(
                 {
-                    owner:            context.repo.owner,
-                    repo:             context.repo.repo,
-                    issue_number:     context.issue.number,
-                    title:            `${ iss_title }`,
-                    labels:           add_labels
-                } );
-            }
-
-      # ---------------------------------------------------------------------------------------
-      #   Label > Urgent
-      # ---------------------------------------------------------------------------------------
-
-      - name: 🏷️ ${{ env.PREFIX_URGENT }} › Assignment
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
-          script: |
-
-            const issueLabels = await github.rest.issues.listLabelsOnIssue(
-            {
-                owner:              context.repo.owner,
-                repo:               context.repo.repo,
-                issue_number:       context.issue.number
-            });
-
-            let add_labels              = issueLabels.data.map(label => label.name);
-
-            let iss_title               = `${ context.payload.issue.title }`;
-            let iss_body                = `${ context.payload.issue.body }`;
-            const iss_tag               = `${{ env.PREFIX_URGENT }}`;
-
-            const iss_title_lc          = iss_title.toLowerCase( )
-            const iss_body_lc           = iss_body.toLowerCase( );
-            const iss_tag_lc            = iss_tag.toLowerCase( )
-
-            const containsList =
-            [
-                "urgent",
-                "urgency",
-                "emergency",
-                "important",
-                "critical",
-            ];
-
-            const bIncludesWordTitle    = containsList.some( s => s.includes( iss_title_lc ) || iss_title_lc.includes( s ) );
-            const bIncludesWordBody     = containsList.some( s => s.includes( iss_body_lc ) || iss_body_lc.includes( s ) );
-
-            /*
-                - Check if issue title matches the issue label "Urgent:"
-                - Check if title contains word in containsList 
-            */
-
-            if ( iss_title_lc.startsWith( iss_tag_lc ) || bIncludesWordTitle || bIncludesWordBody )
-            {
-
-                /*
-                    Rename title to contain Roadmap:
-                */
-
-                if ( !iss_title_lc.startsWith( iss_tag_lc ) )
-                {  
-                    const title           = context.payload.issue.title
-                    let title_new         = title.replace( /^\s?emergency\s*(.*?)\b/gi, '' );
-                    title_new             = title.replace( /^\s?urgent\s*(.*?)\b/gi, '' );
-                    title_new             = title.replace( /^\s?urgency\s*(.*?)\b/gi, '' );
-                    title_new             = title.replace( /^\s?important\s*(.*?)\b/gi, '' );
-                    title_new             = title.replace( /^\s?critical\s*(.*?)\b/gi, '' );
-                    iss_title             = `${ iss_tag }: ${ title_new }`;
-                }
-
-                add_labels.push( `${{ env.LABEL_URGENT }}` );
-
-                await github.rest.issues.update(
-                {
-                    owner:            context.repo.owner,
-                    repo:             context.repo.repo,
-                    issue_number:     context.issue.number,
-                    title:            `${ iss_title }`,
-                    labels:           add_labels
-                } );
-            }
-
-      # ---------------------------------------------------------------------------------------
-      #   Label > Roadmap
-      # ---------------------------------------------------------------------------------------
-
-      - name: 🏷️ ${{ env.PREFIX_ROADMAP }} › Assignment
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
-          script: |
-
-            const issueLabels = await github.rest.issues.listLabelsOnIssue(
-            {
-                owner:              context.repo.owner,
-                repo:               context.repo.repo,
-                issue_number:       context.issue.number
-            });
-
-            let add_labels              = issueLabels.data.map(label => label.name);
-
-            let iss_title               = `${ context.payload.issue.title }`;
-            let iss_body                = `${ context.payload.issue.body }`;
-            const iss_tag               = `${{ env.PREFIX_ROADMAP }}`;
-
-            const iss_title_lc          = iss_title.toLowerCase( )
-            const iss_body_lc           = iss_body.toLowerCase( );
-            const iss_tag_lc            = iss_tag.toLowerCase( )
-
-            const containsList =
-            [
-              "roadmap",
-              "road map",
-              "planned",
-            ];
-
-            const bIncludesWordTitle    = containsList.some( s => s.includes( iss_title_lc ) || iss_title_lc.includes( s ) );
-            const bIncludesWordBody     = containsList.some( s => s.includes( iss_body_lc ) || iss_body_lc.includes( s ) );
-
-            /*
-                - Check if issue title matches the issue label "Roadmap:"
-                - Check if title contains word in containsList 
-            */
-
-            if ( iss_title_lc.startsWith( iss_tag_lc ) || bIncludesWordTitle || bIncludesWordBody )
-            {
-
-                /*
-                    Rename title to contain Roadmap:
-                */
-
-                if ( !iss_title_lc.startsWith( iss_tag_lc ) )
-                {
-                    const title           = context.payload.issue.title
-                    let title_new         = title.replace( /^\s?broad(.*?)\s?map\s*(.*?)\b/gi, '' );
-                    title_new         		= title.replace( /^\s?planned\s*(.*?)\b/gi, '' );
-                    title_new         		= title.replace( /^\s?broadmap\s*(.*?)\b/gi, '' );
-                    iss_title             = `${ iss_tag }: ${ title_new }`;
-                }
-
-                add_labels.push( `${{ env.LABEL_ROADMAP }}` );
-
-                await github.rest.issues.update(
-                {
-                    owner:            context.repo.owner,
-                    repo:             context.repo.repo,
-                    issue_number:     context.issue.number,
-                    title:            `${ iss_title }`,
-                    labels:           add_labels
+                    owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number,
+                    title: `${ iss_title }`, labels: add_labels
                 } );
             }
 
