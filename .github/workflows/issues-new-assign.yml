@@ -147,9 +147,12 @@ jobs:
         with:
           github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
           script: |
-            let iss_title = `${ context.payload.issue.title }`;
+            const core      = require( '@actions/core' )
+            let iss_title   = `${ context.payload.issue.title }`;
 
             core.setOutput( 'issue_title', iss_title )
+            core.info( `Setting env issue title: ${ iss_title }` )
+
             console.log( "\n\n" )
             
 
@@ -164,6 +167,8 @@ jobs:
           github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
           script: |
 
+            const core      = require( '@actions/core' )
+            
             const issueLabels = await github.rest.issues.listLabelsOnIssue(
             {
                 owner:            context.repo.owner,
@@ -275,6 +280,7 @@ jobs:
           github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
           script: |
 
+            const core = require( '@actions/core' )
             const issueLabels = await github.rest.issues.listLabelsOnIssue(
             {
                 owner:            context.repo.owner,
@@ -388,6 +394,7 @@ jobs:
           github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
           script: |
 
+            const core = require( '@actions/core' )
             const issueLabels = await github.rest.issues.listLabelsOnIssue(
             {
                 owner:            context.repo.owner,
@@ -502,6 +509,7 @@ jobs:
           github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
           script: |
 
+            const core = require( '@actions/core' )
             const issueLabels = await github.rest.issues.listLabelsOnIssue(
             {
                 owner:            context.repo.owner,
