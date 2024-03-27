@@ -458,8 +458,11 @@ jobs:
                 // Rename title to contain Roadmap:
                 // Make sure issue / pr title doesnt already contain a beginning title tag
 
+                console.log( "A" )
                 if ( !iss_title_lc.startsWith( bug_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( feat_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( urgn_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( road_tag.toLowerCase( ) ) )
                 {
+                    console.log( "B" )
+
                     const title           = context.payload.issue.title
                     let title_new         = title.replace( /^\s?emergency\s*(.*?)\b/gi, '' );
                     title_new             = title.replace( /^\s?urgent\s*(.*?)\b/gi, '' );
@@ -467,8 +470,11 @@ jobs:
                     title_new             = title.replace( /^\s?important\s*(.*?)\b/gi, '' );
                     title_new             = title.replace( /^\s?critical\s*(.*?)\b/gi, '' );
                     iss_title             = `${ road_tag }: ${ title_new }`; // change TAG per category
+                    console.log( "C" )
                 }
 
+                console.log( "D" )
+                console.log( `${ iss_title }` )
                 await github.rest.issues.update(
                 {
                     owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number,
