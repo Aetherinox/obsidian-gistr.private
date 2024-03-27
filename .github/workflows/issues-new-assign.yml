@@ -477,6 +477,7 @@ jobs:
                 Roadmap
             */
 
+            console.log( iss_title_lc )
             const words                 = [ "roadmap", "road map", "planned" ];
             const bIncWordT             = words.some( s => s.includes( iss_title_lc ) || iss_title_lc.includes( s ) );
 
@@ -493,6 +494,7 @@ jobs:
                 - Check if title contains word in words 
             */
 
+              console.log( "iss_title " + iss_title )
               console.log( "bIncWordT .... " + bIncWordT )
               console.log( "bFoundMatchTitle .... " + bFoundMatchTitle )
               console.log( "bFoundMatchBody .... " + bFoundMatchBody )
