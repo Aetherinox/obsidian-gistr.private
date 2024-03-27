@@ -376,7 +376,7 @@ jobs:
                         append / prepare message for bot to send
                 */
     
-                const urgn_findWordList       = /(?:I?\s*have\s*(?:a|an)\s*(?:issue|problem|bug))|(?:will\s*not\s*work)|(?:it\s*is\s*(?:broken|broke|stuck))|(?:found\s*(?:an?|the)\s*(?:bug|issue))|(?:can\s*I\s*fix\s*the\s*(?:bug|issue))|(?:(?:does not|doesn'?t|don'?t|won'?t|can'?t|can\s?not|will\s*not)\s*(?:work|load|function))|(?:it\s*(?:will\s?not|won'?t|can\s?not|can'?t))\s*get\s*the\s*(?:website|site|webpage|page)/ig;
+                const urgn_findWordList       = /(?:I?\s*have\s*(?:a|an)\s*(?:issue|problem|bug))|(?:will\s*not\s*work)|(?:it\s*is\s*(?:broken|broke|stuck))|(?:found\s*(?:an?|the)\s*(?:bug|issue))|(?:can\s*I\s*fix\s*the\s*(?:bug|issue))|(?:(?:does not|doesn'?t|don'?t|won'?t|can'?t|can\s?not|will\s*not)\s*(?:work|load|function))|(?:it\s*(?:will\s?not|won'?t|can\s?not|can'?t))\s*get\s*the\s*(?:website|site|webpage|page)|(?:the\s*(?:window|frame)\s*is\s*(?:blank|white|empty|missing))/ig;
                 const urgn_bFoundMatchTitle   = Boolean( urgn_findWordList.test( iss_title ) );
                 const urgn_bFoundMatchBody    = Boolean( urgn_findWordList.test( iss_body ) );
 
