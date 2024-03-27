@@ -269,8 +269,8 @@ jobs:
             const iss_title_lc          = iss_title.toLowerCase( );
 
             console.log( "Feat Title ....... " + iss_title )
-            console.log( "Feat Title ....... " + `${{ steps.label_issues_bug.outputs.issue_title }}` )
-            console.log( "Feat Title ....... " + `${ context.payload.issue.title }` )
+            console.log( "Feat Output ...... " + `${{ steps.label_issues_bug.outputs.issue_title }}` )
+            console.log( "Feat Payload ..... " + `${ context.payload.issue.title }` )
 
             /*
                 Tags
@@ -382,8 +382,8 @@ jobs:
             const iss_title_lc          = iss_title.toLowerCase( );
 
             console.log( "Urgn Title ....... " + iss_title )
-            console.log( "Urgn Title ....... " + `${{ steps.label_issues_feature.outputs.issue_title }}` )
-            console.log( "Urgn Title ....... " + `${ context.payload.issue.title }` )
+            console.log( "Urgn Output ...... " + `${{ steps.label_issues_feature.outputs.issue_title }}` )
+            console.log( "Urgn Payload ..... " + `${ context.payload.issue.title }` )
 
             /*
                 Tags
@@ -497,8 +497,8 @@ jobs:
             const iss_title_lc          = iss_title.toLowerCase( );
 
             console.log( "Road Title ....... " + iss_title )
-            console.log( "Road Title ....... " + `${{ steps.label_issues_urgent.outputs.issue_title }}` )
-            console.log( "Road Title ....... " + `${ context.payload.issue.title }` )
+            console.log( "Road Output ...... " + `${{ steps.label_issues_urgent.outputs.issue_title }}` )
+            console.log( "Road Payload ..... " + `${ context.payload.issue.title }` )
 
             /*
                 Tags
