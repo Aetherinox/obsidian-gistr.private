@@ -160,7 +160,8 @@ jobs:
       - name: 🏷️ ${{ env.PREFIX_BUG }} › Assignment
         uses: actions/github-script@v7
         id: label_issues_bug
-        needs: [ label_issues_initialize ]
+        needs:
+        - label_issues_initialize
         with:
           github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
           script: |
@@ -270,7 +271,8 @@ jobs:
       - name: 🏷️ ${{ env.PREFIX_FEATURE }} › Assignment
         uses: actions/github-script@v7
         id: label_issues_feature
-        needs: [ label_issues_initialize ]
+        needs:
+        - label_issues_initialize
         with:
           github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
           script: |
@@ -384,7 +386,8 @@ jobs:
       - name: 🏷️ ${{ env.PREFIX_URGENT }} › Assignment
         uses: actions/github-script@v7
         id: label_issues_urgent
-        needs: [ label_issues_initialize ]
+        needs:
+        - label_issues_initialize
         with:
           github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
           script: |
@@ -499,7 +502,8 @@ jobs:
       - name: 🏷️ ${{ env.PREFIX_ROADMAP }} › Assignment
         uses: actions/github-script@v7
         id: label_issues_roadmap
-        needs: [ label_issues_initialize ]
+        needs:
+        - label_issues_initialize
         with:
           github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
           script: |
