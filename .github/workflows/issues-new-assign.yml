@@ -212,14 +212,15 @@ jobs:
                 console.log( "Already starts with " + road_tag + " ..... " + iss_title_lc.startsWith( road_tag.toLowerCase( ) ) )
 
                 add_labels.push( `${ bug_lbl }` );
+                
                 console.log( `Adding Tag ....................... ${ bug_lbl }` )
+                console.log( "\n" )
 
                 // Rename title to contain Bug:
                 // Make sure issue / pr title doesnt already contain a beginning title tag
 
                 if ( !iss_title_lc.startsWith( bug_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( feat_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( urgn_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( road_tag.toLowerCase( ) ) )
                 {
-                    console.log( "\n" )
                     console.log( "Renaming Title" )
                     console.log( `Old Title: .................. ${ iss_title }` )
 
@@ -323,14 +324,15 @@ jobs:
 
                 // change LBL per category
                 add_labels.push( `${ feat_lbl }` );
+
                 console.log( `Adding Tag ....................... ${ feat_lbl }` )
+                console.log( "\n" )
 
                 // Rename title to contain Feature:
                 // Make sure issue / pr title doesnt already contain a beginning title tag
 
                 if ( !iss_title_lc.startsWith( bug_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( feat_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( urgn_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( road_tag.toLowerCase( ) ) )
                 {
-                    console.log( "\n" )
                     console.log( "Renaming Title" )
                     console.log( `Old Title: .................. ${ iss_title }` )
 
@@ -437,13 +439,13 @@ jobs:
                 add_labels.push( `${ urgn_lbl }` );
 
                 console.log( `Adding Tag ....................... ${ urgn_lbl }` )
+                console.log( "\n" )
 
                 // Rename title to contain Urgent:
                 // Make sure issue / pr title doesnt already contain a beginning title tag
 
                 if ( !iss_title_lc.startsWith( bug_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( feat_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( urgn_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( road_tag.toLowerCase( ) ) )
                 {
-                    console.log( "\n" )
                     console.log( "Renaming Title" )
                     console.log( `Old Title: .................. ${ iss_title }` )
 
@@ -551,13 +553,13 @@ jobs:
                 add_labels.push( `${ road_lbl }` );
 
                 console.log( `Adding Tag .................... ${ road_lbl }` )
+                console.log( "\n" )
 
                 // Rename title to contain Roadmap:
                 // Make sure issue / pr title doesnt already contain a beginning title tag
 
                 if ( !iss_title_lc.startsWith( bug_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( feat_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( urgn_tag.toLowerCase( ) ) && !iss_title_lc.startsWith( road_tag.toLowerCase( ) ) )
                 {
-                    console.log( "\n" )
                     console.log( "Renaming Title" )
                     console.log( `Old Title: .................. ${ iss_title }` )
 
@@ -570,7 +572,7 @@ jobs:
                     iss_title             = `${ road_tag } ${ title_new }`; // change TAG per category
                 }
 
-                console.log( `New Title: ...................... ${ iss_title }` )
+                console.log( `New Title: .................... ${ iss_title }` )
 
                 await github.rest.issues.update(
                 {
