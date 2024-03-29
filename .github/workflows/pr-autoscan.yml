@@ -657,7 +657,7 @@ jobs:
 
             if ( actor ==  "${{ env.BOT_NAME_DEPENDABOT }}" && bDependency )
                 labels.push( "${{ env.LABEL_TYPE_DEPENDENCY }}" );
-            elseif ( actor ==  "${{ env.BOT_NAME_DEPENDABOT }}" && bGitaction )
+            else if ( actor ==  "${{ env.BOT_NAME_DEPENDABOT }}" && bGitaction )
                 labels.push( "${{ env.LABEL_TYPE_GITACTION }}" );
 
             if ( context.payload.pull_request.labels.filter( label => label.name === "${{ env.LABEL_CHECK_CHANGES_REQ }}" ).length > 0 )
