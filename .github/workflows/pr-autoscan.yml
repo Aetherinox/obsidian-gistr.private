@@ -55,7 +55,7 @@ env:
 # ---------------------------------------------------------------------------------------
 
 jobs:
-  autocheck-validation:
+  pr-autoscan:
     runs-on: ubuntu-latest
     permissions:
       contents: read
