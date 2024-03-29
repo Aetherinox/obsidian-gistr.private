@@ -58,11 +58,10 @@ jobs:
   autocheck-validation:
     runs-on: ubuntu-latest
     permissions:
-      id-token: write
       contents: read
       actions: read
       issues: write
-      pull-requests: write
+      pull-requests: read
       
     steps:
 
@@ -111,7 +110,7 @@ jobs:
       - uses: actions/github-script@v7
         id: autocheck-get-issue-number
         with:
-          github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
+          github-token: ${{ secrets.ADMINSERV_TOKEN_CL || github.token }}
           script: |
             if ( context.issue.number )
             {
@@ -199,7 +198,7 @@ jobs:
         id: autocheck-run
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
+          github-token: ${{ secrets.ADMINSERV_TOKEN_CL || github.token }}
           script: |
             const fs            = require( 'fs' );
             const escape_html   = ( unsafe ) => unsafe.replace( /&/g, '&amp;' ).replace( /</g, '&lt;' ).replace( />/g, '&gt;' ).replace( /"/g, '&quot;' ).replace( /'/g, '&#039;' );
