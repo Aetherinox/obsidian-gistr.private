@@ -226,6 +226,11 @@ jobs:
             for ( const issue of issues.data )
             {
 
+                const actor             = '${ issue.actor }`;
+                const author             = '${ issue.author }`;
+
+                console.log( "Actor " + actor )
+                console.log( "author " + author )
                 let date_UpdateDate     = new Date( `${ issue.updated_at }` ?? `${ issue.created_at }` );   // Tue Mar 26 2024 16:40:41 GMT+0000 (Coordinated Universal Time)
                 date_UpdateDate.toISOString( )                                                              // Tue Mar 26 2024 16:40:41 GMT+0000 (Coordinated Universal Time) (string)
 
@@ -347,7 +352,7 @@ jobs:
                         https://regex101.com/r/fR1Hm6/1
                 */
     
-                const feat_findWordList 	      = /^(?:(?:request|include|see)\s*(?:an?|the?)\s*(?:feature|addon|addition|plugin))|(?:(?:add|see|get)\s*support\s*(?:for|with|of))|(?:can\s*we\s*get\s*(?:the|a)\s*(?:ability|feature))|(?:💡 Feature:)$/igm;
+                const feat_findWordList 	    = /^(?:(?:request|include|see)\s*(?:an?|the?)\s*(?:feature|addon|addition|plugin))|(?:(?:add|see|get)\s*support\s*(?:for|with|of))|(?:can\s*we\s*get\s*(?:the|a)\s*(?:ability|feature))|(?:💡 Feature:)$/igm;
                 const feat_bFoundMatchTitle     = Boolean( feat_findWordList.test( iss_title ) );
                 const feat_bFoundMatchBody      = Boolean( feat_findWordList.test( iss_body ) );
 
