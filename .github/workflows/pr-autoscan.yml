@@ -650,11 +650,6 @@ jobs:
             const bGitaction    = type_gitaction.some( s => s.includes( branch_ref ) || branch_ref.includes( s ) );
             const bDependency   = type_dependency.some( s => s.includes( branch_ref ) || branch_ref.includes( s ) );
 
-            console.log( "bGitaction " + bGitaction )
-            console.log( "bDependency " + bDependency )
-            console.log( "${{ env.BOT_NAME_DEPENDABOT }}" )
-            console.log( actor)
-
             if ( actor ==  "${{ env.BOT_NAME_DEPENDABOT }}" && bDependency )
                 labels.push( "${{ env.LABEL_TYPE_DEPENDENCY }}" );
             else if ( actor ==  "${{ env.BOT_NAME_DEPENDABOT }}" && bGitaction )
