@@ -13,7 +13,7 @@ run-name: "⚡ PR › Autoscan"
 # ---------------------------------------------------------------------------------------
 
 on:
-  pull_request_target:
+  pull_request:
     branches:
       - main
 
@@ -75,7 +75,6 @@ jobs:
       - name: 🏷️ Verify Existing Labels
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.ADMINSERV_TOKEN_CL || github.token }}
           script: |
             const labels = JSON.parse( process.env.LABELS_JSON );
             for ( const label of labels )
@@ -107,7 +106,6 @@ jobs:
       - name: 🏷️ Verify Existing Labels
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.ADMINSERV_TOKEN_CL || github.token }}
           script: |
             const labels = JSON.parse( process.env.LABELS_JSON );
             for ( const label of labels )
@@ -143,7 +141,6 @@ jobs:
       - uses: actions/github-script@v7
         id: autocheck-get-issue-number
         with:
-          github-token: ${{ secrets.ADMINSERV_TOKEN_CL }}
           script: |
             if ( context.issue.number )
             {
