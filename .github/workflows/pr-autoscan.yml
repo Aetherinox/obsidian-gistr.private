@@ -66,9 +66,6 @@ jobs:
       
     steps:
 
-      - name: "Checkout"
-        uses: actions/checkout@v4
-
       # ---------------------------------------------------------------------------------------
       #   action needed if using 'pull_request' and 'issue_comment'
       #   to get the pull request, you would normally use ${{ github.event.number }}
@@ -147,7 +144,7 @@ jobs:
       # ---------------------------------------------------------------------------------------
         
       - uses: actions/checkout@v4
-        if: ( github.event_name == 'pull_request' ) || ( github.event_name == 'issue_comment' && contains( github.event.comment.html_url, '/pull/' ) && contains( github.event.comment.body, '/rescan' ) )
+        if: ( github.event_name == 'pull_request_target' ) || ( github.event_name == 'pull_request' ) || ( github.event_name == 'issue_comment' && contains( github.event.comment.html_url, '/pull/' ) && contains( github.event.comment.body, '/rescan' ) )
         with:
           fetch-depth: 0
           ref: "refs/pull/${{ steps.autocheck-get-issue-number.outputs.result }}/merge"
