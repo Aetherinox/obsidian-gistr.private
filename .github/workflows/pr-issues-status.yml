@@ -226,11 +226,7 @@ jobs:
             for ( const issue of issues.data )
             {
 
-                const actor             = '${ issue.actor }`;
-                const author             = '${ issue.author }`;
 
-                console.log( "Actor " + actor )
-                console.log( "author " + author )
                 let date_UpdateDate     = new Date( `${ issue.updated_at }` ?? `${ issue.created_at }` );   // Tue Mar 26 2024 16:40:41 GMT+0000 (Coordinated Universal Time)
                 date_UpdateDate.toISOString( )                                                              // Tue Mar 26 2024 16:40:41 GMT+0000 (Coordinated Universal Time) (string)
 
