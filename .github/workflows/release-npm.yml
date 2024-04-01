@@ -109,7 +109,7 @@ jobs:
                 GH_ID: ${{ secrets.ADMINSERV_GPG_KEYID }}
               run: |
                 echo -n "$GH_SECRET_KEY" | base64 --decode | gpg --import --no-tty --batch --yes
-                env_gpg_pass=$( echo "$gpg_pass" | base64 --decode ) >> $GITHUB_ENV
+                env_gpg_pass=$( echo "$GH_SECRET_PASS" | base64 --decode ) >> $GITHUB_ENV
                 echo -n "default-key $GH_ID" > ~/.gnupg/gpg.conf
 
                 echo "-----------------"
