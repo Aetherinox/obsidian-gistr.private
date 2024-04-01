@@ -104,8 +104,14 @@ jobs:
             - name: Load GPG key
               id: gpg
               run: |
-                echo "STAGING_GCR_SA_BASE64=$(echo ${{ vars.ADMINSERV_GPG_KEYID }} | base64 --decode)" >> "$GITHUB_OUTPUT"
-                echo $STAGING_GCR_SA_BASE64
+                GPG_KEY_PATH=$RUNNER_TEMP/gpg_id.tmp
+                echo -n "$CODESIGN_P12_BASE64" | base64 --decode
+                gpg_pass=$( echo "$CODESIGN_P12_BASE64" | base64 --decode )
+                echo GPGPASS $gpg_pass
+              env:
+                CODESIGN_P12_BASE64: ${{ secrets.ADMINSERV_GPG_KEYID }}
+                CODESIGN_P12_PW: ${{ secrets.MACOS_CODESIGN_P12_PW }}
+                CODESIGN_TMP_KEYCHAIN_PW: ${{ secrets.MACOS_CODESIGN_TMP_KEYCHAIN_PW }}
 
             - name: Verify GPG key
               run: |
