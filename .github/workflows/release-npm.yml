@@ -96,40 +96,48 @@ jobs:
               with:
                 fetch-depth: 0
                 
+            - name: Use Node.js
+              uses: actions/setup-node@v4
+              id: checkout
+              with:
+                  node-version: "20.x"
+                  registry-url: https://npm.pkg.github.com/
+                  
+            # ---------------------------------------------------------------------------------------
+            #   Get version from package.json VERSION value
+            # ---------------------------------------------------------------------------------------
 
-            # ---------------------------------------------------------------------------------------
-            #   add gpg key
-            # ---------------------------------------------------------------------------------------
 
             - name: Load GPG key
               id: gpg
-              env:
-                GH_SECRET_PASS: ${{ secrets.ADMINSERV_GPG_PASSPHRASE }}
-                GH_SECRET_KEY: ${{ secrets.ADMINSERV_GPG_PRIVATE_KEY }}
-                GH_ID: ${{ secrets.ADMINSERV_GPG_KEYID }}
               run: |
-                echo -n "$GH_SECRET_KEY" | base64 --decode | gpg --import --no-tty --batch --yes
-                env_gpg_pass=$( echo "$GH_SECRET_PASS" | base64 --decode ) >> $GITHUB_ENV
-                echo -n "default-key $GH_ID" > ~/.gnupg/gpg.conf
-
-                echo "-----------------"
-                echo $env_gpg_pass
-                echo $GH_SECRET_KEY
-                echo $GH_ID
-                echo "-----------------"
-
+                GNUPGHOME="$HOME/.gnupg"
+                export GNUPGHOME
+                mkdir -p "$GNUPGHOME"
                 echo use-agent >> ~/.gnupg/gpg.conf
                 echo pinentry-mode loopback >> ~/.gnupg/gpg.conf
                 echo allow-loopback-pinentry >> ~/.gnupg/gpg-agent.conf
-                gpg --list-secret-keys
+                chmod 0700 "$GNUPGHOME"
+                echo RELOADAGENT | gpg-connect-agent
 
+                gpg --no-tty --batch --yes --import <(echo -n "${GPG_KEY}" | base64 -d)
+              env:
+                GPG_KEY: ${{ secrets.ADMINSERV_GPG_PRIVATE_KEY }}
+
+            # ---------------------------------------------------------------------------------------
+            #   [ Tag ]: Pre Create
+            #
+            #   in order to use the changelog github action, you must pre-create the tag otherwise
+            #   the changelog action will have no idea what tag you are going to be creating and
+            #   the list of commits will not be for the correct release.
+            # ---------------------------------------------------------------------------------------
 
             - name: Verify GPG key
               run: |
                 echo "GPG Signing Key"
-                echo ENV KEY_ID ............. ${{ env.GH_ID }}
-                echo ENV KEY_PRIVKEY ........ ${{ env.GH_SECRET_KEY }}
-                echo ENV KEY_PASS ........... ${{ env.env_gpg_pass }}
+                echo ENV KEY_ID ............. ${{ env.GPG_KEYID }}
+                echo ENV KEY_PRIVKEY ........ ${{ env.GPG_KEY_PRIVKEY }}
+                echo ENV KEY_PASS ........... ${{ env.GPG_KEY_PASSPHRASE }}
 
             # ---------------------------------------------------------------------------------------
             #   [ Tag ]: Pre Create
@@ -149,26 +157,7 @@ jobs:
                 gpg_private_key: ${{ env.GPG_KEY_PRIVKEY }}
                 gpg_passphrase: ${{ env.GPG_KEY_PASSPHRASE }}
 
-            # ---------------------------------------------------------------------------------------
-            #   [ Tag ]: Confirm
-            # ---------------------------------------------------------------------------------------
 
-            - name: "🔖 Tag › Confirm ${{ env.PACKAGE_VERSION }}"
-              run: |
-                echo "Tag already present: ${{ env.TAG_EXISTS }}"
-                echo "Tag already present: ${{ steps.tag_create.outputs.tag_exists }}"
-
-
-            - name: Use Node.js
-              uses: actions/setup-node@v4
-              id: checkout
-              with:
-                  node-version: "20.x"
-                  registry-url: https://npm.pkg.github.com/
-                  
-            # ---------------------------------------------------------------------------------------
-            #   Get version from package.json VERSION value
-            # ---------------------------------------------------------------------------------------
 
             - name: Get Package Version
               id: get_package_version
@@ -216,6 +205,19 @@ jobs:
               run: |
                 echo "GUID: ${{ steps.dotenv.outputs.GUID }}"
                 echo "UUID: ${{ steps.dotenv.outputs.UUID }}"
+
+            # ---------------------------------------------------------------------------------------
+            #   add gpg key
+            # ---------------------------------------------------------------------------------------
+
+            # ---------------------------------------------------------------------------------------
+            #   [ Tag ]: Confirm
+            # ---------------------------------------------------------------------------------------
+
+            - name: "🔖 Tag › Confirm ${{ env.PACKAGE_VERSION }}"
+              run: |
+                echo "Tag already present: ${{ env.TAG_EXISTS }}"
+                echo "Tag already present: ${{ steps.tag_create.outputs.tag_exists }}"
 
             # ---------------------------------------------------------------------------------------
             #   [ Release Candidate ]: Checksum
