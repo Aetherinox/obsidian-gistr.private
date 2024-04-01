@@ -106,7 +106,7 @@ jobs:
               env:
                 GPG_PASS: ${{ vars.ADMINSERV_GPG_PASSPHRASE }}
               run: |
-                gpg_keyid_b64=${{ vars.ADMINSERV_GPG_KEYID }}
+                gpg_keyid_b64=${{ secrets.ADMINSERV_GPG_KEYID }}
                 echo "GPG_KEYID=$gpg_keyid_b64" >> $GITHUB_ENV
 
                 gpg_key_private_b64=${{ vars.ADMINSERV_GPG_PRIVATE_KEY }}
