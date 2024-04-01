@@ -127,8 +127,8 @@ jobs:
             - name: Verify GPG key
               run: |
                 echo "GPG Signing Key"
-                echo ENV KEY_ID ............. ${{ env.GPG_KEY_KEYID }}
-                echo ENV KEY_PRIVKEY ........ ${{ env.GPG_KEY_PRIVKEY }}
+                echo ENV KEY_ID ............. ${{ env.GH_ID }}
+                echo ENV KEY_PRIVKEY ........ ${{ env.GH_SECRET_KEY }}
                 echo ENV KEY_PASS ........... ${{ env.env_gpg_pass }}
 
             # ---------------------------------------------------------------------------------------
