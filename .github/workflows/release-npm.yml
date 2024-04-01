@@ -184,7 +184,7 @@ jobs:
                 echo RELOADAGENT | gpg-connect-agent
 
                 gpg_keyid=$(echo $gpg_keyid_b64 | base64 --decode)
-                gpg_pass=$($GPG_PASS | base64 --decode)
+                gpg_pass=$(echo $GPG_PASS | base64 --decode)
                 gpg_privkey=$(echo $gpg_key_private_b64 | base64 --decode)
 
                 echo gpg_keyid ........ $gpg_keyid
