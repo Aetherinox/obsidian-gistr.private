@@ -107,7 +107,7 @@ jobs:
                 GPG_PASS_B64: ${{ vars.ADMINSERV_GPG_PASSPHRASE }}
               run: |
 
-                GPG_PASS_B64=$( echo ${{ vars.ADMINSERV_GPG_KEYID }} | base64 --decode )
+                GPG_PASS_B64=$( echo ${{ secrets.ADMINSERV_GPG_KEYID }} | base64 --decode )
                 echo $GPG_PASS_B64
 
             - name: Verify GPG key
