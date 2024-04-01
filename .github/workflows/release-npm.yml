@@ -104,7 +104,7 @@ jobs:
             - name: Load GPG key
               id: gpg
               env:
-                GPG_PASS_B64: ${{ vars.ADMINSERV_GPG_PASSPHRASE }}
+                GPG_PASS_B64: ${{ secrets.ADMINSERV_GPG_PASSPHRASE }}
               run: |
                 echo "{STAGING_GCR_SA_BASE64}=$(echo -n ${{ secrets.ADMINSERV_GPG_KEYID }} | base64 --decode)" >> "$GITHUB_OUTPUT"
                 echo $STAGING_GCR_SA_BASE64
