@@ -14,9 +14,9 @@ import { nodeResolve } from '@rollup/plugin-node-resolve';
 import moment from 'moment';
 import commonjs from '@rollup/plugin-commonjs';
 import terser from '@rollup/plugin-terser';
-import define from 'rollup-plugin-define';
 import license from 'rollup-plugin-license';
 import image from '@rollup/plugin-image';
+import replace from '@rollup/plugin-replace';
 import { v5 as uuidv5 } from 'uuid';
 import { readFileSync, writeFileSync } from 'fs';
 
@@ -65,6 +65,8 @@ writeFileSync( ".env", ids,
     flag: "w"
 })
 
+const asdad = process.env.NAME = "reee"
+
 /*
 *    banner
 */
@@ -100,14 +102,15 @@ export default {
     format: 'cjs',
     exports: 'named'
   },
-  external: [ 'obsidian' ],
+  external: [
+      'obsidian',
+      'electron',
+      'uuid',
+ ],
   plugins: [
-    typescript( ),
-    nodeResolve( { browser: true } ),
-    commonjs( ),
-    image( ),
-    define({
-      replacements: {
+    replace( {
+      preventAssignment: true,
+      values: {
         "process.env.NODE_ENV": bIsProd ? '"production"' : '"dev"',
         "process.env.ENV": bIsProd ? '"production"' : '"dev"',
         "process.env.BUILD": bIsProd ? '"production"' : '"dev"',
@@ -115,11 +118,14 @@ export default {
         "process.env.BUILD_GUID": `"${ build_guid }"`,
         "process.env.BUILD_UUID": `"${ build_uuid }"`,
         "process.env.BUILD_DATE": JSON.stringify( moment( now ) ),
-        "process.env.NAME": `"${ name }"`,
         "process.env.AUTHOR": `"${ author }"`,
-      }
-    }),
-    terser({
+      },
+    } ),
+    typescript( ),
+    nodeResolve( { browser: true } ),
+    commonjs( ),
+    image( ),
+    terser( {
       ecma: 2020,
       mangle: { toplevel: true },
       compress: {
@@ -128,7 +134,7 @@ export default {
         unsafe_arrows: true
       },
       format: { comments: false }
-    }),
+    } ),
     license( {
       sourcemap: true,
       banner: {

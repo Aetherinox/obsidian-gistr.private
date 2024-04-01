@@ -1,8 +1,16 @@
 import GistrPlugin from "src/main"
+import { SaturynParams } from 'src/api/Saturyn/Parameters'
 
 /*
     Settings
 */
+
+export interface MarkdownLink
+{
+    title:  string
+    url:    string
+}
+
 
 export interface GistrSettings
 {
@@ -15,8 +23,9 @@ export interface GistrSettings
     blk_pad_b:                  number | 19
     textwrap:                   string | "Enabled"
     notitime:                   number | 10
-    sy_clr_lst_icon:            string | "757575E6"
     ge_enable_updatenoti:       boolean | true
+    ge_enable_ribbon_icons:     boolean | false
+    ge_contextmenu_sorting:     [],
 
     og_clr_bg_light:            string | "CBCBCB"
     og_clr_bg_dark:             string | "121315"
@@ -42,9 +51,10 @@ export interface GistrSettings
     sy_add_frontmatter:         boolean | false
     sy_save_list_showall:       boolean | false
     sy_save_list_datetime:      string | "MM.DD.YYYY h:m:s a"
-    sy_save_duration:           number | 10
-
-    context_sorting:    [],
+    sy_clr_lst_icon:            string | "757575E6"
+    sy_save_duration:           number | 120
+    portals:                    Record< string, SaturynParams >
+    uuid:                       string
 }
 
 /*

@@ -22,6 +22,7 @@ export default
     base_debug_updater_1:                       '{0} Update Check',
     base_debug_updater_2:                       '{0} {1}',
     base_context_nofocus:                       'Obsidian does not have focus, please open a file',
+    base_reload_notice:                         'Successfully reloaded Gistr',
 
     /*
         Context menu options
@@ -30,6 +31,7 @@ export default
     cfg_context_gist_public:                    'Save Gist (Github Public)',
     cfg_context_gist_secret:                    'Save Gist (Github Secret)',
     cfg_context_gist_copy:                      'Copy Gist URL',
+    cfg_context_gist_reload:                    'Reload Gistr',
 
     /*
         Tab > Settings > Header
@@ -50,6 +52,8 @@ export default
     cfg_tab_og_header:                          'Opengist is a self-hosted pastebin powered by Git. All snippets are stored in a Git repository and can be read and/or modified using standard Git commands, or with the web interface. It is similiar to GitHub Gist, but open-source and is self-hosted. OpenGist supports Windows, Linux, and MacOS.',
     cfg_tab_gh_title:                           'Github',
     cfg_tab_gh_header:                          'Github Gists let you store and distribute code snippets without setting up a full-fledged repository. Store snippets such as strings, bash scripts, markdown, text files, and other small pieces of data.',
+    cfg_tab_po_title:                           'Portal (Developer)',
+    cfg_tab_po_header:                          'These settings display currently registered portals for Gistr.',
     cfg_tab_sp_title:                           'Support',
     cfg_tab_ge_keyword_name:                    'Trigger keyword',
     cfg_tab_ge_keyword_desc:                    'Word to use inside codeblocks to designate as a portal for showing gists',
@@ -61,19 +65,22 @@ export default
     cfg_tab_ge_noti_dur_desc:                   'How long a notification will display for (in seconds). Set to <span class="gistr-settings-elm-important">0</span> to keep notification up until user dismisses it.',
     cfg_tab_ge_noti_update_name:                'Enable Gistr update notifications',
     cfg_tab_ge_noti_update_desc:                '<span class="gistr-settings-elm-note">Enabled</span>: When launching Obsidian, you will get a notification if a new version of Gistr is available. This includes beta releases not available to the public yet.<br><br><span class="gistr-settings-elm-important">Disabled</span>: You will not get any notifications alerting you to new Gistr updates. You must manually check or use the Obsidian plugin checker.<br><br><b>Note</b>: This update notification includes beta releases of Gistr. The Obsidian plugin updater does not track beta.',
-
+    cfg_tab_ge_tog_enable_ribbon_debug_name:    'Enable refresh icon',
+    cfg_tab_ge_tog_enable_ribbon_debug_desc:    '<span class="gistr-settings-elm-note">Enabled</span>: Adds a special icon to your top header ribbon which allows you to force all embedded gists to be refreshed.<br>This is useful when modifying the colors / settings for Gistr, since all codeblocks are cached and changes do not appear immediately. The button added to your ribbon will force-refresh all codeblocks and immediately show new changes.',
+    cfg_tab_ge_tog_enable_ribbon_debug_tip:     '',
+    
     /*
         Tab > Settings > OpenGist
     */
 
     cfg_tab_og_cb_light_name:                   'Codeblock bg (Light)',
-    cfg_tab_og_cb_light_desc:                   'Color for Github codeblock background color <span class="gistr-settings-lbl-theme-light">(Light Theme)</span>',
+    cfg_tab_og_cb_light_desc:                   'Color for Opengist codeblock background color <span class="gistr-settings-lbl-theme-light">(Light Theme)</span>',
     cfg_tab_og_cb_dark_name:                    'Codeblock bg (Dark)',
-    cfg_tab_og_cb_dark_desc:                    'Color for Github codeblock background color <span class="gistr-settings-lbl-theme-dark">(Dark Theme)</span>',
+    cfg_tab_og_cb_dark_desc:                    'Color for Opengist codeblock background color <span class="gistr-settings-lbl-theme-dark">(Dark Theme)</span>',
     cfg_tab_og_sb_light_name:                   'Scrollbar track (Light)',
-    cfg_tab_og_sb_light_desc:                   'Color for gist scrollbar track <span class="gistr-settings-lbl-theme-light">(Light Theme)</span>',
+    cfg_tab_og_sb_light_desc:                   'Color for Opengist scrollbar track <span class="gistr-settings-lbl-theme-light">(Light Theme)</span>',
     cfg_tab_og_sb_dark_name:                    'Scrollbar track (Dark)',
-    cfg_tab_og_sb_dark_desc:                    'Color for gist scrollbar track <span class="gistr-settings-lbl-theme-dark">(Dark Theme)</span>',
+    cfg_tab_og_sb_dark_desc:                    'Color for Opengist scrollbar track <span class="gistr-settings-lbl-theme-dark">(Dark Theme)</span>',
     cfg_tab_og_tx_light_name:                   'Codeblock text (Light)',
     cfg_tab_og_tx_light_desc:                   'Color for codeblock text color <span class="gistr-settings-lbl-theme-light">(Light Theme)</span>',
     cfg_tab_og_tx_dark_name:                    'Codeblock text (Dark)',
@@ -93,13 +100,13 @@ export default
     */
 
     cfg_tab_gh_cb_light_name:                   'Codeblock bg (Light)',
-    cfg_tab_gh_cb_light_desc:                   'Color for Opengist codeblock background color <span class="gistr-settings-lbl-theme-light">(Light Theme)</span>',
+    cfg_tab_gh_cb_light_desc:                   'Color for Github codeblock background color <span class="gistr-settings-lbl-theme-light">(Light Theme)</span>',
     cfg_tab_gh_cb_dark_name:                    'Codeblock bg (Dark)',
-    cfg_tab_gh_cb_dark_desc:                    'Color for Opengist codeblock background color <span class="gistr-settings-lbl-theme-dark">(Dark Theme)</span>',
+    cfg_tab_gh_cb_dark_desc:                    'Color for Github codeblock background color <span class="gistr-settings-lbl-theme-dark">(Dark Theme)</span>',
     cfg_tab_gh_sb_light_name:                   'Scrollbar track (Light)',
-    cfg_tab_gh_sb_light_desc:                   'Color for gist scrollbar track <span class="gistr-settings-lbl-theme-light">(Light Theme)</span>',
+    cfg_tab_gh_sb_light_desc:                   'Color for Github scrollbar track <span class="gistr-settings-lbl-theme-light">(Light Theme)</span>',
     cfg_tab_gh_sb_dark_name:                    'Scrollbar track (Dark)',
-    cfg_tab_gh_sb_dark_desc:                    'Color for gist scrollbar track <span class="gistr-settings-lbl-theme-dark">(Dark Theme)</span>',
+    cfg_tab_gh_sb_dark_desc:                    'Color for Github scrollbar track <span class="gistr-settings-lbl-theme-dark">(Dark Theme)</span>',
     cfg_tab_gh_tx_light_name:                   'Codeblock text (Light)',
     cfg_tab_gh_tx_light_desc:                   'Color for codeblock text color <span class="gistr-settings-lbl-theme-light">(Light Theme)</span>',
     cfg_tab_gh_tx_dark_name:                    'Codeblock text (Dark)',
@@ -121,7 +128,7 @@ export default
     cfg_tab_gh_pat_perm_3:                      '<span class="gistr-settings-elm-li-title">Repository Permissions ► Contents</span> <span class="gistr-settings-elm-li-perm">                                                    Read-only</span>',
     cfg_tab_gh_pat_perm_4:                      '<span class="gistr-settings-elm-li-title">Repository Permissions ► Issues</span> <span class="gistr-settings-elm-li-perm">                                                              Read-only</span>',
     cfg_tab_gh_pat_footer:                      'Github icon to the right will turn into a checkmark when you\'ve entered a valid token.',
-    cfg_tab_gh_pat_help:                        '<b>What is this for?</b> <a href="https://github.com/Aetherinox/obsidian-gistr/wiki/2.-Usage#github-tab">Read the docs</a>',
+    cfg_tab_gh_pat_help:                        '<b>What is this for?</b> <a href="https://aetherinox.github.io/obsidian-gistr/settings/github/">Read the docs</a>',
     cfg_tab_gh_pat_url_btn:                     'https://github.com/settings/tokens?type=beta',
     cfg_tab_gh_pat_ok_btn_tip:                  'Valid Github API Token',
     cfg_tab_gh_pat_bad_btn_tip:                 'Invalid Github API Token entered\n\nClick here to generate one',
@@ -136,14 +143,15 @@ export default
     */
 
     cfg_tab_su_desc:                            'The following buttons are associated to useful resources for this plugin.',
+    cfg_tab_su_doc_name:                        'Documentation',
+    cfg_tab_su_doc_desc:                        'View the official Gistr documentation',
+    cfg_tab_su_doc_btn:                         'View',
     cfg_tab_su_gs_name:                         'Introduction',
     cfg_tab_su_gs_desc:                         'View brief introduction to getting started with this plugin',
     cfg_tab_su_gs_btn:                          'Open',
     cfg_tab_su_repo_label:                      'Plugin repo',
-    cfg_tab_su_repo_url:                        'https://github.com/Aetherinox/obsidian-gistr',
     cfg_tab_su_repo_btn:                        'View',
     cfg_tab_su_vault_label:                     'Plugin demo vault',
-    cfg_tab_su_vault_url:                       'https://github.com/Aetherinox/obsidian-gistr/tree/main/tests/gistr-vault',
     cfg_tab_su_vault_btn:                       'View',
     cfg_tab_su_ogrepo_label:                    'OpenGist: download',
     cfg_tab_su_ogrepo_url:                      'https://github.com/thomiceli/opengist/releases',
@@ -176,20 +184,79 @@ export default
     cfg_tab_su_ver_status_new_stable_btn_tip:   'A newer stable release of Gistr is available',
     cfg_tab_su_ver_status_new_beta_btn_tip:     'A newer beta release of Gistr is available',
     cfg_tab_su_ver_status_error_btn_tip:        'Could not communicate with the gistr server, retrying later',
-    cfg_tab_su_ver_releases:                    'https://github.com/Aetherinox/obsidian-gistr/releases',
+
+    /*
+        Portal
+    */
+
+    cfg_tab_po_create_name:                     'Create Portal',
+    cfg_tab_po_create_desc:                     'Created a new registered portal',
+    cfg_tab_po_create_btn:                      'Create',
+    cfg_tab_po_list_desc:                       'List of portals registered:',
+    cfg_tab_po_list_none_title:                 'No Portals Found',
+    cfg_tab_po_list_none_msg:                   'No created portals can be found. Click the **Create Portal** button at the top of this settings interface to create your first',
+
+    cfg_po_edit_url_name:                       'URL',
+    cfg_po_edit_url_desc:                       'Direct path URL which leads to your assigned website portal',
+    cfg_po_edit_url_hold:                       'https://gist.github.com/username/XXXXXXXXX',
+
+    cfg_po_edit_name_name:                      'Name',
+    cfg_po_edit_name_desc:                      'Name assigned to the portal window. This can be used in a codeblock to call the name of the portal using a YAML structure.',
+    cfg_po_edit_name_hold:                      'Portal Name',
+
+    cfg_po_edit_icon_name:                      'Icon',
+    cfg_po_edit_icon_desc:                      'Icon displayed in the portal',
+    cfg_po_edit_icon_hold:                      'Leave blank to auto-detect',
+
+    cfg_po_edit_agent_name:                     'User agent',
+    cfg_po_edit_agent_desc:                     'Leave this alone if you are unsure what it does',
+    cfg_po_edit_agent_hold:                     'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0/HBpt3US8-18',
+
+    cfg_po_edit_dock_name:                      'Dock / Position',
+    cfg_po_edit_dock_desc:                      'Sets the position for the page',
+
+    cfg_po_edit_pin_name:                       'Pin to menu',
+    cfg_po_edit_pin_desc:                       'If enabled: Portal will be pinned to the left bar',
+
+    cfg_po_edit_pkey_name:                      'Profile key',
+    cfg_po_edit_pkey_desc:                      'Portals with the same profile key will share cookies & storage',
+    cfg_po_edit_pkey_hold:                      '',
+
+    cfg_po_edit_zoom_name:                      'Zoom',
+    cfg_po_edit_zoom_desc:                      'Allows a webpage to be zoomed in or out on load',
+
+    cfg_po_edit_css_name:                       'CSS',
+    cfg_po_edit_css_desc:                       'Override CSS / stylesheet for window',
+    cfg_po_edit_css_hold:                       'No custom CSS provided',
+
+    cfg_po_edit_js_name:                        'JS',
+    cfg_po_edit_js_desc:                        'Override JS / javascript for window',
+    cfg_po_edit_js_hold:                        'No custom Javascript provided',
+
+    cfg_po_edit_advtoggle_name:                 'Advanced Settings',
+    cfg_po_edit_advtoggle_desc:                 'Make advanced menu options appear',
+
+    cfg_po_button_name:                         'Portal Actions',
+    cfg_po_button_desc:                         'Save or update settings for your configured portals',
+    cfg_po_button_opt_create:                   'Create Portal',
+    cfg_po_button_opt_update:                   'Update Portal',
+
+    po_url_missing:                             'Missing url parameter',
+    po_notice_restart_obsidian:                 'Change(s) will take effect after you restart Obsidian',
+    po_notice_portal_not_found:                 'Portal not found',
 
     /*
         Tab > Sync
     */
 
-    cfg_tab_sy_list_save_showall_name:          'Gist save list: Show All Saves',
+    cfg_tab_sy_list_save_showall_name:          'Save list: Show All Saves',
     cfg_tab_sy_list_save_showall_desc:          'This setting effects how the gist save list displays saved gists.<br><br><span class="gistr-settings-elm-note">Enabled</span>: When saving an existing gist, the suggestion box will display ALL saves for that note in the same list; both public and secret.<br><br><span class="gistr-settings-elm-important">Disabled</span>: Public and secret gist saves will be separated when being displayed in the existing gist save list.',
 
-    cfg_tab_sy_list_icon_name:                  'Gist save list: Icon color',
+    cfg_tab_sy_list_icon_name:                  'Save list: Icon color',
     cfg_tab_sy_list_icon_desc:                  'Color for icon in gist save list',
 
-    cfg_tab_sy_list_datetime_name:              'Gist save list: Datetime format',
-    cfg_tab_sy_list_datetime_desc:              'Defines what format the date and time will display as.<br>Datetime Format Options: <a href="http://momentjs.com/docs/#/displaying/format/">view here</a>',
+    cfg_tab_sy_list_datetime_name:              'Save list: Datetime format',
+    cfg_tab_sy_list_datetime_desc:              'Defines what format the date and time will display as.<br>Datetime Format Options: <a href="https://aetherinox.github.io/obsidian-gistr/cheatsheets/datetime/">view here</a>',
 
     cfg_tab_sy_tog_enable_ribbon_name:          'Enable ribbon icons',
     cfg_tab_sy_tog_enable_ribbon_desc:          '<span class="gistr-settings-elm-note">Enabled</span>: Adds <span class="gistr-settings-elm-note">Save Public / Secret Gist</span> icons to left-side ribbon in Obsidian.<br><br><span class="gistr-settings-elm-important">Disabled</span>: You will only be able to access the save menu options from your <span class="gistr-settings-elm-note">right-click menu</span>, or the Obsidian command palette',
@@ -215,7 +282,7 @@ export default
     cfg_tab_sy_num_save_dur_desc:               'How often autosave will execute <span class="gistr-settings-elm-note">in seconds</span>. Set this to a fair amount so that the calls aren\'t being ran excessively to the gist API server (Github or OpenGist).<br><br>The save countdown timer will begin shortly after you stop typing.<br><br>If you wish to change this to save precisely every <span class="gistr-settings-elm-note">{0} seconds</span>, enable the setting <span class="gistr-settings-elm-note">Autosave Strict Saving</span> located above.',
 
     cfg_tab_sy_tog_inc_fm_name:                 'Include frontmatter',
-    cfg_tab_sy_tog_inc_fm_desc:                 'When saving a note as a new gist, frontmatter will be added to the top of your note with information about the gist.<br><br><span class="gistr-settings-elm-note">Enabled</span>: the note will be cleaned before it is pushed to the gist service and no frontmatter fields will be present in the online version.<br><br><span class="gistr-settings-elm-important">Disabled</span>: frontmatter added to your notes will be included when your note is pushed to a gist service.<br><br>Frontmatter can be found at the very top of each note, in-between <span class="gistr-settings-elm-note"> `---` </span>',
+    cfg_tab_sy_tog_inc_fm_desc:                 'When saving a note as a new gist, frontmatter will be added to the top of your note with information about the gist.<br><br><span class="gistr-settings-elm-note">Enabled</span>: frontmatter added to your notes will be included when your note is pushed to a gist service.<br><br><span class="gistr-settings-elm-important">Disabled</span>: the note will be cleaned before it is pushed to the gist service and no frontmatter fields will be present in the online version.<br><br>Frontmatter can be found at the very top of each note, in-between <span class="gistr-settings-elm-note"> `---` </span>',
     cfg_tab_sy_tog_inc_fm_tip:                  'Frontmatter starts with three hyphens `---`',
 
     /*

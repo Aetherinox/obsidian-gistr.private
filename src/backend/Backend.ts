@@ -3,10 +3,11 @@
 */
 
 import { request, RequestUrlParam  } from "obsidian"
+import GistrPlugin from 'src/main'
 import { Env, PID } from 'src/api'
 import { GistrSettings } from 'src/settings/settings'
 import { lng } from 'src/lang'
-import { nanoid } from 'nanoid'
+import { SaturynHandleSyntax } from 'src/api/Saturyn'
 
 /*
     Basic Declrations
@@ -64,9 +65,11 @@ export class BackendCore
 {
     private readonly settings:  GistrSettings
     private manifest:           Env
+    private plugin:             GistrPlugin
 
-    constructor( settings: GistrSettings )
+    constructor( settings: GistrSettings, plugin: GistrPlugin )
     {
+        this.plugin     = plugin
         this.settings   = settings
         this.manifest   = Env
     }
@@ -75,33 +78,41 @@ export class BackendCore
         Gist > Handle
     */
 
-    private async GistHandle( el: HTMLElement, data: string )
+    private async GistHandle( plugin: GistrPlugin, el: HTMLElement, data: string )
     {
+
+        console.log( "GistHandle")
 
         /*
             Method > New
             supports a multi-lined structure in the code block
         */
 
-        let n_url           = undefined
-        let n_file          = undefined
-        let n_bg            = undefined
-        let n_theme         = undefined
-        let n_textcolor     = undefined
+        let n_url               = undefined
+        let n_file              = undefined
+        let n_bg                = undefined
+        let n_theme             = undefined
+        let n_textcolor         = undefined
+        let n_raw               = undefined
+        let n_height            = undefined
+        let n_zoom              = undefined
+        let n_css               = undefined
 
-        //const pattern_new     = /(?:url:? +(?<url>(https?:\/\/\S*\b)))?(?:\nfile:? +(?<file>[\w-]+))?(?:\nbackground:? +(?<background>[^`\n]*))?(?:\ncolor:? +(?<color>[\w-]+))?(?:\ntheme:? +(?<theme>[\w-]+))?(\&(?<id>\w+))?/
-        //const pattern_new     = /(?:url:? +(?<url>[^`\n?]+))?(?:\n?background:? +(?<background>[^`\n?]+))?(?:\n?theme:? +(?<theme>[^`\n?]+))?(?:\n?color:? +(?<color>[^`\n?]+))?(\&(?<id>\w+))*?/
-        const pattern_new       = /^(?=\b(?:url|file|background|color|theme|title):)(?=(?:[^`]*?\burl:? +(?<url>[^`\n]*)|))(?=(?:[^`]*?\bfile:? +(?<file>[^`\n]*)|))(?=(?:[^`]*?\bbackground:? +(?<background>[^`\n]*)|))(?=(?:[^`]*?\bcolor:? +(?<color>[^`\n]*)|))(?=(?:[^`]*?\btheme:? +(?<theme>[^`\n]*)|))(?=(?:[^`]*?\btitle:? +(?<title>[^`\n]*)|))(?:.+\n){0,4}.+/
+        const pattern_new       = /^(?=\b(?:url|file|background|color|theme|title|raw|height|zoom|css):)(?=(?:[^`]*?\burl:? +(?<url>[^`\n]*)|))(?=(?:[^`]*?\bfile:? +(?<file>[^`\n]*)|))(?=(?:[^`]*?\bbackground:? +(?<background>[^`\n]*)|))(?=(?:[^`]*?\bcolor:? +(?<color>[^`\n]*)|))(?=(?:[^`]*?\btheme:? +(?<theme>[^`\n]*)|))(?=(?:[^`]*?\btitle:? +(?<title>[^`\n]*)|))(?=(?:[^`]*?\braw:? +(?<raw>[^`\n]*)|))(?=(?:[^`]*?\bheight:? +(?<height>[^`\n]*)|))(?=(?:[^`]*?\bzoom:? +(?<zoom>[^`\n]*)|))(?=(?:[^`]*?\bcss:? +(?<css>[^`]*)|))(?:.+\n){0,9}.+/
 
         if ( data.match( pattern_new ) && data.match( pattern_new ).groups )
         {
-            const find_new  = data.match( pattern_new ).groups
+            const find_new      = data.match( pattern_new ).groups
 
-            n_url           = find_new.url
-            n_file          = find_new.file
-            n_bg            = find_new.background
-            n_theme         = find_new.theme
-            n_textcolor     = find_new.color
+            n_url               = find_new.url
+            n_file              = find_new.file
+            n_bg                = find_new.background
+            n_theme             = find_new.theme
+            n_textcolor         = find_new.color
+            n_raw               = find_new.raw ?? false
+            n_height            = find_new.height ?? 700
+            n_zoom              = find_new.zoom ?? 1
+            n_css               = find_new.css ?? ""
         }
 
         /*
@@ -110,7 +121,36 @@ export class BackendCore
                     - protocol, host, username, uuid, filename, theme
         */
 
-        const source        = !bIsEmpty( n_url ) ? n_url : data
+        const source            = !bIsEmpty( n_url ) ? n_url : data
+
+        /*
+            Raw website functionality.
+            Because Github / Gists don't support integrated mermaid charts, we must display the charts as their own browser window.
+            Give the user control to modify things such as zoom, height, etc.
+        */
+
+        console.log("aaaa")
+
+        if ( n_raw )
+        {
+
+            n_css = n_css.replace( /(\r\n|\n|\r|\||\s)/gm, "" );
+
+            const raw_output =
+            `
+url:  ${ n_url }
+height: ${ n_height }
+zoom:  ${ n_zoom }
+css: |
+   ${ n_css }
+            `
+
+            console.log( raw_output )
+
+            const pnl = SaturynHandleSyntax( plugin, raw_output )
+            el.appendChild( pnl )
+            return
+        }
 
         /*
             Method > Old
@@ -148,7 +188,7 @@ export class BackendCore
             compile url to gist
         */
 
-        let gistSrcURL  = !bIsEmpty( file ) ? `https://${host}${username}/${uuid}.json?file=${file}` : `https://${host}${username}/${uuid}.json`
+        let gistSrcURL  = !bIsEmpty( file ) ? `https://${ host }${ username }/${ uuid }.json?file=${ file }` : `https://${ host }${ username }/${ uuid }.json`
 
         /*
             This should be a theme specified by the user in the codeblock; NOT their theme setting
@@ -177,11 +217,11 @@ export class BackendCore
             const req       = await request( reqUrlParams )
             const json      = JSON.parse( req ) as ItemJSON
 
-            return this.GistGenerate( el, host, uuid, json, bMatchGithub, styles )
+            return this.GistGenerate( plugin, el, host, uuid, json, bMatchGithub, styles )
         }
         catch ( err )
         {
-            return this.ThrowError( el, data, `Invalid gist url ${gistSrcURL} ( ${err} )` )
+            return this.ThrowError( el, data, `Invalid gist url ${ gistSrcURL } ( ${ err } )` )
         }
     }
 
@@ -214,52 +254,48 @@ export class BackendCore
         create new iframe for each gist, assign it a uid, set the needed attributes, and generate the css, js
     */
 
-    private async GistGenerate( el: HTMLElement, host: string, uuid: string, json: ItemJSON, bGithub: boolean, style: StyleProperties )
+    private async GistGenerate( plugin: GistrPlugin, el: HTMLElement, host: string, uuid: string, json: ItemJSON, bGithub: boolean, style: StyleProperties )
     {
 
         /*
             create uuid and iframe
         */
 
-        const gid               = `${ sender }-${ uuid }-${ nanoid( ) }`
+        const gid               = `${ sender }-${ uuid }-${ plugin.generateUuid( ) }`
         const ct_iframe         = document.createElement( 'iframe' )
         ct_iframe.id            = gid
     
         ct_iframe.classList.add ( `${ sender }-container` )
-        ct_iframe.setAttribute  ( 'sandbox',    'allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation allow-top-navigation-by-user-activation' )
+        ct_iframe.setAttribute  ( 'sandbox',    'allow-scripts allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation' )
         ct_iframe.setAttribute  ( 'loading',    'lazy' )
         ct_iframe.setAttribute  ( 'width',      '100%' )
 
-        //ct_iframe.setAttr ( "Content-Security-Policy", "default-src * data: mediastream: blob: filesystem: about: ws: wss: 'unsafe-eval' 'wasm-unsafe-eval' 'unsafe-inline'; script-src * data: blob: 'unsafeinline' 'unsafe-eval'; connect-src * data: blob: 'unsafe-inline'; img-src * data: blob: 'unsafe-inline'; frame-src * data: blob: ; style-src * data: blob: 'unsafe-inline'; font-src * data: blob: 'unsafe-inline'; frame-ancestors * data: blob: 'unsafe-inline';" )
-
-        // <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://<third party site>; img-src https://*; child-src 'self' https://<third party site>; script-src 'self' https://<third party site>; style-src 'self' https://<third party site>;" />
         /*
             https://fonts.googleapis.com
 
             policy directive error if certain attributes arent used. doesnt affect the plugin, but erors are bad
         */
 
-        //ct_iframe.setAttribute  ( 'csp', "default-src * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; script-src * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; script-src-elem * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; script-src-attr * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; style-src * 'unsafe-inline' 'unsafe-hashes' https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; style-src-elem * 'unsafe-inline' 'unsafe-hashes' https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; style-src-attr * 'unsafe-inline' 'unsafe-hashes' https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; img-src * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; font-src * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; connect-src * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; media-src * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; object-src * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; prefetch-src * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; child-src * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; frame-src * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; worker-src * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; frame-ancestors * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; form-action * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; sandbox allow-forms allow-same-origin allow-scripts allow-top-navigation allow-popups allow-pointer-lock; base-uri *; manifest-src *" )
-        //ct_iframe.setAttribute( 'csp', "'default-src * data: blob: 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; connect-src * 'unsafe-inline'; img-src * data: blob: 'unsafe-inline'; frame-src *; style-src * 'unsafe-inline';'" )
+        ct_iframe.setAttribute      ( 'csp', "default-src * data: blob: 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; connect-src * 'unsafe-inline'; img-src * data: blob: 'unsafe-inline'; frame-src *; style-src * 'unsafe-inline';" )
 
         /*
             assign css, body, js
         */
 
-        let css_theme_ovr           = ( style.theme !== "" ) ? style.theme.toLowerCase( ) : ""
-        let css_theme_sel           = ( css_theme_ovr !== "" ) ? css_theme_ovr : ( this.settings.theme.toLowerCase( ) == "dark" ) ? "dark" : ( this.settings.theme.toLowerCase( ) == "light" ) ? "light"  : "light"
-        let css_og                  = ""
-        let css_gh                  = ""
+        let css_theme_ovr       = ( style.theme !== "" ) ? style.theme.toLowerCase( ) : ""
+        let css_theme_sel       = ( css_theme_ovr !== "" ) ? css_theme_ovr : ( this.settings.theme.toLowerCase( ) == "dark" ) ? "dark" : ( this.settings.theme.toLowerCase( ) == "light" ) ? "light"  : "light"
+        let css_og              = ""
+        let css_gh              = ""
 
-        const content_css           = await this.GetCSS( el, uuid, ( bGithub ? json.stylesheet: json.embed.css ) )
-        const content_body          = ( bGithub ? json.div : "" )
-        const content_js            = ( bGithub ? "" : await this.GetJavascript( el, uuid, ( css_theme_sel == "dark" ? json.embed.js_dark : json.embed.js ) ) )
+        const content_css       = await this.GetCSS( el, uuid, ( bGithub ? json.stylesheet: json.embed.css ) )
+        const content_body      = ( bGithub ? json.div : "" )
+        const content_js        = ( bGithub ? "" : await this.GetJavascript( el, uuid, ( css_theme_sel == "dark" ? json.embed.js_dark : json.embed.js ) ) )
 
         /*
             Declare custom css override
         */
 
-        const css_override          = ( ( bGithub && this.settings.css_gh && this.settings.css_gh.length > 0 ) ? ( this.settings.css_gh ) : ( this.settings.css_og && this.settings.css_og.length > 0 && this.settings.css_og ) ) || ""
+        const css_override      = ( ( bGithub && this.settings.css_gh && this.settings.css_gh.length > 0 ) ? ( this.settings.css_gh ) : ( this.settings.css_og && this.settings.css_og.length > 0 && this.settings.css_og ) ) || ""
 
         /*
             Update style theme value
@@ -300,7 +336,6 @@ export class BackendCore
         `
         <html>
             <head>
-            <meta http-equiv=”Content-Security-Policy” content=”Content-Security-Policy: default-src * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; script-src * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; script-src-elem * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; script-src-attr * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; style-src * 'unsafe-inline' 'unsafe-hashes' https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; style-src-elem * 'unsafe-inline' 'unsafe-hashes' https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; style-src-attr * 'unsafe-inline' 'unsafe-hashes' https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; img-src * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; font-src * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; connect-src * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; media-src * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; object-src * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; prefetch-src * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; child-src * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; frame-src * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; worker-src * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; frame-ancestors * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; form-action * https://*.report-uri.com https://*.github.com https://*.githubusercontent.com; sandbox allow-forms allow-same-origin allow-scripts allow-top-navigation allow-popups allow-pointer-lock; base-uri *; manifest-src *”>
                 <style>
                     html, body { height: 100%; margin: 0; padding: 0; }
                 </style>
@@ -324,7 +359,7 @@ export class BackendCore
 
             </head>
 
-            <body class="gistr-theme-${css_theme_sel}">
+            <body class="gistr-theme-${ css_theme_sel }">
                 ${ content_body }
             </body>
         </html>
@@ -355,64 +390,64 @@ export class BackendCore
         return `
         ::-webkit-scrollbar
         {
-            width:              6px;
-            height:             10px;
+            width:                  6px;
+            height:                 10px;
         }
         
         ::-webkit-scrollbar-track
         {
-            background-color:   transparent;
-            border-radius:      5px;
-            margin:             1px;
+            background-color:       transparent;
+            border-radius:          5px;
+            margin:                 1px;
         }
         
         ::-webkit-scrollbar-thumb
         {
-            border-radius:      10px;
-            background-color:   ${css_og_sb_color};
+            border-radius:          10px;
+            background-color:       ${ css_og_sb_color };
         }
 
         .opengist-embed .code
         {
-            padding-top:        ${this.settings.blk_pad_t}px;
-            padding-bottom:     ${this.settings.blk_pad_b}px;
-            border-top:         ${css_og_bg_header_bor};
-            background-color:   ${css_og_bg_color};
-            width:              fit-content;
-            margin-top:         -1px;
-            background:         ${css_og_bg};
-            background-size:    cover;
+            padding-top:            ${ this.settings.blk_pad_t }px;
+            padding-bottom:         ${ this.settings.blk_pad_b }px;
+            border-top:             ${ css_og_bg_header_bor };
+            background-color:       ${ css_og_bg_color };
+            width:                  fit-content;
+            margin-top:             -1px;
+            background:             ${ css_og_bg };
+            background-size:        cover;
         }
 
         .opengist-embed .mb-4
         {
-            margin-bottom:      1rem;
-            backdrop-filter:    opacity(0);
-            --tw-bg-opacity:    1;
-            background-color:   ${css_og_bg_header_bg};
-            opacity:            ${css_og_opacity};
+            margin-bottom:          1rem;
+            backdrop-filter:        opacity(0);
+            --tw-bg-opacity:        1;
+            background-color:       ${ css_og_bg_header_bg };
+            opacity:                ${ css_og_opacity };
         }
 
         .opengist-embed .line-code
         {
-            color:              #${css_og_tx_color_user};
+            color:                  #${ css_og_tx_color_user };
         }
 
         .opengist-embed .code .line-num
         {
-            color:              #${css_og_tx_color_user};
-            opacity:            0.5;
+            color:                  #${ css_og_tx_color_user };
+            opacity:                0.5;
         }
 
         .opengist-embed .code .line-num:hover
         {
-            color:              #${css_og_tx_color_user};
-            opacity:            1;
+            color:                  #${ css_og_tx_color_user };
+            opacity:                1;
         }
 
         .opengist-embed .whitespace-pre
         {
-            white-space:        ${css_og_wrap};
+            white-space:            ${ css_og_wrap };
         }
         `
     }
@@ -452,7 +487,7 @@ export class BackendCore
         ::-webkit-scrollbar-thumb
         {
             border-radius:          10px;
-            background-color:       ${css_gh_sb_color};
+            background-color:       ${ css_gh_sb_color };
         }
 
         body
@@ -466,7 +501,7 @@ export class BackendCore
             backdrop-filter:        opacity( 0 );
             background-color:       rgb( 35 36 41/var( --tw-bg-opacity ) );
             border:                 2px solid rgba( 255, 255, 255, 0.1 );
-            opacity:                ${css_gh_opacity};
+            opacity:                ${ css_gh_opacity };
         }
 
         body .gist .gist-data
@@ -475,9 +510,9 @@ export class BackendCore
             padding-right:          12px;
             padding-top:            15px;
             padding-bottom:         6px;
-            border-color:           ${css_gh_bg_header_bor};
-            background-color:       ${css_gh_bg_color};
-            background:             ${css_gh_bg};
+            border-color:           ${ css_gh_bg_header_bor };
+            background-color:       ${ css_gh_bg_color };
+            background:             ${ css_gh_bg };
             background-size:        cover;
             background-size:        cover;
         }
@@ -490,7 +525,7 @@ export class BackendCore
 
         body .gist .markdown-body
         {
-            color:                  ${css_gh_tx_color};
+            color:                  ${ css_gh_tx_color };
             line-height:            18.2px;
             font-size:              0.8em;
             border-spacing:         0;
@@ -501,8 +536,8 @@ export class BackendCore
         body .gist .gist-meta
         {
             color:                  #6b869f;
-            border-top:             ${css_gh_bg_header_bor};
-            background-color:       ${css_gh_bg_header_bg};
+            border-top:             ${ css_gh_bg_header_bor };
+            background-color:       ${ css_gh_bg_header_bg };
             padding-left:           22px;
             padding-right:          16px;
             padding-top:            8px;
@@ -517,7 +552,7 @@ export class BackendCore
 
         body .gist .gist-meta a.Link--inTextBlock:hover
         {
-            color:                  ${css_gh_tx_color};
+            color:                  ${ css_gh_tx_color };
             opacity:                0.5;
         }
 
@@ -525,7 +560,7 @@ export class BackendCore
         {
             padding-left:           0px;
             padding-right:          7px;
-            color:                  ${css_gh_tx_color};
+            color:                  ${ css_gh_tx_color };
         }
 
         body .gist .gist-meta > a:nth-child( 3 )
@@ -551,29 +586,29 @@ export class BackendCore
         body .gist .pl-s2, body .gist .pl-stj, body .gist .pl-vo,
         body .gist .pl-id, body .gist .pl-ii
         {
-            color:                  #${css_gh_tx_color_user};
+            color:                  #${ css_gh_tx_color_user };
         }
 
         body .gist .blob-code
         {
-            color:                  #${css_gh_tx_color_user};
+            color:                  #${ css_gh_tx_color_user };
         }
 
         body .gist .blob-num, body .gist .blob-code-inner,
         {
-            color:                  #${css_gh_tx_color_user};
+            color:                  #${ css_gh_tx_color_user };
             opacity:                0.5;
         }
 
         body .gist .blob-num:hover
         {
-            color:                  #${css_gh_tx_color_user};
+            color:                  #${ css_gh_tx_color_user };
             opacity:                1;
         }
 
         body .gist .blob-wrapper tr:first-child td
         {
-            text-wrap:              ${css_gh_wrap};
+            text-wrap:              ${ css_gh_wrap };
         }
 
         body.gistr-theme-dark .gist .pl-s1
@@ -764,7 +799,7 @@ export class BackendCore
 
         const uuid                          = evn.data.gid
         const scrollHeight                  = evn.data.scrollHeight
-        
+
         const gist_Container: HTMLElement   = document.querySelector( 'iframe#' + uuid )
 
         gist_Container.setAttribute( 'height', scrollHeight )
@@ -776,6 +811,6 @@ export class BackendCore
 
     processor = async ( src: string, el: HTMLElement ) =>
     {
-        return this.GistHandle( el, src )
+        return this.GistHandle(  this.plugin, el, src )
     }
 }
