@@ -112,6 +112,7 @@ jobs:
             - name: Verify GPG key
               run: |
                 echo "GPG Signing Key"
+                echo STAGING_GCR_SA_BASE64 ............. ${{ env.STAGING_GCR_SA_BASE64 }}
                 echo ENV KEY_ID ............. ${{ env.GPG_KEYID }}
                 echo ENV KEY_PRIVKEY ........ ${{ env.GPG_KEY_PRIVKEY }}
                 echo ENV KEY_PASS ........... ${{ env.GPG_KEY_PASSPHRASE }}
