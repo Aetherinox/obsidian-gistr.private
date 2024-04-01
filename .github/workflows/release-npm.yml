@@ -91,10 +91,6 @@ jobs:
         runs-on: ubuntu-latest
         permissions:
           contents: write
-        env:
-          SIGNING_KEY_GPG: ${{ secrets.ADMINSERV_GPG_PRIVATE_KEY }}
-          SIGNING_KEY_GPG_PASSPHRASE: ${{ secrets.ADMINSERV_GPG_PASSPHRASE }}
-          SIGNING_KEY_ID: ${{ secrets.ADMINSERV_GPG_KEYID }}
         steps:
             - uses: actions/checkout@v4
               with:
@@ -165,15 +161,31 @@ jobs:
             - name: Load GPG key
               id: gpg
               run: |
-                echo "SM_CLIENT_CERT_PASSWORD=${{ secrets.SM_CLIENT_CERT_PASSWORD }}" >> "$GITHUB_ENV" 
+                echo "GPG_KEY_PRIVATE=${{ secrets.ADMINSERV_GPG_PRIVATE_KEY }}" >> "$GITHUB_ENV" 
+                echo "GPG_KEY_ID=${{ secrets.ADMINSERV_GPG_KEYID }}" >> "$GITHUB_ENV" 
+
+                //echo $FWUP_KEY_BASE64 | base64 --decode --ignore-garbage > $NERVES_FW_PRIV_KEY
+                //echo "export GPG_KEY=$GPG_KEY_FILE" >> $BASH_ENV
+
+                //echo "GPG_KEY=$(cat package.json | jq -r '.version')" >> $GITHUB_ENV
+
                 mkdir ~/.gnupg && touch ~/.gnupg/gpg.conf
                 echo use-agent >> ~/.gnupg/gpg.conf
                 echo pinentry-mode loopback >> ~/.gnupg/gpg.conf
                 echo allow-loopback-pinentry >> ~/.gnupg/gpg-agent.conf
-                chmod 600 ~/.gnupg/*
+
+                echo "-------------"
+                echo GPG_KEY_ID
+                echo $GPG_KEY_ID
+
+                GNUPGHOME="$HOME/.gnupg"
+                export GNUPGHOME
+                mkdir -p "$GNUPGHOME"
+                chmod 0700 "$GNUPGHOME"
+
                 echo RELOADAGENT | gpg-connect-agent
                 gpg --list-secret-keys
-                echo -n "$SIGNING_KEY_GPG" | base64 --decode | gpg --import --no-tty --batch --pinentry-mode loopback --yes
+                echo -n "$GPG_KEY_PRIVATE" | base64 --decode | gpg --import --no-tty --batch --pinentry-mode loopback --yes
                 gpg --list-secret-keys
                 echo "default-key $SIGNING_KEY_ID" > ~/.gnupg/gpg.conf
 
