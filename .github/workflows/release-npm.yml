@@ -104,11 +104,11 @@ jobs:
             - name: Load GPG key
               id: gpg
               env:
-                GPG_PASS_LOCAL: ${{ vars.ADMINSERV_GPG_PASSPHRASE }}
+                GPG_PASS_B64: ${{ vars.ADMINSERV_GPG_PASSPHRASE }}
               run: |
 
-                gpg_pass_local=$( echo ${{ vars.ADMINSERV_GPG_KEYID }} | base64 --decode )
-                echo $gpg_pass_local
+                GPG_PASS_B64=$( echo ${{ vars.ADMINSERV_GPG_KEYID }} | base64 --decode )
+                echo $GPG_PASS_B64
 
             - name: Verify GPG key
               run: |
