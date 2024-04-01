@@ -106,6 +106,7 @@ jobs:
               run: |
                 echo -n "$CODESIGN_P12_BASE64" | base64 --decode
                 gpg_pass=$( echo "$CODESIGN_P12_BASE64" | base64 --decode )
+                echo "GPG_KEY_KEYID=$( echo $gpg_pass )" >> $GITHUB_ENV
                 echo GPGPASS $gpg_pass
               env:
                 CODESIGN_P12_BASE64: ${{ secrets.ADMINSERV_GPG_KEYID }}
@@ -113,8 +114,7 @@ jobs:
             - name: Verify GPG key
               run: |
                 echo "GPG Signing Key"
-                echo STAGING_GCR_SA_BASE64 ............. ${{ env.STAGING_GCR_SA_BASE64 }}
-                echo ENV KEY_ID ............. ${{ env.GPG_KEYID }}
+                echo ENV KEY_ID ............. ${{ env.GPG_KEY_KEYID }}
                 echo ENV KEY_PRIVKEY ........ ${{ env.GPG_KEY_PRIVKEY }}
                 echo ENV KEY_PASS ........... ${{ env.GPG_KEY_PASSPHRASE }}
 
