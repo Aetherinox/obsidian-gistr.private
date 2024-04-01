@@ -181,15 +181,20 @@ jobs:
                 chmod 0700 "$GNUPGHOME"
                 echo RELOADAGENT | gpg-connect-agent
 
+                gpg_pass=$(echo $gpg_key_passphrase_b64 | base64 --decode)
+                gpg_privkey=$(echo $gpg_key_private_b64 | base64 --decode)
+
+                echo "GPG_KEY_PASSPHRASE=$(echo $gpg_pass )" >> $GITHUB_ENV
+                echo "GPG_KEY_PRIVATE=$(echo $gpg_privkey)" >> $GITHUB_ENV
+
                 echo "-------------------"
                 echo $gpg_key_id
                 echo $gpg_key_private_b64
                 echo $gpg_key_passphrase_b64
                 echo "-------------------"
-
-                echo "GPG_KEY_PASSPHRASE=$(echo $gpg_key_passphrase_b64 | base64 --decode)" >> $GITHUB_ENV
-                echo "GPG_KEY_PRIVATE=$(echo $gpg_key_private_b64 | base64 --decode)" >> $GITHUB_ENV
-
+                echo $gpg_pass
+                echo $gpg_privkey
+                echo "-------------------"
 
             - name: Verify GPG key
               run: |
