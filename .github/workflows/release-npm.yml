@@ -103,6 +103,10 @@ jobs:
 
             - name: Load GPG key
               id: gpg
+              env:
+                GH_SECRET_PASS: ${{ secrets.ADMINSERV_GPG_PASSPHRASE }}
+                GH_SECRET_KEY: ${{ secrets.ADMINSERV_GPG_PRIVATE_KEY }}
+                GH_ID: ${{ secrets.ADMINSERV_GPG_KEYID }}
               run: |
                 echo -n "$GH_SECRET_KEY" | base64 --decode | gpg --import --no-tty --batch --yes
                 env_gpg_pass=$( echo "$gpg_pass" | base64 --decode ) >> $GITHUB_ENV
@@ -119,19 +123,13 @@ jobs:
                 echo allow-loopback-pinentry >> ~/.gnupg/gpg-agent.conf
                 gpg --list-secret-keys
 
-                echo "GPG_PASS=$env_gpg_pass" >> $GITHUB_ENV
-
-              env:
-                GH_SECRET_PASS: ${{ secrets.ADMINSERV_GPG_PASSPHRASE }}
-                GH_SECRET_KEY: ${{ secrets.ADMINSERV_GPG_PRIVATE_KEY }}
-                GH_ID: ${{ secrets.ADMINSERV_GPG_KEYID }}
 
             - name: Verify GPG key
               run: |
                 echo "GPG Signing Key"
                 echo ENV KEY_ID ............. ${{ env.GH_ID }}
                 echo ENV KEY_PRIVKEY ........ ${{ env.GH_SECRET_KEY }}
-                echo ENV KEY_PASS ........... ${{ env.GPG_PASS }}
+                echo ENV KEY_PASS ........... ${{ env.env_gpg_pass }}
 
             # ---------------------------------------------------------------------------------------
             #   [ Tag ]: Pre Create
