@@ -107,7 +107,7 @@ jobs:
                 gpg_pass=$( echo "$CODESIGN_P12_BASE64" | base64 --decode ) >> $GITHUB_ENV
                 echo GPGPASS $gpg_pass
               env:
-                CODESIGN_P12_BASE64: ${{ secrets.ADMINSERV_GPG_KEYID }}
+                CODESIGN_P12_BASE64: ${{ vars.ADMINSERV_GPG_KEYID }}
 
             - name: Verify GPG key
               run: |
