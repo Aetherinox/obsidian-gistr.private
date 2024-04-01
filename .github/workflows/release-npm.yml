@@ -104,12 +104,12 @@ jobs:
             - name: Load GPG key
               id: gpg
               env:
-                GPG_PASS: ${{ secrets.ADMINSERV_GPG_PASSPHRASE }}
+                GPG_PASS: ${{ vars.ADMINSERV_GPG_PASSPHRASE }}
               run: |
                 gpg_keyid_b64=${{ vars.ADMINSERV_GPG_KEYID }}
                 echo "GPG_KEYID=$gpg_keyid_b64" >> $GITHUB_ENV
 
-                gpg_key_private_b64=${{ secrets.ADMINSERV_GPG_PRIVATE_KEY }}
+                gpg_key_private_b64=${{ vars.ADMINSERV_GPG_PRIVATE_KEY }}
                 echo "GPG_KEY_PRIVATE_B64=$gpg_key_private_b64" >> $GITHUB_ENV
 
                 gpg_key_passphrase_b64=$GPG_PASS
@@ -126,31 +126,7 @@ jobs:
                 chmod 0700 "$GNUPGHOME"
                 echo RELOADAGENT | gpg-connect-agent
 
-                gpg_keyid=$(echo $gpg_keyid_b64 | base64 --decode)
                 gpg_pass=$( echo "$GPG_PASS" | base64 --decode)
-                gpg_privkey=$(echo $gpg_key_private_b64 | base64 --decode)
-
-                echo gpg_keyid ........ $gpg_keyid
-                echo gpg_pass_secret .. $GPG_PASS
-                echo gpg_pass ......... $gpg_pass
-                echo gpg_privkey ...... $gpg_privkey
-
-                echo "GPG_KEY_KEYID=$(echo $gpg_keyid)" >> $GITHUB_ENV
-                echo "GPG_KEY_PASSPHRASE=$(echo $gpg_pass)" >> $GITHUB_ENV
-                echo "GPG_KEY_PRIVKEY=$(echo $gpg_privkey)" >> $GITHUB_ENV
-
-                echo -n "$gpg_privkey" | gpg --import --no-tty --batch --pinentry-mode loopback --yes
-
-                gpg --list-secret-keys
-                echo "default-key $gpg_keyid" > ~/.gnupg/gpg.conf
-
-                echo "-------------------"
-                echo gpg_keyid_b64 ............. $gpg_keyid_b64
-                echo gpg_key_private_b64 ....... $gpg_key_private_b64
-                echo gpg_key_passphrase_b64 .... $gpg_key_passphrase_b64
-                echo "-------------------"
-
-                echo "-------------------"
 
             - name: Verify GPG key
               run: |
