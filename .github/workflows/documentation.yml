@@ -40,6 +40,8 @@ jobs:
     permissions:
       contents: write
       pages: write
+    environment:
+      name: Orion
     
     steps:
       - name: "Checkout"
