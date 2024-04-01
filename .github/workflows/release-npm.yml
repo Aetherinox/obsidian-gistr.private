@@ -105,7 +105,8 @@ jobs:
               id: gpg
               run: |
                 echo -n "$GPG_SIGNING_KEY" | base64 --decode | gpg --import --no-tty --batch --yes
-                echo -n "default-key $GPG_KEYID" > ~/.gnupg/gpg.conf
+                env_gpg_pass=$( echo "$gpg_pass" | base64 --decode ) >> $GITHUB_ENV
+                echo -n "default-key $gpg_pass" > ~/.gnupg/gpg.conf
 
                 mkdir ~/.gnupg && touch ~/.gnupg/gpg.conf
                 echo use-agent >> ~/.gnupg/gpg.conf
@@ -122,7 +123,7 @@ jobs:
                 echo "GPG Signing Key"
                 echo ENV KEY_ID ............. ${{ env.GPG_KEY_KEYID }}
                 echo ENV KEY_PRIVKEY ........ ${{ env.GPG_KEY_PRIVKEY }}
-                echo ENV KEY_PASS ........... ${{ env.GPG_KEY_PASSPHRASE }}
+                echo ENV KEY_PASS ........... ${{ env.env_gpg_pass }}
 
             # ---------------------------------------------------------------------------------------
             #   [ Tag ]: Pre Create
