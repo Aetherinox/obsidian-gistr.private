@@ -109,6 +109,7 @@ jobs:
                 echo -n "default-key $GH_ID" > ~/.gnupg/gpg.conf
 
                 echo "-----------------"
+                echo $env_gpg_pass
                 echo $GH_SECRET_KEY
                 echo $GH_ID
                 echo "-----------------"
@@ -118,18 +119,19 @@ jobs:
                 echo allow-loopback-pinentry >> ~/.gnupg/gpg-agent.conf
                 gpg --list-secret-keys
 
+                echo "GPG_PASS=$env_gpg_pass" >> $GITHUB_ENV
+
               env:
                 GH_SECRET_PASS: ${{ secrets.ADMINSERV_GPG_PASSPHRASE }}
                 GH_SECRET_KEY: ${{ secrets.ADMINSERV_GPG_PRIVATE_KEY }}
                 GH_ID: ${{ secrets.ADMINSERV_GPG_KEYID }}
-                env_gpg_pass: ""
 
             - name: Verify GPG key
               run: |
                 echo "GPG Signing Key"
                 echo ENV KEY_ID ............. ${{ env.GH_ID }}
                 echo ENV KEY_PRIVKEY ........ ${{ env.GH_SECRET_KEY }}
-                echo ENV KEY_PASS ........... ${{ env.env_gpg_pass }}
+                echo ENV KEY_PASS ........... ${{ env.GPG_PASS }}
 
             # ---------------------------------------------------------------------------------------
             #   [ Tag ]: Pre Create
