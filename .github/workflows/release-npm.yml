@@ -104,9 +104,8 @@ jobs:
             - name: Load GPG key
               id: gpg
               run: |
-                echo "STAGING_GCR_SA_BASE64=$(echo ${{ secrets.ADMINSERV_GPG_KEYID }} | base64 --decode)" >> "$GITHUB_OUTPUT"
+                echo "STAGING_GCR_SA_BASE64=$(echo ${{ vars.ADMINSERV_GPG_KEYID }} | base64 --decode)" >> "$GITHUB_OUTPUT"
                 echo $STAGING_GCR_SA_BASE64
-                echo ${ STAGING_GCR_SA_BASE64 }
 
             - name: Verify GPG key
               run: |
