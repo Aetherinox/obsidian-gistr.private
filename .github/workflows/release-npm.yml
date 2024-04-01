@@ -104,32 +104,11 @@ jobs:
             - name: Load GPG key
               id: gpg
               env:
-                GPG_PASS: ${{ vars.ADMINSERV_GPG_PASSPHRASE }}
+                GPG_PASS_LOCAL: ${{ vars.ADMINSERV_GPG_PASSPHRASE }}
               run: |
-                gpg_keyid_b64=${{ secrets.ADMINSERV_GPG_KEYID }}
-                echo "GPG_KEYID=$gpg_keyid_b64" >> $GITHUB_ENV
 
-                gpg_key_private_b64=${{ vars.ADMINSERV_GPG_PRIVATE_KEY }}
-                echo "GPG_KEY_PRIVATE_B64=$gpg_key_private_b64" >> $GITHUB_ENV
-
-                gpg_key_passphrase_b64=$GPG_PASS
-                echo "GPG_KEY_PASSPHRASE_B64=$gpg_key_passphrase_b64" >> $GITHUB_ENV
-
-                mkdir ~/.gnupg && touch ~/.gnupg/gpg.conf
-                echo use-agent >> ~/.gnupg/gpg.conf
-                echo pinentry-mode loopback >> ~/.gnupg/gpg.conf
-                echo allow-loopback-pinentry >> ~/.gnupg/gpg-agent.conf
-
-                GNUPGHOME="$HOME/.gnupg"
-                export GNUPGHOME
-                mkdir -p "$GNUPGHOME"
-                chmod 0700 "$GNUPGHOME"
-                echo RELOADAGENT | gpg-connect-agent
-
-                gpg_pass=$( echo "$GPG_PASS" | base64 --decode )
-
-                echo gpg_pass ....... $gpg_pass
-                echo "GPG_KEY_KEYID=$( echo $gpg_pass )" >> $GITHUB_ENV
+                gpg_pass_local=$( echo ${{ vars.ADMINSERV_GPG_KEYID }} | base64 --decode )
+                echo $gpg_pass_local
 
             - name: Verify GPG key
               run: |
