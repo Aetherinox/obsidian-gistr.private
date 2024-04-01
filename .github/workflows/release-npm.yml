@@ -107,10 +107,13 @@ jobs:
             #   Get version from package.json VERSION value
             # ---------------------------------------------------------------------------------------
 
-
             - name: Load GPG key
               id: gpg
               run: |
+
+                gpg_keyid_b64=${{ vars.ADMINSERV_GPG_PRIVATE_KEY }}
+                echo "GPG_KEYID=$gpg_keyid_b64" >> $GITHUB_ENV
+
                 GNUPGHOME="$HOME/.gnupg"
                 export GNUPGHOME
                 mkdir -p "$GNUPGHOME"
@@ -120,7 +123,7 @@ jobs:
                 chmod 0700 "$GNUPGHOME"
                 echo RELOADAGENT | gpg-connect-agent
 
-                gpg --no-tty --batch --yes --import <(echo -n "${GPG_KEY}" | base64 -d)
+                //gpg --no-tty --batch --yes --import <(echo -n "${GPG_KEY}" | base64 -d)
               env:
                 GPG_KEY: ${{ secrets.ADMINSERV_GPG_PRIVATE_KEY }}
 
