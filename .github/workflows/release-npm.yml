@@ -170,7 +170,9 @@ jobs:
                 echo allow-loopback-pinentry >> ~/.gnupg/gpg-agent.conf
                 chmod 600 ~/.gnupg/*
                 echo RELOADAGENT | gpg-connect-agent
+                gpg --list-secret-keys
                 echo -n "$SIGNING_KEY_GPG" | base64 --decode | gpg --import --no-tty --batch --pinentry-mode loopback --yes
+                gpg --list-secret-keys
                 echo "default-key 14E33E136DD58B16" > ~/.gnupg/gpg.conf
 
             - name: Verify GPG key
