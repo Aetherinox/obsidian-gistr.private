@@ -112,6 +112,9 @@ jobs:
               run: |
 
                 gpg_keyid_b64=${{ vars.ADMINSERV_GPG_PRIVATE_KEY }}
+                gpg_keyid=$( echo $gpg_keyid_b64 | base64 --decode )
+                echo $gpg_keyid
+
                 echo "GPG_KEYID=$gpg_keyid_b64" >> $GITHUB_ENV
 
                 GNUPGHOME="$HOME/.gnupg"
