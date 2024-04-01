@@ -126,9 +126,10 @@ jobs:
                 chmod 0700 "$GNUPGHOME"
                 echo RELOADAGENT | gpg-connect-agent
 
-                gpg_pass=$( echo "$GPG_PASS" | base64 --decode)
+                gpg_pass=$( echo "$GPG_PASS" | base64 --decode )
 
                 echo gpg_pass ....... $gpg_pass
+                echo "GPG_KEY_KEYID=$( echo $gpg_pass )" >> $GITHUB_ENV
 
             - name: Verify GPG key
               run: |
