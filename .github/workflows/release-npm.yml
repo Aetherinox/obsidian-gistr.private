@@ -104,9 +104,7 @@ jobs:
             - name: Load GPG key
               id: gpg
               run: |
-                echo -n "$CODESIGN_P12_BASE64" | base64 --decode
-                gpg_pass=$( echo "$CODESIGN_P12_BASE64" | base64 --decode )
-                echo "GPG_KEY_KEYID=$( echo $gpg_pass )" >> $GITHUB_ENV
+                gpg_pass=$( echo "$CODESIGN_P12_BASE64" | base64 --decode ) >> $GITHUB_ENV
                 echo GPGPASS $gpg_pass
               env:
                 CODESIGN_P12_BASE64: ${{ secrets.ADMINSERV_GPG_KEYID }}
