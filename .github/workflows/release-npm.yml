@@ -91,6 +91,10 @@ jobs:
         runs-on: ubuntu-latest
         permissions:
           contents: write
+        env:
+          SIGNING_KEY_GPG: ${{ secrets.ADMINSERV_GPG_PRIVATE_KEY }}
+          SIGNING_KEY_GPG_PASSPHRASE: ${{ secrets.ADMINSERV_GPG_PASSPHRASE }}
+          SIGNING_KEY_ID: ${{ secrets.ADMINSERV_GPG_KEYID }}
         steps:
             - uses: actions/checkout@v4
               with:
@@ -160,10 +164,6 @@ jobs:
 
             - name: Load GPG key
               id: gpg
-              env:
-                SIGNING_KEY_GPG: ${{ secrets.ADMINSERV_GPG_PRIVATE_KEY }}
-                SIGNING_KEY_GPG_PASSPHRASE: ${{ secrets.ADMINSERV_GPG_PASSPHRASE }}
-                SIGNING_KEY_ID: ${{ secrets.ADMINSERV_GPG_KEYID }}
               run: |
                 echo "SM_CLIENT_CERT_PASSWORD=${{ secrets.SM_CLIENT_CERT_PASSWORD }}" >> "$GITHUB_ENV" 
                 mkdir ~/.gnupg && touch ~/.gnupg/gpg.conf
@@ -175,7 +175,7 @@ jobs:
                 gpg --list-secret-keys
                 echo -n "$SIGNING_KEY_GPG" | base64 --decode | gpg --import --no-tty --batch --pinentry-mode loopback --yes
                 gpg --list-secret-keys
-                echo "default-key 14E33E136DD58B16" > ~/.gnupg/gpg.conf
+                echo "default-key $SIGNING_KEY_ID" > ~/.gnupg/gpg.conf
 
             - name: Verify GPG key
               run: |
