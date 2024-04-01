@@ -104,10 +104,13 @@ jobs:
             - name: Load GPG key
               id: gpg
               run: |
-                gpg_pass=$( echo "$CODESIGN_P12_BASE64" | base64 --decode ) >> $GITHUB_ENV
-                echo GPGPASS $gpg_pass
+                echo -n "$GPG_SIGNING_KEY" | base64 --decode | gpg --import --no-tty --batch --yes
+
+                gpg --list-secret-keys
+                echo "default-key $GPG_KEYID" > ~/.gnupg/gpg.conf
               env:
-                CODESIGN_P12_BASE64: ${{ vars.ADMINSERV_GPG_KEYID }}
+                GPG_SIGNING_KEY: ${{ secrets.ADMINSERV_GPG_PRIVATE_KEY }}
+                GPG_KEYID: ${{ secrets.ADMINSERV_GPG_KEYID }}
 
             - name: Verify GPG key
               run: |
