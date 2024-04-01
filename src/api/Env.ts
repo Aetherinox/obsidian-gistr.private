@@ -17,7 +17,7 @@ export function PID( ) : string
     Web URL string
 */
 
-type HttpsUrl = `https://${ string }`
+type HttpsUrl = `https://${string}`
 
 /*
     Repository Strings
@@ -25,13 +25,11 @@ type HttpsUrl = `https://${ string }`
 
 type Repo =
 {
-    urlDocs?:       HttpsUrl
-    urlRepo?:       HttpsUrl
-    urlWiki?:       HttpsUrl
-    urlIssues?:     HttpsUrl
-    urlReleases?:   HttpsUrl
-    urlPackage?:    HttpsUrl
-    urlDemoVault?:  HttpsUrl
+  urlWiki?:         HttpsUrl
+  urlIssues?:       HttpsUrl
+  urlReleases?:     HttpsUrl
+  urlPackage?:      HttpsUrl
+  urlDemoVault?:    HttpsUrl
 }
 
 /*
@@ -44,10 +42,8 @@ export abstract class Env
     private static _obsidianApiVer:     string
     private static _manifest:           PluginManifest
 
-    public static readonly Links: Repo =
+    public static readonly repository: Repo =
     {
-        urlDocs:        'https://aetherinox.github.io/obsidian-gistr',
-        urlRepo:        'https://github.com/Aetherinox/obsidian-gistr',
         urlWiki:        'https://github.com/Aetherinox/obsidian-gistr/wiki',
         urlIssues:      'https://github.com/Aetherinox/obsidian-gistr/issues',
         urlReleases:    'https://github.com/Aetherinox/obsidian-gistr/releases',

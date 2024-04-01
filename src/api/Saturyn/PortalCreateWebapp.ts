@@ -18,8 +18,6 @@ export const SaturynCreateWebapp = ( params: Partial< SaturynParams >, onReady?:
 
     viewer.addEventListener( 'dom-ready', async ( ) =>
     {
-        console.log( params )
-
         if ( params.zoom )
             viewer.setZoomFactor( params.zoom )
 

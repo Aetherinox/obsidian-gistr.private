@@ -37,8 +37,8 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "4. Mermaid Charts & Advanced Embeds.md",
-                "mode": "source",
+                "file": "2. Github.md",
+                "mode": "preview",
                 "source": false
               }
             }
@@ -110,7 +110,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "4. Mermaid Charts & Advanced Embeds.md",
+                "file": "2. Github.md",
                 "collapseAll": false,
                 "extraContext": true,
                 "sortOrder": "alphabetical",
@@ -127,7 +127,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "4. Mermaid Charts & Advanced Embeds.md",
+                "file": "2. Github.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -150,7 +150,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "4. Mermaid Charts & Advanced Embeds.md"
+                "file": "2. Github.md"
               }
             }
           }
@@ -163,23 +163,23 @@
   },
   "left-ribbon": {
     "hiddenItems": {
-      "gistr:Save Gist (Github Public)": false,
-      "gistr:Save Gist (Github Secret)": false,
       "obsidian42-brat:BRAT": false,
       "switcher:Open quick switcher": false,
       "graph:Open graph view": false,
       "canvas:Create new canvas": false,
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
-      "command-palette:Open command palette": false
+      "command-palette:Open command palette": false,
+      "gistr:Save Gist (Github Public)": false,
+      "gistr:Save Gist (Github Secret)": false
     }
   },
   "active": "fd79962cd61072a6",
   "lastOpenFiles": [
-    "2. Github.md",
     "3. OpenGist.md",
     "4. Mermaid Charts & Advanced Embeds.md",
-    "0. Official Documentation.md",
-    "1. Methods.md"
+    "2. Github.md",
+    "1. Methods.md",
+    "0. Official Documentation.md"
   ]
 }

@@ -5,7 +5,7 @@ import { ColorPicker, GetColor, RemoveLeafButtonsAll } from 'src/utils'
 import { GHStatusAPI, GHTokenSet, GHTokenGet } from 'src/backend/services'
 import { SaturynTemplate, SaturynModalPortalEdit, SaturynParams } from 'src/api/Saturyn'
 import ModalGettingStarted from "src/modals/GettingStartedModal"
-import { Env, NoxComponent, LeafButton_Refresh } from 'src/api'
+import { NoxComponent, LeafButton_Refresh } from 'src/api'
 import { lng } from 'src/lang'
 import Pickr from "@simonwep/pickr"
 import lt from 'semver/functions/lt'
@@ -2181,7 +2181,7 @@ export class SettingsSection extends PluginSettingTab
 
                         btn.onClick( ( ) =>
                         {
-                            window.open( Env.Links[ 'urlReleases' ] )
+                            window.open( lng( "cfg_tab_su_ver_releases" ) )
                         } )
 
                     }, json_delay )
@@ -2283,37 +2283,18 @@ export class SettingsSection extends PluginSettingTab
                         } )
                 } )
 
-            elm.createEl( 'div', { cls: "gistr-settings-section-separator-15", text: "" } )
-
-            /*
-                Button > Documentation
-            */
-
-            new Setting( elm )
-                .setName( lng( "cfg_tab_su_doc_name" ) )
-                .setDesc( lng( "cfg_tab_su_doc_desc" ) )
-                .addButton( btn =>
-                {
-                    btn.setButtonText( lng( "cfg_tab_su_doc_btn" ) ).onClick( ( ) =>
-                    {
-                        window.open( Env.Links[ 'urlDocs' ] )
-                    } )
-                } )
-
-            elm.createEl( 'div', { cls: "gistr-settings-section-separator-15", text: "" } )
-
             /*
                 Button -> Plugin Repo
             */
 
             new Setting( elm )
                 .setName( lng( "cfg_tab_su_repo_label" ) )
-                .setDesc( Env.Links[ 'urlRepo' ] )
+                .setDesc( lng( "cfg_tab_su_repo_url" ) )
                 .addButton( ( btn ) =>
                 {
                     btn.setButtonText( lng( "cfg_tab_su_repo_btn" ) ).onClick( ( ) =>
                     {
-                        window.open( Env.Links[ 'urlRepo' ] )
+                        window.open( lng( "cfg_tab_su_repo_url" ) )
                     } )
                 } )
 
@@ -2323,12 +2304,12 @@ export class SettingsSection extends PluginSettingTab
 
             new Setting( elm )
                 .setName( lng( "cfg_tab_su_vault_label" ) )
-                .setDesc( Env.Links[ 'urlDemoVault' ] )
+                .setDesc( lng( "cfg_tab_su_vault_url" ) )
                 .addButton( ( btn ) =>
                 {
                     btn.setButtonText( lng( "cfg_tab_su_vault_btn" ) ).onClick( ( ) =>
                     {
-                        window.open( Env.Links[ 'urlDemoVault' ] )
+                        window.open( lng( "cfg_tab_su_vault_url" ) )
                     } )
                 } )
 
