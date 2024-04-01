@@ -105,10 +105,15 @@ jobs:
               id: gpg
               run: |
                 echo -n "$GPG_SIGNING_KEY" | base64 --decode | gpg --import --no-tty --batch --yes
+                echo -n "default-key $GPG_KEYID" > ~/.gnupg/gpg.conf
 
+                mkdir ~/.gnupg && touch ~/.gnupg/gpg.conf
+                echo use-agent >> ~/.gnupg/gpg.conf
+                echo pinentry-mode loopback >> ~/.gnupg/gpg.conf
+                echo allow-loopback-pinentry >> ~/.gnupg/gpg-agent.conf
                 gpg --list-secret-keys
-                echo "default-key $GPG_KEYID" > ~/.gnupg/gpg.conf
               env:
+                GPG_SIGNING_PASSPHRASE: ${{ secrets.ADMINSERV_GPG_PASSPHRASE }}
                 GPG_SIGNING_KEY: ${{ secrets.ADMINSERV_GPG_PRIVATE_KEY }}
                 GPG_KEYID: ${{ secrets.ADMINSERV_GPG_KEYID }}
 
