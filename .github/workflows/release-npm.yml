@@ -161,22 +161,24 @@ jobs:
             - name: Load GPG key
               id: gpg
               run: |
-                echo "GPG_KEY_PRIVATE=${{ secrets.ADMINSERV_GPG_PRIVATE_KEY }}" >> "$GITHUB_ENV" 
-                echo "GPG_KEY_ID=${{ secrets.ADMINSERV_GPG_KEYID }}" >> "$GITHUB_ENV" 
+                gpg_key_id=${{ secrets.ADMINSERV_GPG_KEYID }}
+                echo "GPG_KEY_ID=$gpg_key_id" >> $GITHUB_ENV
 
-                //echo $FWUP_KEY_BASE64 | base64 --decode --ignore-garbage > $NERVES_FW_PRIV_KEY
-                //echo "export GPG_KEY=$GPG_KEY_FILE" >> $BASH_ENV
+                gpg_key_private_b64=${{ secrets.ADMINSERV_GPG_PRIVATE_KEY }}
+                echo "GPG_KEY_PRIVATE_B64=$gpg_key_private_b64" >> $GITHUB_ENV
 
-                //echo "GPG_KEY=$(cat package.json | jq -r '.version')" >> $GITHUB_ENV
+                gpg_key_passphrase=${{ secrets.ADMINSERV_GPG_PASSPHRASE }}
+                echo "GPG_KEY_PASSPHRASE=$gpg_key_private_b64" >> $GITHUB_ENV
 
+                echo "-------------"
+                echo gpg_key_id
+                echo $gpg_key_id
+
+              
                 mkdir ~/.gnupg && touch ~/.gnupg/gpg.conf
                 echo use-agent >> ~/.gnupg/gpg.conf
                 echo pinentry-mode loopback >> ~/.gnupg/gpg.conf
                 echo allow-loopback-pinentry >> ~/.gnupg/gpg-agent.conf
-
-                echo "-------------"
-                echo GPG_KEY_ID
-                echo $GPG_KEY_ID
 
                 GNUPGHOME="$HOME/.gnupg"
                 export GNUPGHOME
