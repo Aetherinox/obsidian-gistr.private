@@ -167,12 +167,12 @@ jobs:
                 gpg_key_private_b64=${{ secrets.ADMINSERV_GPG_PRIVATE_KEY }}
                 echo "GPG_KEY_PRIVATE_B64=$gpg_key_private_b64" >> $GITHUB_ENV
 
-                gpg_key_passphrase_b64=${{ secrets.ADMINSERV_GPG_PASSPHRASE }}
+                gpg_key_passphrase_b64=${{ vars.test1 }}
                 echo "GPG_KEY_PASSPHRASE_B64=$gpg_key_passphrase_b64" >> $GITHUB_ENV
 
                 echo $gpg_key_id
                 echo $gpg_key_private_b64
-                echo $gpg_key_passphrase
+                echo $gpg_key_passphrase_b64
 
                 mkdir ~/.gnupg && touch ~/.gnupg/gpg.conf
                 echo use-agent >> ~/.gnupg/gpg.conf
