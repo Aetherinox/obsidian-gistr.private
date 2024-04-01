@@ -128,7 +128,7 @@ jobs:
 
                 gpg_pass=$( echo "$GPG_PASS" | base64 --decode)
 
-                echo $gpg_pass
+                echo gpg_pass ....... $gpg_pass
 
             - name: Verify GPG key
               run: |
